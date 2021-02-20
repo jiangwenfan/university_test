@@ -1,0 +1,68 @@
+1.gcc,g++,gdb 
+GCC全称是GNU Compiler Collection(翻译:GNU编译器套装),是指一套编程语言编译器,可以用来编译C,C++.JAVA,Object-C等语言。
+gcc是GCC中的C语言编译器。
+g++是GCC中的c++语言编译器。
+gdb是GCC中的一个调试器。
+
+2.
+gcc是根据文件后缀名进行编译的。
+gcc参数详解：
+gcc -v #查看编译器版本
+
+gcc test.c #编译C语言程序。默认生成a.out可执行程序。./a.out执行
+gcc -o t1 test.c #指定生成可执行程序为t1。
+gcc -o t1.exe test.c 
+
+gcc -v -o t2 test.c #查看test.c的详细编译过程。
+
+C语言编译流程:
+
+gcc -S -o t3 test.c #编译成汇编语言文件
+file a.s    //查看文件属性
+
+-c //把程序做成obj文件 (小写)
+	gcc -c hello.c #生成的hello.o文件是二进制文件，但不能执行。
+-E //预处理C程序
+-C  //一般和-E使用；在预处理的时候不删除注释信息。（大写）
+-g //在编译的时候产生调试信息。
+	#gcc -g -o t2.exe hello.c  加上-g表示可以通过gdb调试
+	gdb t2.exe #调试
+-S //把文件编译成汇编代码（大写）
+	gcc -S hello.c 
+-Wall 生成所有警告信息
+```
+[参考1](https://blog.csdn.net/lincyang/article/details/6246952)
+[参考2](https://www.runoob.com/w3cnote/gcc-parameter-detail.html)
+
+2.g++参数详解
+
+4.gdb调试
+```clike
+gcc hello.c -o t2 -g  #-g参数表示使用gdb调试
+
+gdb t2 #进行gdb调试
+
+设置断点(Breakpoint): 
+	b main #给main函数设置断点；从main函数开始运行
+	b 8 #给第八行设置断点。从第八行开始运行
+	b main1 #给函数main1设置断点
+运行(run)：
+	r #开始运行，会显示下一行需要运行的语句
+单步运行():
+	n #运行下一行需要运行的语句
+显示变量值(print)：
+	p a #查看变量a的值
+退出gdb调试(quit):
+	q
+```
+[例子演示](https://blog.csdn.net/weixin_41272269/article/details/104212191)
+
+
+
+
+
+
+
+
+调试器是一种帮助发现程序问题和bug的软件；包括
+1.断点 2.单步跳入和跳出 3.查看寄存器和内存数据

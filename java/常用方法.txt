@@ -1,0 +1,63 @@
+
+
+
+String类的方法:
+1.length()方法，返回字符串的长度。
+String name = "abc";
+int length = name.length();  //3
+
+String age = "123456";
+int length = age.length();   //6
+String aa = ""; //0
+String bb = "  "; //2
+
+2. isEmpty()方法,判断字符长度。
+字符串长度为0时,返回true,其他则返回false
+String aa = "";
+aa.isEmpty();  //true
+String bb = " "; //false
+
+3.hashCode()方法，返回字符的哈希值。空字符串哈希值为0
+aa.hashCode();  /1281198347
+
+4.charAt()方法，获取字符串指定索引位置的值。 在字符串中根据索引取值。
+name.charAt(0);   //a
+
+5.indexOf()方法, 在字符串中根据字符取索引
+返回指定字符在此字符串中第一次出现的索引
+String name = "abcjwfabc";
+name.indexOf('a');  //0
+name.indexOf('j');  //3
+age.indexOf('1');  //0
+
+获取指定字符在此字符串中第一次出现的位置索引。
+name.indexOf("abc");  //0
+name.indexOf("jwf"); //3
+age.indexOf("23"); //1
+
+获取指定字符在指定索引之后的第一次出现位置的索引
+name.indexOf('a',3); //6
+name.indexOf('a',5);  //6
+
+获取指定字符串在指定索引之后的第一次出现位置的索引
+name.indexOf("abc",5); //6
+name.indexOf("abc",3);  //6
+
+6.截取字符串
+name.substring(2); //截取索引2到末尾的字符串  cjwfabcjwf
+name.substring(2,5);  //截取索引2-->4的字符串 cjw
+
+
+
+
+
+判断字符内容是否相等，推荐使用.equals方法，== 这个容易出现问题
+String bb = "182";
+String aa = "182";
+aa.equals(bb);  //判断两个字符串的内容是否相等
+
+
+
+
+
+

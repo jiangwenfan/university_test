@@ -1,0 +1,15 @@
+#vim 汉字乱码问题解决：
+	vim text.txt #显示乱码
+	原因：编码问题
+	通过iconv命令转码， ####iconv -l #列出所有已知的字符集。
+	参数详解：-f,--from-code=名称 原始文件编码
+			 -t,--to-code=输出编码
+			 -o,--output=file 输出文件名
+	iconv -f 文件原始编码 -t 目标编码 test.txt -o 重命名.txt
+	iconv -f gb2312 -t utf8 test.txt -o t.txt
+	vim t.txt #显示正常
+
+
+32位系统中，每个内存地址为32位，寻址宽度为32位。内存以字节为单位。一个地址对应一个字节。
+
+virt-install --name manager03 --memory=3096 --arch=x86_64 --cpu=host-model --vcpus=2 --check-cpu --os-type=windows --os-variant='windos7test'  --cdrom=/home/data_tem/win7.iso --disk path=/home/data_tem/win7test.qcow2 --network bridge=br0 --noautoconsole --graphics vnc,password=xxxx,listen=0.0.0.0,port=8000 --cpu=host-model

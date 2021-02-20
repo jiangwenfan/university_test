@@ -1,0 +1,73 @@
+eclipse+sdk
+
+1.ddms(Dalvik Debug Monitor Service 调试监控服务工具)透视图:
+实时截取模拟器上的界面保存到电脑上。
+选中设备--->screen capture-->截图
+。。-->File Explorer(浏览手机内的文件)
+/mnt/sdcard sd卡目录
+/data/app/ #里面都是系统的软件
+	其中ApiDemos.apk是google工程师提供的一些案列
+/data/data/  里面都是软件对应的包名
+
+。。 -->Emulator Control(模拟发短信打电话)
+2.
+activity 一个activity就是一个页面
+创建一个helloworld的android项目
+new-->Android Application Project-->
+Application Name：bestTools
+Project Name:homework
+Package Name:com.pwall.bestTools
+
+Minimum Required SDK: API8:android 2.2 最低的sdk版本
+Target SDK:API 17:android 4.2 目标Sdk版本
+Compile With:API 18：android 4.3
+Theme:None
+
+-->create custom launcher 创建了一个启动图标
+create activity 创建一个界面
+--->blank activity 
+
+运行:
+run as--> Android Application
+
+3.android工程的目录结构
+src 存储java源码
+gen 
+	R.java 自动生成的文件。通过R.java文件可以找到res下的资源文件
+android 4.3 android的包
+android Dependencies 依赖的包
+assets 资产目录,存放音频视频等等
+bin/res apk存放
+lib 存储一些用到的jar包
+res 存储资源文件
+	drawable-* 存储图片,后缀不同是为了适配不同的屏幕。放入图片后,R.java会多一条记录。
+	layout 布局文件
+values 
+	strings.xml 字符串存储文件
+AndroidMainfest.xml android的清单文件,记录一些基础的app的信息
+	android:versionName="dog1.1.0" 在手机中应用的详细信息中可以看到版本信息
+	<application> 代表当前的应用
+		allowBackup="true" 表示允许备份
+		icon="@drawable/ic_launcher"  @表示R.java文件,所以这个表示这个java文件中的drawable下的ic_launcher资源。
+		label=".." label就是app的标题
+		<activity> 对activity进行配置
+		
+window --> show view --> other --> android -->logcat 查看日志窗口
+
+MainActivity.java 
+	MainActivity是首先被启动的。
+	onCreate方法,当activity启动的时候就会执行onCreate方法
+	setContentView 设置来自布局的activity的内容
+4.
+5.android打包过程
+adb命令
+kill-server 杀死adb服务
+start-server 开启服务
+adb install aa.apk 快速安装一个app
+adb uninstall app的包名  卸载一个app,包名去android的进程列表中看
+adb shell 进入shell
+adb push a.txt /mnt/sdcard/  把电脑上的文件push到手机上
+adb pull /mnt/sdcard/a.txt a.txt 从手机上拉一个文件到电脑上
+
+
+6.

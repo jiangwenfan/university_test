@@ -1,0 +1,19 @@
+1.如何启动mysql服务?,/etc/init.d/mysqld start ---- service mysqld start  -----  systemctl start mysqld 
+2.检测端口是否运行?,lsof -i :3306 ----- netstat -lntup | grep 3306 
+-3.设置或修改mysql密码?
+4.登录数据库?,mysql -uroot -p123456
+5.查看当前数据库的字符集?,show create database test;
+6.查看当前数据库的版本?,mysql -V(大) ------ mysql -uroot -p123456 -e "use mysql;select version();"
+7.查看当前登录用户?,mysql -uroot -p123456 -e "select user();"
+-8.创建gbk字符集的数据库test1,并查看完整的创建语句?,create database test1 default charset gbk collate gbk_chinese_ci;
+9.创建用户jwf并管理数据库test2?,grant all on test2.* to 'jwf'@'localhost' identified by 'admin123';
+10.查看创建用户jwf的权限?,show grants for 'jwf'@'localhost'; ----- show grants for jwf@localhost;
+11.查看数据库有那些用户?,select user from mysql.user;
+12.创建一个innodb gbk表test3,字段id int(4)和name varchar(16)?,create table test3( id int(4),name varchar(16))ENGINE=innodb DEFAULT CHARSET=gbk;
+13.查看表结构及表结构的Sql语句?,desc test3;show create table test3\G
+14.给test3表插入一条数据"1,bear"?,insert into test3 values('1','bear');
+15.给test3表批量插入2条数据"2,river","3,presenter",insert into test3 values("2",'river'),("3","presenter");
+16.查询test3表中name为river的记录?,select * from test3 where name = 'river';
+17.把数据id等于1的name字段值改为buttock?@update test3 set name = 'buttock' where id ='1';
+18.在字段name前插入age字段,类型为tinyint(2)?@alter table test3 add age tinyint(2) after id;
+19.不退出数据库,完成备份test1数据库?@system mysqldump -uroot -p123456 -B test1 > /root/test1.sql

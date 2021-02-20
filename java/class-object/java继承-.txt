@@ -1,0 +1,83 @@
+class son extends father{ }  //继承。不支持多继承。
+
+1.子类只能继承父类所有[非私有]的成员方法和成员变量。
+2.子类不能继承父类的构造方法,可以通过super关键字去访问父类的构造方法。
+
+1.单纯的继承父类的方法
+class Person{
+	public void sleep(){ 
+		System.out.println("sleep ...");
+	}
+}
+class Father extends Person{}  //继承
+class Son extends Person{}
+class Demo{
+	public static void main(String[] args){
+		Father f1 = new Father();
+		f1.sleep();  //继承的子类调用父类的方法
+		Son s1 = new Son();
+		s1.sleep();
+	}
+}
+
+this关键字是本类的引用。
+super关键字是父类空间的标识。
+成员变量:
+	this.成员变量
+	super.成员变量
+构造方法:
+	this()
+	super()
+成员方法:
+	this.成员方法名()
+	super.成员方法名()
+
+2.继承并修改父类的方法
+class Father{
+	public void sleep(){
+		System.out.println("sleep ...");
+	}
+}
+class Son extends Father{
+	//方法重写:直接修改。即沿袭了父类的功能，又定义了子类特有的内容。
+	public void sleep(){
+		System.out.println("sleep ... / son method");
+	}
+	//方法重写:在父类基础上增加新功能。
+	public void sleep(){
+		super.sleep();  //继承父类方法的功能
+		System.out.println("add a new tool");
+	}
+}
+class Demo{
+	public static void main(String[] args){
+		Son s1 = new Son();
+		s1.sleep();  
+	}
+}
+3.构造方法的继承。子类所有构造方法默认自动调用父类无参构造.
+通过super关键字指定父类的参构造方法。
+通过this关键字指定本类构造方法
+
+父类必须要存在无参构造方法。
+通过使用super关键字去调用父类的带参构造方法
+子类通过this去调用本类的其他构造方法
+
+class Father{
+	//父类的无参构造方法是继承的基础。子类默认自动访问父类无参构造。
+	public Father(){
+		System.out.println("hello father");
+	}
+	public Father(String abc){
+		System.out.println(abc);
+	}
+}
+clas Son extends Father{
+	public Son(){
+		//super() 默认以及自动调用了父类的无参构造
+		super("hello");  //继承有参构造
+	}
+	public Son(String abc){
+		//super() 默认进行自动调用父类的无参构造
+	}
+}

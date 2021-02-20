@@ -1,0 +1,62 @@
+匿名对象就是没有名字的对象
+
+1.仅使用一次
+2.匿名对象可以作为实际参数传递
+
+class Father{
+	public void show(){
+		System.out.println("hello father");
+	}
+}
+class Demo{
+	public static void main(String[] args){
+		Father f1 = new Father();
+		f1.show();  //带名字的调用
+		
+		new Father().show(); //匿名对象调用方法
+			
+	}
+
+}
+匿名对象可以作为实际参数传递:
+//这是一个工具类，实现各种功能
+class Student{
+	public void sleep(){
+		System.out.println("sleep ...");
+	}
+}
+//这是一个测试工具类，用来测试工具类中的功能。
+class StudentDemo{
+	public void testSleep(Student s1){
+		s1.sleep();
+	}
+
+}
+//这是一个总的测试类，调用各种工具类的测试类，进行测试。
+class Demo{
+	public static void main(String[] args){
+		//正常调用。
+		Student s2 = new Student();
+		StudentDemo s3 = new StudentDemo();
+		s3.testSleep(s2);   //传入工具类的对象
+		
+		//匿名调用
+		s3.testSleep(new Student);
+		
+		//匿名嵌套调用
+		new StudentDemo.testSleep(new Student);
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+

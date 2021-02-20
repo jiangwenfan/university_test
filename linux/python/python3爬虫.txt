@@ -1,0 +1,49 @@
+url="http://www.google.com"
+#1.发送请求
+response = requests.get(url) #发送请求，获得response响应对象
+1.1 添加请求头
+#构造请求头,伪装浏览器
+header={
+'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
+}
+response = requests.get(url=url,headers=header)
+
+#2.设置获取的编码
+response.encoding = 'gbk' #转换编码
+
+#3.根据响应体获取内容
+body = response.text #获得响应体的字符串
+cookies= response.cookies #获得响应体带来的cookie
+status_code = response.status_code #获取状态码
+
+#4.将响应体转换为Beautifulsoup对象
+soup = BeautifulSoup(body,'html.parser') #将响应体字符串转换为BeautifulSoup对象
+
+#5.根据BeautifulSoup对象获取html节点
+div = soup.find(name='div',attrs={'id':'auto-channel-lazyload-article'})  #根据标签名和标签的id找到标签对象
+
+li_list = div.find_all(name="li")	#找到div这个对象下的所有li标签
+for li in li_list:
+	h3 = li.find(name='h3') #找到每个li标签对象下的h3标签对象
+	print(h3.text) #取到h3标签对象的内容<h3>内容123</h3>
+	
+	a = li.find(name='a')
+	short_url = a.attrs.get('href') #取到a标签对象的属性的内容google网址。 <a href="www.google.com">内容123</a>
+	
+	img = li.find(name='img')
+	src_url = img.get('src')  #取到img标签对象的属性的内容，这是一种简写形式。 <img src="http://127.0.0.1/t1.img"></img>
+	
+	#下载图片
+	img_name = "test.img" #图片要保存的名字
+	download_img = requests.get(src_url) #获得图片的二进制流
+	with open(img_name,'wb') as f:
+		f.write(ret.content) #将二进制流写入图片
+	
+---2. geti请求带数据
+requests.get("http://httpbin.org/get?name=tony&age=22")  #给get请求带上name是tony，age是22的数据
+
+data = {
+	'name':'germey',
+	'age':22
+}
+resquests.get("http://httpbin.org/get",params=data) #常用的方式

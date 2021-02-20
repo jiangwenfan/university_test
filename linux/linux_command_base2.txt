@@ -1,0 +1,127 @@
+系统用户及组管理
+三种linux用户：
+超级用户: root 对系统的最高权限 UID=0
+普通用户: 
+	系统用户 UID:1-999(centos7) 1-499(centos6)
+	本地用户 UID:1000+		500+
+虚拟用户:伪用户(不进行系统登录，只维持某个服务的正常运行:ftp,mysql,apache)
+UID:即每个用户的身份标示,类似于每个人的身份证号码
+
+useradd添加用户：
+useradd -d /home/t1 -u 1300 -g test-test -G "test-123" -s /usr/bin/bash  #-g指定的test-test这个属组必须存在。 -G test-123这个附加组也必须存在。 
+
+#指定用户的uid为1300 
+#useradd -u 1200 t3 //创建uid时1200的t3用户。uid默认是从1000开始创建的。
+#useradd -d /var/t4 t4 //创建t4用户，指定家目录在/var/t4中。 默认是自动创建在/home/t4。
+
+选项 参数说明：
+-d 目录 指定用户主目录，如果此目录不存在，则同时使用-m选项，还可以创建主目录。
+-g 用户组 指定用户所属的用户组。
+-G 附加组 用户组指定用户所属的附加组。
+-s shell文件 指定用户登录的shell
+-u 用户名 指定用户的用户号，如果同时有-o选项，则可以重复使用使用其他用户的标识号。
+#---?
+#用户名：
+#指定新帐号的登录名。
+#创建了一个用户sam,其中-d和-m选项用来为登录名产生一个主目录/usr/sam(/usr为默认的用户主目录所在所在父目录)
+#user -d /usr/sam -m sam
+#创建了一个用户gem,该用户登录的shell是/bin/sh,
+#它属于group用户组，同时又属于adm和root用户组，其中group用户组是主组。
+#useradd -s /bin/sh -g group -G adm,root gem
+#新建组：groupadd group 及 groupadd adm
+#增加用户账号就是在/etc/passwd文件中为新用户增加一条记录，同时更新其他系统文件如/etc/shadow,/etc/group等。
+
+linux提供了系统管理工具userconf,他可以用来对用户账号进行统一管理。
+
+删除账号：
+删除用户账号就是要将/etc/passwd等系统文件中该用户记录删除，必要时还要删除用户的主目录。
+格式如下：userdel 选项 用户名
+常用选项是-r 作用是把用户的主目录一起删除。
+此命令删除用户sam在系统文件中(主要是/etc/passwd,/etc/shadow,/etc/group等)的记录，同时删除用户的主目录。
+userdel -r sam
+修改帐号：
+修改用户账号就是根据实际情况更改用户的属性，如用户号，主目录，用户组，登录shell等。
+格式如下：usermod 选型 用户名
+常用选项包括-c,-d,-m,-g,-s,-u以及-o等，这些选项的意义与useradd命令中的选项一样，可以为用户指定新的资源值。有些系统可用 -i 新用户名
+这个选项指定一个新的账号，即将原来的用户名改为新的用户名。
+将用户sam的登录shell设为ksh,主目录修改为/home/z,用户组改为developer
+usermod -s /bin/ksh -d /home/z -g developer sam
+	useradd 用户名 //创建一个新用户
+	passwd  用户名 //为用户创建密码
+	passwd -S 用户名 //查询账号密码，S为大写。
+	usermod -l 新名 老名 //为用户改名。
+	groupadd 组名 //创建一个新的组
+用户的口令管理：
+12.查看所有用户
+more /etc/passwd & /etc/shadow
+cat   /etc/passwd | grep 用户名
+看第三个参数:500以上的,就是后面建的用户了.其它则为系统的用户.
+cat /etc/group 系统中的所有组
+useradd :添加用户
+passwd:修改用户密码
+usermod:修改用户信息
+pwcov:同步用户从/etc/passwd到/etc/shadow
+pwunconv:是pwcov的逆向操作。
+finger:查看用户信息的工具。
+id:查看用户id及其归属的组。
+su:用户切换工具。
+groupadd:添加用户组
+groupdel:删除用户组
+groupmod：修改用户组信息
+groups :查看当前登录用户的组内成员。
+groups tony:查看tony用户所在的组，以及组内的成员。
+
+压缩与解压缩:
+7z：
+yum install p7zip p7zip-plugins
+ 
+7za e xxx.7z 解压到当前目录下,不保留原来的目录结构
+7za x xxx.7z 解压到当前目录下,但保留原来的目录结构 #7z x xxx.7z 也行
+
+tree参数说明：
+-a 显示所有文件，默认不显示隐藏文件
+-u  显示各层目录的拥有者
+-L  指定下降的层级
+eg： tree -u -L 2  /home/tony
+
+
+
+
+
+
+
+
+
+9.chmod
+linux/unix的文件调用权限分为三级：文件拥有者，群组，其他。
+利用chmod可以籍以控制文件如何被他人所调用。
+u:表示该文件的拥有者
+g:表示与该文件的拥有者属于同一个群组（group）
+o:表示其他以外的人。
+	a:表示三者皆是。a=ugo
+10.which
+which命令用于查找文件
+which指令会在环境变量$PATH里查找符合的文件。
+which [文件]
+参数说明：
+-n<文件名长度> 指定文件名长度，指定的长度必须大于或等于所有文件。
+-p<文件名长度> 与-n参数相同，但此处的<文件名长度>包括了文件的路径。
+-w 指定输出时的栏位宽度
+-v 显示版本信息
+
+which bash #查看bash指令的绝对路径。
+which vim #找vim的绝对路径
+
+
+11.系统管理
+uname -a  //查看内核版本
+lsusb    //查看usb设备
+ethtool eth0 //查看网卡状态。
+cat /proc/cpuinfo  //查看cpu信息
+fdisk -l  //查看磁盘信息
+df -h  //查看磁盘剩余空间
+free -m  //查看内存使用情况
+apt-get update //系统升级
+ps -a  //查看当前进程
+kill 进程号 //杀死进程
+kill -9 进程号  //强制杀死进程。

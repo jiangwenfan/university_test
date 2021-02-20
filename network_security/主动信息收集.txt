@@ -1,0 +1,42 @@
+主动信息搜集：
+其他途径：
+	社交网络
+	工商注册
+	新闻组/论坛
+	招聘网站
+	http://www.archive.org/web/web.php  #定期给网络上的其他网站做快照。
+
+被动信息收集：
+recon-ng
+	全特性的web侦查框架
+	基于python开发
+
+	web信息搜索框架
+	命令格式与msf一致
+
+	实践1：
+	recon-ng -w sina  #新建一个新浪工作区
+		help #查看这个框架下有哪些命令
+		workspaces #如果不知道这个命令有哪些参数，可以tab两下。
+				workspaces list #查看当前recon-ng下有哪些工作区。
+		keys  #tab两下查看该命令下有哪些子命令（参数）
+				keys list #列出recon-ng所支持的网站api
+				keys  add #添加一个新的api [tab两下]
+				keys add twitter_api xxxxxxxxxxxxxxxx   #网站所提供的key
+				keys list #再次查看会发现多了一条记录。 
+
+				keys delete twitter_api  #删除api
+		load  #可以加载自己编写的模块
+		search #搜索相关的模块
+				search google #搜索google相关的模块。
+		shell  #调用系统命令
+				shell ls 
+		show   #显示信息
+				show options #没有在任何模块里，显示全局信息。
+					debug #不做排错，没必要启动
+					nameserver  #recon-ng不适用系统自带的NDS，它使用自己设置的。
+					proxy   #为搜索引擎做代理
+					useragent
+		set PROXY 127.0.0.1:8087  #设置全局模式下的代理。
+				unset PROXY  #清空设置
+		set 

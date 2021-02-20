@@ -1,0 +1,65 @@
+多态是建立在继承和方法重写之上的,只要重写的方法才能被调用。
+父类引用指向子类对象
+Zi z = new Zi();
+本来Zi的对象因该是z,但是显示为f,所以这个对象可以
+Fu f = new Zi();
+调用父类的的成员变量和静态方法，但是成员方法还是只能调用自己的,但是不能使用自己特有的成员方法，这个就是弊端。
+
+
+多态的扩展性:
+private AnimalTool(){}  //私有无参构造方法，使类不能创建对象
+有多个子类继承父类,对多个子类进行测试，需要创建多个子类的对象分别调用其方法，很麻烦。
+创建一个子类的测试类，其中含有一个测试的静态方法，通过传入子类对象的父类引用来调用方法。
+测试时只需要创建对象传入引用即可。
+
+class Tools{
+	public void eat(){};
+	public void sleep(){};
+}
+class Cat extends Tools{
+	public void eat(){
+		System.out.println("dog is happy");
+	}
+	public void sleep(){
+		System.out.println("sleep is cat");
+	}
+}
+class Dog extends Tools{
+	public void eat(){
+		System.out.println("dog is hahah");
+	}
+	public void sleep(){
+		System.out.println("dog is slepp");
+	}
+}
+class ToolTest{
+	public static void test(Tools t){
+		t.eat();
+		t.sleep();
+	}
+}
+
+
+通过一个静态方法操作里面的所有私有成员变量和成员方法和非静态的成员变量和成员方法，可以保证安全性。
+class Tools{
+
+	private public Tools(){};  //私有无参构造方法，使类不能创建对象。
+	public void sleep(){
+		System.out.println("sleep ...");
+	}
+	public void eat(){
+		System.out.println("eat ...");
+	}
+	//因为不能创建对象，所以以上都无法直接使用。
+	//通过静态方法，通过类来使用。
+	//现主不能创建对象了，但是调用成员方法，本质上还是通过对象调用。
+	public static void use(){}
+	
+}
+
+//可以创建对象时这样使用。
+Tools t = new Tools();
+t.sleep()
+
+//
+Tools.use()

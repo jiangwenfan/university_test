@@ -1,0 +1,149 @@
+# 匿名共享
+公司现在再用一个工作组xuegod.cn,共享目录/share,共享名public，允许所有公司员工访问。
+shift + t :打开新的终端。
+###### centos7无法使用
+```bash
+mkdir /share
+vim /etc/samba/smb.conf #:noh 去掉高亮
+	workgroup =  xuegod.cn
+	server string = xuegod.cn samba server
+	security=share
+	[share]
+	comment=xuegod.cn 
+	path=/share
+	public=yes
+service smb restart #重启
+```
+
+* 测试
+\\192.168.201.205   [share/1.txt]
+可下载。不能上传。
+
+# 通过用户名密码共享
+把 /sales共享出去。
+
+```bash
+vim /etc/samba/smb.conf     #指定存放密码的文件
+	security=user
+passdb backend=smbpasswd
+smb passwd file = /etc/samba/smbpasswd
+添加销售部用户和组,并添加相应的的samba账号：
+groupadd sales  
+useradd -g sales sale1
+useradd -g sales sale2   #本地账号没有密码，不能登录操作系统
+id sale2  #查看
+为本地用户创建samba账号:服务器不用本地账号，用自己的账号：
+smbpasswd  -a sale1  #添加密码123456
+设置共享目录：
+vim /etc/samba/smb.conf
+[sales]
+comment=sales data
+path=/sales
+valid users =@sales
+#writable =yes  #写权限  服务权限。【同时更改系统权限：chmod 777 /sales】
+#write list= boss,@sales	#老板和销售组只可以有写权限。[1]
+创建共享目录：
+mkdir  /sales
+
+重启：service smb restart
+```
+
+测试：
+\\192.168.201.205   sale2  123456
+[sale2[可创建文件。/home/sale2/...]  sales  share]
+
+扩展参数：
+hosts allow 定义允许访问的客户端
+hosts deny  定义禁止访问的客户端
+eg: 
+hosts deny = 192.168.1.    #表示禁止所有来自192.168.1.0/24网段IP的访问。
+hosts allow =192.168.1.24     #表示允许1.24这个IP地址访问。
+【hosts	allow 优先级高】
+
+
+--------------------
+
+* #### 卸载系统自带的samba服务器软件包
+```bash
+yum remove -y samba-*
+```
+* #### 安装samba服务器所需的软件包：
+```bash
+yum install -y samba
+```
+* #### 编辑配置文件夹
+```bash
+vim /etc/samba/smb.conf
+	[public]  #服务器共享目录的名称
+	path=/home/samba/  #实际的共享目录绝对路径，表示共享这个目录下的文件。
+	browseable=yes
+	writable=yes
+	available=yes
+	public=yes   #可以共享
+```
+
+* #### 建立共享目录文件夹并赋予权限：
+```bash
+mkdir  /home/samba
+chmod  777 /home/samba
+```
+* #### 创建samba用户：
+```bash
+useradd  t1
+passwd   t1
+```
+
+--------
+samba：主要用来文件和打印机共享。
+端口号：139 ，445 【早期：137.138.139.基于NetBios协议.。查看端口号：vim /etc/services。NetBios协议主要作用是：获得计算机名称，然后把计算机名称解析为对应IP地址】
+安装：
+服务端：
+rpm -ivh  /mnt/Packages/samba-3.5.10......x86_64.rpm
+rpm -pql  /mnt/Packages/samba-3.5.10......x86_64.rpm  | more   #寻找配置文件在哪儿，看生成的文件。
+vim   /etc/samba/smb.conf 	#修改主配置文件
+
+启动或关闭脚本：
+5：/etc/init.d/smb  start
+service smb start/reload    #reload不重启服务，只是动态的加载文件。
+7：systemctl restart smb
+开机启动：
+chkconfig smb on
+chkconfig --level 3 smb on  #只在级别3下开机启动
+查看对应的端口号：
+netstat  -antup |grep smb
+
+客户端：
+rpm -ivh  /mnt/Packages/samba-client......x86_64.rpm
+rpm -qf `which smbclient`  #查看这个命令是由谁安装生成的。
+使用服务：
+ \\192.168.201.205
+smbclient  -L 192.168.201.205
+配置文件详解：
+/etc/samba
+├── lmhosts
+├── smb.conf
+└── smb.conf.example
+编辑配置文件。指定需要共享的目录。设置目录权限。设置共享目录的本地系统权限，samba共享权限。
+#表示注释
+;表示配置的格式，也是注释。
+share 匿名访问
+user 用户名访问
+[homes] 默认共享home目录
+[printers] 默认共享打印机
+[public.共享出以后的名字]
+comment = 描述
+path = 共享的绝对路径
+public = yes 匿名可访问
+browseable=yes  是否允许查看此共享内容。否，通过绝对路径查看
+valid users=用户名  #设置访问用户
+valid users=@组名  
+设置目录权限：
+readonly =yes #只读.no:读写
+writable=yes #读写。no:只读。
+write list =用户名
+write list=@组名
+日志文件：/etc/samba
+
+
+
+

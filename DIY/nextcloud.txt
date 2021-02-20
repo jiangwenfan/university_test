@@ -1,0 +1,8 @@
+centos7部署nextcloud
+1.安装apache,php,mysql环境
+2.
+create database nextcloud_db;
+create user 'nextcloud'@'localhost' identified by 'admin123#K';
+grant all privileges on nextcloud_db.* to 'nextcloud'@'localhost'
+flush privileges
+exit

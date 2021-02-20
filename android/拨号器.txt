@@ -1,0 +1,198 @@
+1.画UI
+2.根据UI写对应的业务逻辑
+3.测试
+
+1.eclipse熟练使用
+2.java
+
+EditText ---> TextView -->View  继承关系
+Button -->TextView --> view
+
+MainActivity.java
+	一个Activity就是一个页面，MainActivity(MainActivity.java)是app启动首先加载的第一个页面，
+	setContentView(R.layout.activity_main)是运行的第一个代码，含义是加载一个布局文件，其中activity_main是要加载的第一个布局文件。
+activity_main.xml
+	<RelativeLayout
+	//删除下面这些属性，可以去掉控件和屏幕的边距。
+	android:paddingBottom=""
+	android:paddingLeft=""
+	android:paddingRight=""
+	android:paddingTop=""
+	>
+	修改默认的<TextView>标签。这个标签是用来显示一些文本信息的。
+	android:layout_width="match_parent"  这个属性表示这个控件的高，match_parent表示这个手机多宽，这个窗体就有多宽。
+	//wrap_content 这个值表示,里面的文本内容多宽，外面这个空间就多宽。
+	//fill_parent(旧)和match_parent表示的一模一样。
+	android:layout_height="wrap_content"  这个属性表示这个控件的宽，
+	android:textSize="20sp" 字体大小
+	android:text="请输入手机号码"
+	
+	拖一个Plain Text控件，这个控件是用来进行输入的。
+	plain text控件就是edit Text标签:
+		<EditText
+			android:id="@+id/editTextTextPersonName" @符号表示R文件,主要是用来找个控件的。
+			最后这个editTextTextPersonName是可以修改为自己想要的名字的。
+			比如:"@+id/jwf1"
+			android:layout_width="match_parent" 使这个输入框和手机同宽。
+		/>
+	
+	拖一个button按钮，在右边属性栏中找到text属性，修改为"拨打"就可以改掉默认按钮的文字。
+	或者在:
+		android:text="拨打" 这样修改也行
+		android:id="@+id/but1" 修改按钮的id
+	????有个问题，现在这样，运行部署之后，界面会堆在一起。
+	
+	找到控件:
+	MainActivity.java 
+		//找到edit Text这个输入框控件。
+		View findViewById = findViewById(R.id.jwf1); 通过id找到输入框,输入框是Edit Text。返回值是View,所有控件都继承自View。
+		EditText
+		
+	private
+	
+	选中num,按住ctrl+数字键1可以把num从局部变量转换为类的成员变量。
+	
+	toas类
+	需要加一个用户权限，在AndroidMainifest.xml文件(清单)中。Permissions -->add [User Permission  ,, android.permission.CALL_PHONE]
+	
+	
+	按钮的第二种点击事件:
+	复制一份项目，在清单文件中修改包名:
+	package="com.example.test123" 修改为 package="com.example.t666"
+	2.修改app名 
+	
+	/res/values/strings.xml中将<string name="app_name">test123</string> 修改为 <string name="app_name">按钮的点击事件</string>
+	
+	3.在src中重新引入R文件，选择第二个 import 'R' (com.example.t666) 引入自己项目的包文件
+	
+	第三种按钮点击事件:
+	复制项目，选中新项目-->Android Tools-->rename application name 进行修改包名
+	修改string.xml中的app名字
+	
+	
+2.布局
+线性布局:
+创建项目，在layout中创建一个.xml文件,可以看到最外层是<LinearLayout />是线性布局
+ android:orientation="vertical" 这个指定是垂直还是水平布局。
+vertical 垂直布局
+horizontal 水平布局
+并在MainActivity中修改要启动的布局文件为新建的布局文件。
+
+android中所有的控件都大写。
+<TextView
+	android:id="@+id/tv_number"
+	android:layout_width="match_parent" 宽是填充父窗体
+	android:layout_height="wrap_content" 高是包裹内容
+	android:layout_marginLeft="20dp" 这个文本显示框离左边屏幕20个像素
+	//android:layout_margin="10dp" 上下左右都离屏幕10个像素
+	android:text="请输入电话号码"  文本内容
+/>
+<EditText
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:hint="请输入电话号码"  这个属性是为了在输入框显示提示背景
+/>
+<Button 
+	android:layout_height="wrap_content"
+	android:layout_width="match_parent"
+	android:text="拨打"
+/>
+
+相对布局: 
+默认的activity_main.xml是相对布局，<RelativeLayout />
+默认都会在左上角去显示，所以会重叠。
+android:paddingBottom="@dimen/activity_vertical_margin"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin"
+tools:context=".MainActivity" >
+
+    <TextView
+		android:id="@+id/tv_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请输入数字:" />
+	<EditText
+		android:id="@+id/et_number"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:hint="请输入电话号码"
+		android:layout_below="@id/tv_number"  相对布局的核心，解决重叠问题。表示当前控件在@id/tv_number这个控件的下面。
+		
+	/>
+	<Button
+		android:id="@+id/btn_call"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="call"
+		android:layout_below="@id/et_number"  当前控件在输入框控件的下面
+	/>
+	<Button
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:text="TESTcall"
+		android:layout_toRightOf="@+id/btn_call"  当前这个按钮在Call这个按钮的右边。
+		android:layout_below="@+id/et_number"  在EditText输入框的下面
+	/>
+	
+帧布局: 一层一层的显示。
+在layout中创建一个FrameLayout的.xml文件 
+帧布局主要用在视频播放器上中间那个大大的开始和暂停按钮。
+	<TextView 
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"  
+		android:text="哈哈哈哈"   使这个本文占据全部的一面的屏幕。
+	/>
+	<Button 
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center" 水平垂直居中
+		android:text="paly" 
+	/>
+
+表格布局:
+新建一个.xml文件，选择TableLayout
+一个TableRow就代表一行
+<TableRow
+	android:layout_width="match_parent"  这个表示这一行的宽是填充父窗体，高是包裹内容
+	android:layout_height="wrap_content"
+	一个TextView就是一列。
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="effect效果"
+		android:textSize="18sp" 字体大小
+		
+	/>
+	<TextView
+		android:layout_width="wrap_parent"
+		android:layout_height="wrap_content"
+		android:text="elect选举"
+		android:textSize="18sp" 字体大小 
+		android:textColor="#FF0080" 字体颜色
+		android:layout_marginLeft="30dp" 这个控件距离上一个控件的距离
+	/>
+></TableRow>
+
+android下采用rgb进行颜色渲染，颜色拾取器是bgr，打开颠倒就行。
+
+绝对布局:
+基本已经被废弃了。
+AbsoluteLayout类下的.xml文件 
+绝对布局中的每一个控件距离屏幕的距离已经被写死了，不适合进行屏幕适配。斗地主中的人物位置。
+
+
+android中的单位介绍:
+sp 主要用来设置文字的大小
+dp 根据像素进行转换，解决了大屏手机和小瓶手机屏幕像素不一致，容易错位的情况。主要用来设置控件大小的单位。
+
+px 像素。不要使用，用dp替换。
+
+android:background="#ffffff" 背景颜色
+padding是内边距，控件中文字相对于这个控件里面的距离。
+margin是外边距，是控件相对于其他控件的距离。
+
+<TextView 
+	android:layout_width="180dp"
+	android:textSize="20sp"
+/>

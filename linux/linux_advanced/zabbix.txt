@@ -1,0 +1,143 @@
+kvm虚拟机小助手:
+开机发送本机ip到手机/邮箱中。
+开机自动同步时间。
+
+git clone https://github.com/foxlet/macOS-Simple-KVM.git 
+
+zabbix安装:
+防火墙关闭:
+setenforce 0
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config 
+
+hosts文件同步
+192.168.2.215   test2
+192.168.2.147   test1
+192.168.2.126   hadoop1
+~                            
+3.
+https://developer.aliyun.com/mirror/ 阿里镜像站
+wget https://mirrors.aliyun.com/zabbix/zabbix/4.4/rhel/7/x86_64/zabbix-release-4.4-1.el7.noarch.rpm
+三台机器全部下载安装
+rpm -ivh zabbix-release-4.4-1.el7.noarch.rpm
+
+yum repolist 加载
+
+yum install  -y epel-release.noarch 
+
+yum instal -y zabbix-agent zabbix-get zabbix-sender zabbix-server-mysql zabbix-web zabbix-web-mysql 
+
+yum localinstall zabbix-server-mysql.....rpm zabbix-web-.....rpm  自动解决依赖包
+
+#以前安装过mysql57,所以再次安装mysql80会报错，yum remove mysql* 卸载干净就可以了
+
+-----zabbix 4.0版 LTS 长期支持版 支持5年 
+移除zabbix的yum源:
+ rpm -e zabbix-release 根据源名卸载
+rpm -qa |grep zabbix 查询zabbix的源名
+ 
+wget https://mirrors.aliyun.com/zabbix/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-2.el7.noarch.rpm
+rpm -ivh zabbix....
+yum repolist 
+vim /etc/yum.repos.d/zabbix.repo 
+	替换下载地址为阿里的
+	baseurl = https://mirrors.aliyun.com/zabbix/4.0/rhel/7/x86_64/ 
+		http://repo.zabbix.com/non-supported/rhel/7/$basearch/
+		https://mirrors.aliyun.com/zabbix/zabbix/4.0/rhel/7/x86_64/
+		--->https://mirrors.aliyun.com/zabbix/4.0/rhel/7/x86_64/ 删除一个zabbix
+	gpgcheck=0 
+zabbix-server(mysql版本和pgsql版本) zabbix-web(mysql版本和pgsql版本)
+安装mysql版本: yum install -y zabbix-server-mysql zabbix-web-mysql 
+
+yum install -y mariadb-server 
+systemctl start mariadb 
+systemctl enable mariadb
+mysql_secure_installation #初始化。回车,n,yyyy
+mysql #登录
+	select host,user from mysql.user;
+	create database zabbix character set utf8 collate utf8_bin;
+	grant all privileges on zabbix.* to zabbix@localhost identified by '123456'; 用户不存在会自动创建
+
+rpm -ql zabbix-server-mysql |grep mysql #查一下sql文件的位置
+zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz |mysql -uzabbix -p123456 zabbix zcat表示不接压查看
+mysql zabbix -e "show tables;" 查看导入的所有表
+
+配置zabbix-server连接mysql
+vim /etc/zabbix/zabbix_server.conf 
+	DBHost=localhost
+	DBPassword=123456
+systemctl start zabbix-server
+systemctl enable zabbix-server 
+netstat -anpt |grep 10051
+
+systemctl start httpd
+enable 
+
+http:192.168.2.147/zabbix/ 
+
+rpm -qf /etc/httpd/conf.d/zabbix.conf 查看这个文件是那个包下的
+
+vim /etc/httpd/conf.d/zabbix.conf  ---->不知道为啥不生效，所以去php.ini中配置
+	php_value date.timezone Asia/Shanghai 修改时区为亚洲上海
+
+vim /etc/php.ini 
+	post_max_size = 16M
+	max_execution_time = 300
+	max_input_time = 300
+	date.timezone=Asia/Shanghai
+	
+成功配置文件: 数据库迁移所用到的配置文件
+	Configuration file "/etc/zabbix/web/zabbix.conf.php" created
+
+登录: http://1.1.1.1/zabbix/
+	默认用户名和密码: Aadmin,zabbix
+
+----添加监控主机:
+在zabbix服务器上安装一个Agent监控自己。
+yum install zabbix-agent -y 
+systemctl start zabbix-agent 
+systemctl enable zabbix-agent 
+
+----在其他linux主机上安装agent
+wget https://mirrors.aliyun.com/zabbix/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-2.el7.noarch.rpm
+rpm -ivh zabbix....rpm 
+yum repolist 
+
+yum install zabbix-agent -y 
+
+vim /etc/zabbix/zabbix_agentd.conf 
+	Server=1.1.1.1 #服务器ip
+
+systemctl start zabbix-agent 
+systemctl enable zabbix-agent
+
+添加主机:
+配置-->主机-->添加配置
+systemctl restart zabbix-server #不行的话，重启agent,iptables -F
+
+W 查看当前登录用户
+md5sum /etc/passwd 计算md5值
+
+1.自定义监控项
+yum -y install sysstat 安装iostat，查看系统负载
+iostat 查看系统IO负载。
+iostat | awk '/sda/{print $2}' 取出硬盘的tps值。
+iostat |awk '/vda/{print $2}'
+
+vim /etc/zabbix/zabbix_agentd.conf 
+	UserParameter=vda_tps,iostat |awk '/vda/{print $2}'  #vda_tps是这个监控指标的命名
+systemctl restart zabbix-agent
+给server添加监控指标。创建一个监控项。其中非模板监控项，就是我们自己添加的。
+
+yum install zabbix-get -y 
+zabbix_get -s 127.0.0.1 -k vda_tps #测试能否取到值。-s表示agent的ip地址
+
+2.创建一个触发器
+用户基本资料-->正在发送消息-->前端消息居中。
+
+给"free swap space in%"创建。
+在监控项中修改为10s监控一次。
+
+swapoff -a 关闭swap分区
+
+3.创建一个自定义的触发器
+echo $?查看是否有异常

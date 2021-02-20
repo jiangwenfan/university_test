@@ -1,0 +1,15 @@
+php连接mysql:
+php7.0以下：
+$serverLink=mysql_connect("localhost","root","admin123K#");
+php7.0使用:
+$serverLink=mysqli_connect("localhost","root","admin123#K");
+
+$serverLink=mysqli_connect("localhost","root","admin123#K");
+if($serverLink)
+{
+	echo "connected ok! <br>";
+}
+else
+{
+	echo "failed connected";
+}

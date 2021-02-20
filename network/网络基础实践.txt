@@ -1,0 +1,11 @@
+route print  //查看路由表
+route -n
+
+netstat -ano  //查看本地连接信息
+netstat -anp
+
+利用net命令：
+net view //查看共享资源，利用主机名解析IP地址。
+查看管理员登录ip:
+net session
+who

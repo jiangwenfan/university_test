@@ -1,0 +1,64 @@
+
+overview 概览
+performance 性能
+
+centos7: 结果: virtio磁盘
+[root@jwf ~]# virt-install --name centos7-vmx-qcow2  --arch=x86_64 --cpu=host-model --vcpus=2 --memory=2048 --os-type=linux --os-variant='centos7.0' --accelerate --cdrom=/home/data_tem/centos7.iso --disk path=/home/m.2/centos7-vmx.qcow2,size=50,format=qcow2,bus=virtio --network bridge=br0 --noautoconsole --graphics vnc,password=admin123,listen=0.0.0.0,port=8000
+
+Starting install...
+Allocating 'centos7-vmx.qcow2'                                                                                                         |  50 GB  00:00:00
+Domain installation still in progress. You can reconnect to
+the console to complete the installation process.
+---------
+1.修改onboot=yes 上网
+2. 修改显示接口为vga接口,解决没有1080分辨率的问题
+?? 关于编译安装v2ray客户端解决安装android studio的问题
+https://medium.com/@eleveninstrangerthings/%E5%9C%A8ubuntu%E4%B8%8A%E5%AE%89%E8%A3%85%E5%9B%BE%E5%BD%A2%E5%8C%96v2ray%E5%AE%A2%E6%88%B7%E7%AB%AFqv2ray-d0f690b7c519
+
+
+
+windows7:结果 sata磁盘
+[root@jwf data_tem]# virt-install --name windows7-vmx-qcow2  --arch=x86_64 --cpu=host-model --vcpus=4 --memory=4096 --os-type=windows --os-variant='win7' --accelerate --cdrom=/home/data_tem/windows7.iso --disk path=/home/m.2/windows7-vmx.qcow2,size=80,format=qcow2,bus=virtio --network bridge=br0 --noautoconsole --graphics vnc,password=admin123,listen=0.0.0.0,port=8001
+
+Starting install...
+Allocating 'windows7-vmx.qcow2'                                                                                                        |  80 GB  00:00:00
+Domain installation still in progress. You can reconnect to
+the console to complete the installation process.
+---------
+virtio磁盘无法识别问题
+1.https://www.linux-kvm.org/page/WindowsGuestDrivers/Download_Drivers
+去kvm官网下载最新版的windows驱动，不是稳定版
+2.添加一块磁盘，类型为cdrom,选择最新的驱动镜像。
+----问题无法解决,驱动无法被识别，最后改为sata磁盘类型安装。
+
+网络没驱动的问题:
+挂载kvm驱动镜像到虚拟机 
+通过计算机管理安装驱动，并且网络模式也设置为virtio
+
+安装orcal box虚拟机不能打开--> 不能打开新电脑报错
+ vmware--->显示要关闭hyper-v虚拟化
+android studio --->依旧显示没有打开Cpu虚拟化
+夜神模拟器--->显示显卡驱动版本太低,更换过多个显示模式，无法解决。
+??
+尝试更换cpu类型，再次尝试..
+??
+vmware虚拟化与hyper-v虚拟化的区别,为何不能共存?
+??
+想办法解决开机时间自动同步的问题
+使用软件开机自动同步。或者..
+修改虚拟机配置文件，将默认的utc时间改为localtime
+virsh edit win7 
+https://my.oschina.net/u/3579120/blog/1508013
+
+windows xp：ide接口
+xp没有网卡驱动，无法上网的问题:
+设置网卡模式为virtio
+挂载kvm驱动镜像到虚拟机
+
+
+
+1.查看kvm虚拟机的IP
+virsh list 查看虚拟机
+virsh dumpxml win7 | grep mac #查看win7虚拟机mac
+arp -a #显示mac与ip对应关系
+2.kvm虚拟机开机时间不同步

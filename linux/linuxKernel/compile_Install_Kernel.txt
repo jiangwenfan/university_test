@@ -1,0 +1,26 @@
+understanding the linux operating system
+
+CPU : 运算器 + 控制器 +寄存器
+
+PVE:physical address Extension 
+
+1.安装依赖的工具和包
+yum groupinstall "开发工具"  "开发及生成工作站" #"服务器平台开发"
+ yum install ncurses-devel 
+ yum install openssl openssl-devel  elfutils-libelf-devel #libelf-dev libelf-devel
+
+磁盘空余空间最少15G+
+
+2. make menuconfig 定制内核选项，比如关闭Selinux，开启ext4文件系统
+		general setup --> local version 
+
+3.make -j 4 #可以使用htop查看有几个线程。指定4个线程，即2核4线程
+
+4.make modules_install #安装模块
+
+5.查看新内核.当make modules_install之后会出现a new kernel。
+ls /lib/modules 
+
+make install 
+
+reboot

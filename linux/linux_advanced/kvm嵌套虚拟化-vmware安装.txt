@@ -1,0 +1,20 @@
+1.图形化界面
+yum groups install "MATE Desktop"
+2.设置默认启动图形界面
+systemctl  set-default  graphical.target
+3.reboot
+
+4.下载vmware16
+wget https://download3.vmware.com/software/wkst/file/VMware-Workstation-Full-16.1.0-17198959.x86_64.bundle?HashKey=75d4a38a7a07f5264e3fd692029d0f73&params=%7B%22custnumber%22%3A%22ZGplJSVqcGR0dA%3D%3D%22%2C%22sourcefilesize%22%3A%22503.66+MB%22%2C%22dlgcode%22%3A%22WKST-1610-LX%22%2C%22languagecode%22%3A%22en%22%2C%22source%22%3A%22DOWNLOADS%22%2C%22downloadtype%22%3A%22manual%22%2C%22eula%22%3A%22Y%22%2C%22downloaduuid%22%3A%221bd453ec-635b-4cd4-abd0-7f102dd6b03c%22%2C%22purchased%22%3A%22N%22%2C%22dlgtype%22%3A%22Product+Binaries%22%2C%22productversion%22%3A%2216.1.0%22%2C%22productfamily%22%3A%22VMware+Workstation+Pro%22%7D&AuthKey=1610333352_53296fd4bed29645a010eafe3d93fbc2
+
+下载vmware15
+wget https://download3.vmware.com/software/wkst/file/VMware-Workstation-Full-15.5.7-17171714.x86_64.bundle?HashKey=7082cbcc30eec81a7ae142fecc136926&params=%7B%22custnumber%22%3A%22ZGplJSVqcGR0dA%3D%3D%22%2C%22sourcefilesize%22%3A%22512.84+MB%22%2C%22dlgcode%22%3A%22WKST-1557-LX%22%2C%22languagecode%22%3A%22en%22%2C%22source%22%3A%22DOWNLOADS%22%2C%22downloadtype%22%3A%22manual%22%2C%22eula%22%3A%22Y%22%2C%22downloaduuid%22%3A%220c90cef1-1a1b-4a8e-9b54-011f82caf96b%22%2C%22purchased%22%3A%22N%22%2C%22dlgtype%22%3A%22Product+Binaries%22%2C%22productversion%22%3A%2215.5.7%22%2C%22productfamily%22%3A%22VMware+Workstation+Pro%22%7D&AuthKey=1610333883_1e532e66d4a66afcde088a187a581660
+
+5.
+chmod +x *.budle
+./*.budle 
+
+6.
+yum update kernel
+yum install kernel-headers kernel-devel gcc
+reboot

@@ -1,0 +1,6 @@
+IDA view-A : 反汇编窗口
+Hex view-1 : 十六进制格式显示窗口
+imports : 导入表(程序中调用到的外面函数)
+functions : 函数表(这个程序中的函数)
+structures : 结构
+enums : 枚举

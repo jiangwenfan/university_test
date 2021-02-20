@@ -1,0 +1,15 @@
+date 显示当前详细时间
+cal 显示当月日历
+history -c 清空历史命令
+
+cat t1.txt t2.txt > t3.txt 把t1和t2的内容放到t3中
+cat /dev/null > t3.txt 清空t3文件
+less t3.txt 翻页查看
+
+mkdir -p t1/t2/t3 创建多级目录
+
+cp -r t1/ t2/ 目录递归复制
+
+alias 查看系统命令别名
+unalias cp 取消别名
+alias cp='cp -i' 设置别名

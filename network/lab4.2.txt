@@ -1,0 +1,51 @@
+三层交换机A(路由)(f0/1)--->(f0/1)二层交换机B--->(f0/2)PC0(192.168.1.2/24)
+						              --->(f0/3)PC1(192.168.2.2/24)
+							  
+B:
+#配置vtp client(vip客户机), vtp domain(vip域)
+vlan database
+vtp domain abc
+vtp client
+
+#配置为trunk
+int f0/1
+switchport mode trunk
+
+#划分端口
+int f0/2 
+switchport access vlan 2
+int f0/3
+switchport access vlan 3
+
+A:
+#配置vtp server(VIP服务器), vtp domain为abc
+vlan database 
+vtp domain abc 
+vtp server 
+
+#配置f0/1接口为trunk
+int f0/1
+switchport mode trunk 
+
+#创建vlan，设置vlan ip地址
+vlan 2
+vlan 3
+
+int vlan 2
+ip address 192.168.1.1 255.255.255.0
+int vlan 3
+ip address 192.168.2.1 255.255.255.0
+
+#
+ip routing
+
+---->全网互通
+
+
+
+
+
+
+
+
+

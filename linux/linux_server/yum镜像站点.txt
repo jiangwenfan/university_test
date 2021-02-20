@@ -1,0 +1,20 @@
+setup #图形化设置ip. yum install setuptool
+
+echo $?
+
+1.使用rsync同步cenots镜像:
+yum install rsync 
+
+mkdir /root/1t/cenots #centos官方标准源
+mkdir /root/1t/epel #第三方epel源 
+
+rsync -avrt rsync://mirrors.tuna.tsinghua.edu.cn/centos/ /root/1t/yum-repo-data/centos #这个目录要改成自己的
+rsync -avrt rsync://mirrors.tuna.tsinghua.edu.cn/epel/ /root/1t/yum-repo-data/epel/
+
+配合我的脚本，没十分钟定时检查同步进步。
+2. 每天定时同步 
+
+3. 使用nginx发布镜像
+
+https://blog.csdn.net/chenjia6605/article/details/82734945
+https://www.linuxprobe.com/centos-source-mirror.html

@@ -1,0 +1,37 @@
+mysql扩展性差，表结构更改困难。
+mongodb由于每条数据都是独立的，所以重复数据多，占用存储位置大。
+非关系型数据库
+数据之间没有对应的关系。
+
+```bash
+apt install mongodb　
+
+systemctl start mongodb
+
+vim /etc/mongodb.conf
+
+默认端口是:27017
+源码安装时候,需要添加环境变量
+export Path=/aa/bb/cc/bin:$PATH
+源码安装时候，通过mongod程序启动。
+
+启动客户端:
+mongo  
+#远程：mongo -h -p
+```
+
+```bash
+查看当前数据库: db
+
+查看所有数据库:show dbs 或　show databases
+
+use test1 #切换数据库。如果不存在，会自动创建空数据库。但是此时数据库是看不到的，只有插入数据之后才能看到。此时show dbs 会发现没有。
+
+db.dropDatabase()　#删除当前数据库。db表示当前数据库
+
+
+```
+mongodb没有表的概念，通过集合存储数据。
+```bash
+
+```

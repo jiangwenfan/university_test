@@ -1,0 +1,89 @@
+1.中文语言,kde桌面,centos7
+
+#基础设施安装
+yum install cjkuni-ukai-fonts #安装中文字体
+vi /etc/locale.conf #zh_CN.UTF-8 #更改系统语言。LANG=zh_CN.UTF-8
+yum install vim
+yum install net-tools
+yum install openssh-server #ssh远程
+
+合盖不休眠：
+vim /etc/systemd/logind.conf
+	HandlePowerKey=lock #按电源键锁屏
+	HandleSuspendKey=ignore #
+	HandleHibernateKey=ignore #按休眠键忽略
+	HandleLidSwitch=lock #合上笔记本锁屏
+	HandleLidSwitchDocked=ginore
+	HandleSleepKey=ignore #按下睡眠键忽略
+systemctl restart systemd-logind #生效
+
+xfce桌面安装:
+yum update
+yum install epel-release
+yum grouplist #可以看到有xfce了
+yum groupinstall "X Window system"
+yum groupinstall xfce 
+systemctl isolate graphical.target #进入桌面
+
+添加host文件:
+vim /etc/hosts
+	192.168.1.111 centos71
+	192.168.1.112 centos72
+	
+没有网卡配置文件:
+TYPE=Ethernet
+BOOTPROTO=static  #启用静态IP地址
+DEFROUTE=yes
+PEERDNS=yes
+PEERROUTES=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_PEERDNS=yes
+IPV6_PEERROUTES=yes
+IPV6_FAILURE_FATAL=no
+NAME=ens33 #网卡名字
+UUID=a5f0f473-01f7-42fd-983f-bcd25865391d #需要改
+DEVICE=ens33 #这个好像也是
+ONBOOT=yes  #开启自动启用网络连接
+IPADDR0=192.168.140.199 #设置IP地址.可能是为了配置双IP
+PREFIXO0=24 #设置子网掩码
+GATEWAY0=192.168.140.1 #设置网关
+DNS1=192.168.12.8 #设置主DNS   
+DNS2=192.168.12.9 #设置备DNS
+
+
+#服务安装配置
+kvm虚拟化技术安装:
+设置kvm虚拟机桥接网络:
+https://blog.csdn.net/u011414200/article/details/47310827
+https://blog.csdn.net/u011414200/article/details/47310827
+如果桥接成功，但是不能上网，重启即可
+
+1.开机自动挂载硬盘
+yum install ntfs-3g
+mount –t ntfs-3g /dev/sdb1 /mnt/usb
+vim /etc/fstab
+	UUID=68149dd3-dddf-074a-ab28-fc71663d9cee /home/kvmMachine ext4 defaults  0 0
+	UUID=DA18EBFA09C1B27D /home/jwf/2tData ntfs-3g defaults 0 0 
+	UUID=EA9216EF9216C04D /home/jwf/1tData ntfs-3g defaults 0 0 
+
+2.安装vsftp服务，并进行内网穿透
+
+3.安装httpd服务，并进行内网穿透
+
+
+
+
+
+
+
+
+
+
+
+
+
+init 3 #退出图形界面
+

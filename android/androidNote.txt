@@ -1,0 +1,59 @@
+android:hint="请输入电话号码"  输入框的提示背景文字，不可删除。
+android:text="hello"  文本内容。在EditText中是默认输入的文本，可以删除。
+android:textSize="20dp" 文字的大小
+android:textColor="#228B22" 设置文字的颜色
+android:gravity="center" 设置文字在控件中居中
+android:padding="10dp" 这个控件中的内容距离控件上下左右10个单位
+android:paddingLeft="10dp" 这个控件中的内容距离控件左边10个单位
+
+android:background="#228B22" 设置控件的背景色
+android:id="@+id/tv_number" 设置控件的id属性
+
+android:layout_height="wrap_contetn" 设置控件的高
+android:layout_width="match_parent" 设置控件的宽。mathch_parent填充父窗体。wrap_content包裹文字内容。
+android:layout_gravity="center" 设置控件居中
+android:layout_margin="10dp" 这个控件距离上下左右都10个单位
+android:layout_marginLeft="10dp" 这个控件离左边10个距离单位
+
+android:layout_below="@+id/tv_number" 表示当前控件距离id为tv_number这个控件的下面
+android:layout_toRightOf="@+id/tv_number" 表示当前控件距离id为tv_number这个控件的的右边
+
+
+setContentView(R.layout.activity_main) 加载一个布局文件
+Toast.makeText(MainActivity.this,"num不能为空",1).show(); 显示一个小弹窗。第一个参数是上下文，通过当前文件名.this获得,
+第二个参数是弹窗要显示的消息，第三个参数1表示弹窗显示事件较长,0表示显示事件较短。
+
+1.找到编辑框控件
+EditText et_name = (EditText)findViewById(R.id.et_username);  通过控件的id找到控件对象
+String number = et_name.getText().toString().trim(); 通过控件获取到控件中的值
+
+1.找到文本显示框控件
+TextView tv1 = (TextView)findViewById(R.id.tv1_name);
+tv1.setText("新的文本标题");
+
+1.找到按钮控件
+Button bt_call = (Button)findViewById(R.id.button1);
+
+
+1.找到多选框控件
+CheckBox cb_status = (CheckBox)findViewById(R.id.cb_status);
+
+给按钮设置一个点击事件：
+bt_call.setOnClickListener(new MyClickListener(){
+	@Override
+	public void onClick(View v){
+		callPhone();  //实现打电话的逻辑
+	}
+})
+
+private void callPhone(){
+	String number = et_name.getText().toString().trim();  获取控件内容
+	if("".equals(number)){
+		Toast.makeText(MainActivity.this,"数字不能为空",1).show();  使用小弹窗显示信息
+		return;
+	}
+	Intent intent = new Intent(); 创建一个意图对象
+	intent.setAction(Intent.ACTION_CALL); 给意图设置动作
+	intent.setData(Uri.parse("tel:"+number)); 给意图设置数据
+	startActivity(intent); 开启意图
+}

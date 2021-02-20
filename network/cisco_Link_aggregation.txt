@@ -1,0 +1,30 @@
+链路聚合，也叫端口汇聚，端口捆绑技术。
+将多个低带宽端口捆绑成一个高带宽链路，并且通过多个端口进行链路负载平衡，还提高了链路的容错性。
+链路聚合与生成树协议并不冲突，生成树协议将聚合后高速链路当作单个逻辑链路进行生成树建立。
+cisco交换机最多允许8个端口进行聚合，采用4条链路进行聚合最优。选择合适的网卡和交换机达到协同工作，进行全双工模式。
+现在主要的链路聚合技术标准:
+PAGP(port aggregation protocol),cisco公司的端口聚合协议，仅支持cisco设备。
+LACP(link aggregation control protocol),IEEE802.3ad的链路聚合协议，支持所有设备。
+原理:
+链路聚合过程中，交换机通过LACP协议进行相互协商，LACP协议通过链路汇聚控制协议数据单元与对端交互信息。当某端口的LACP协议启动后，该端口将通过发送LACPDU向对端通告自己的系统优先级、系统MAC地址、端口优先级、端口号、操作密钥等信息。对端接收到这些信息后，将这些信息与其他端口所保存的信息进行比较，以选择能够汇聚的端口，从而双方可以对端口加入或退出某个汇聚组达成一致。
+链路聚合配置要求：
+1.端口均为全双工模式
+2.端口速率相同
+3.端口类型一致
+4.端口同为access端口并且同为一个vlan，或者同为trunk端口。
+配置流程:
+1.进入相应的一批端口中，配置协议为LACP,设置通道组激活。
+
+A:
+switchA(config)# interface range FastEthernet0/1-2
+switchA(config-if-range)# channel-protocol lacp
+switchA(config-if-range)# channel-group 1 mode active
+switchA#show etherchannel summary
+//最后一行中: Po1表示端口通道1，SU表示二层链路正在使用，LACP表示使用的协议。
+B：
+switchB(config)# interface range FastEthernet0/23-24
+switchB(config-if-range)# channel-protocol lacp
+switchB(config-if-range)# channel-group 1 mode active
+switchB#show etherchannel summary
+
+2.把聚合后的链路作为trunk链路

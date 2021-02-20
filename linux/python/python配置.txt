@@ -1,0 +1,11 @@
+pip3:
+### 1. pip3或pip更换为国内源
+```bash
+mkdir ~/.pip
+vim ~/.pip/pip.conf
+	[global]
+	timeout = 6000
+	index-url = http://mirrors.aliyun.com/pypi/simple/
+	trusted-host = pypi.tuna.tsinghua.edu.cn
+```
+[参考](https://blog.csdn.net/xy707707/article/details/80787991)

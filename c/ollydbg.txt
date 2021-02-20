@@ -1,0 +1,14 @@
+1.快捷键使用:
+alt f2 :添加移除断点
+f7 :单步步入
+f8 :单步步过
+f9 :让程序执行到下一个断点
+;    : 在汇编指令后写入注释
+空格  : 修改该条汇编指令
+
+2.
+api查找:
+反汇编窗口(右键) ----> search for ---> name(label) in current module 
+
+字符串查找:
+反汇编窗口(右键) ----> search for ---> all referenced text strings

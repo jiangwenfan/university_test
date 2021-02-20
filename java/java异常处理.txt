@@ -1,0 +1,168 @@
+IO:input,output。
+上传操作用到了IO流技术，读取客户端数据，写到服务器。
+IO读取服务器数据，显示到客户端。
+下载操作。
+### 异常
+* 分类
+```clike
+Throwable类:
+	1.严重问题: Error类。 //不处理，一般很严重比如内存溢出
+	2.普通问题: Exception类。
+			编译期问题：非RuntimeException问题。 //必须处理
+			运行期问题：RuntimeException  //不处理
+```
+如果程序出了问题，我们没有做任何处理，最终jvm会做出默认处理(把异常的名称，原因以及出现的问题等信息输出到控制台)，同时会结束程序。
+
+```java
+public class ExceptionDemo{
+        public static void main(String[] args){
+                int a = 10;
+                //int b = 2;
+                int b = 0;
+                System.out.println(a/b);  //可以看到遇到运行时错误时，会结束程序。
+                System.out.println("over!"); //没有被执行
+				//默认情况下java遇到异常报错会直接抛出，不继续向下执行后续代码。
+
+        }
+}
+```
+
+> Exception in thread "main" java.lang.ArithmeticException: / by zero
+        at ExceptionDemo.main(ExceptionDemo.java:6)
+
+0.编译期异常与运行期异常的区别:
+java在编译期间的异常必须通过try...catch语句进行处理，这是java语言本身所规定的(因为着必须要处理的异常不能被jvm给处理，所以必须手动使用try语句)，不管被处理的语句是否真的有问题，都需要被try...catch语句给处理。相反在运行期间的异常时可以不处理的，因为jvm会进行默认处理，或者可以改善源代码避免发生运行期异常(通过if语句，判断使得除数不能为0)，也可以进行try...catch语句进行异常处理。
+python只用来处理运行期间的的异常，python不是编译型语言，所以也不存在编译期间的错误，对python来说只有运行期异常，所以python只处理运行期异常，一般使用try语句，或者也可以改善源代码避免错误的发生。
+
+```java
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class ExceptionDemo{
+        public static void main(String[] args){
+
+                String s = "2019-11-20";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                //Date d = sdf.parse(s);  同样的代码，放在try语句中可以正常编译，拿出来就不能正常编译。
+                //System.out.println(d);
+                try{
+                        Date d = sdf.parse(s);
+                        System.out.println(d);
+                  }catch(ParseException e){
+                        System.out.println("it is error!");
+                }
+
+        }
+}
+
+```
+
+1.try....catch..finally
+```clike
+try{
+	可能出现问题的代码;
+}catch(异常名 变量){
+	针对问题的处理;
+}finally{
+	释放资源;
+}
+变形格式:
+try{
+	可能出现问题的代码;
+}catch(异常名 变量){
+	针对问题的处理;
+}
+```
+
+
+2. 处理多个异常
+
+> Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 3
+        at ExceptionDemo.main(ExceptionDemo.java:12)
+
+1.写两个try...catch语句处理异常，但是感觉麻烦，不过可以获得详细的出错信息。
+```java
+				int a = 10;
+                int b = 0;
+                int[] arr = {1,2,3};
+
+                try{
+                        System.out.println(a/b);
+                }catch(ArithmeticException ae){
+                        System.out.println("除数不能为0");
+                }
+
+                try{
+                        System.out.println(arr[3]);
+                }catch(ArrayIndexOutOfBoundsException e){
+                        System.out.println("数组越界");
+                }
+
+                System.out.println("over!");
+
+```
+2.一个try...catch....catch。。语句
+这种虽然可以处理多个异常，但是不能确定详细的出错点。
+```java
+try{
+ 	System.out.println(a/b);  //一旦try语句里面有一条语句出错，就会去匹配异常，然后执行后面的语句；try中剩下的需要带测试的语句都会跳过。
+    System.out.println(arr[3]);
+}catch(ArithmeticException ae){   //[孙子辈]
+    System.out.println("除数不能为0");
+}catch(ArrayIndexOutOfBoundsException e){  //[孙子辈]
+    System.out.println("数组越界"); 
+}catch(Exception e){	//使用父类异常，捕获所有类型的错误。[爷爷是万能匹配]
+	System.out.println("出错了!");
+}
+System.out.println("over!");
+```
+3. jdk7的新处理方案
+虽然处理简单，但是不能详细定位到问题。（针对同类型的问题的处理）
+多个异常间，必须是平级关系，所以才不呢放置Exception类。
+```clike
+//此时异常名中不能放置Exception这个父类。
+try{
+	....
+}catch(异常名1 | 异常名2 | 异常名3 | ..... 变量){
+	.....
+}
+```
+
+```java
+try{
+                        System.out.println(a/b);
+                        System.out.println(arr[3]);
+                }catch(ArithmeticException | ArrayIndexOutOfBoundsException e){
+                         System.out.println("出错了");
+                     
+                }
+
+```
+
+2.throws (抛出)
+
+--关于异常的一个列子:
+int a[] = new int[2];
+System.out.println("Access element three :" + a[3]);
+
+[root@VM-8-3-centos java]# ./compile.sh 
+Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 3
+	at Demo.main(Demo.java:10)
+
+
+
+try{
+	int a[] = new int[2];
+	System.out.println("Access element three :" + a[3]);
+}catch(ArrayIndexOutOfBoundsException e){
+	System.out.println("xxxxxxxxxxxxxxxxxx" + e);
+}
+	System.out.println("--------------");
+
+[root@VM-8-3-centos java]# ./compile.sh 
+xxxxxxxxxxxxxxxxxxjava.lang.ArrayIndexOutOfBoundsException: 3
+--------------
+
+说明:
+catch语句中的第一个语句是可能要报错的类，后面的变量e获取到了如果报错产生的报错信息。

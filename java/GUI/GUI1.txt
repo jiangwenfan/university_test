@@ -1,0 +1,269 @@
+GUI	图形用户接口
+CLI	命令行用户接口
+
+java.awt (Abstract Window ToolKit 抽象窗口工具包),需要调用本地系统方法实现功能,重量级控件。
+javax.swing 在AWT的基础上建立一套图形界面系统，其中提供了更多的组件，而且完全由java实现.增强了移植性，属于轻量级控件。
+	java 基本java包
+	javax java的扩展包
+
+compontent awt包下的抽象类
+基本组件: 依赖于容器组件
+	textArea 文本域 -->个人介绍
+	textField 文本框 -->用户名
+容器组件: 容器组件容纳其他基本组件
+	window 窗体 --->一个背景大区域
+		Dialog 对话框
+		FileDialog 文件对话框
+	Panel 面板 --->大区域中的每个功能小区域
+
+事件监听机制:
+	事件源: 事件发生的地方的地方
+	事件:	就是要发生的事情
+	事件处理:	针对发生的事情做出的处理方案
+	事件监听:	把事件源和事件关联起来
+	举例：
+		事件源: 人(具体的对象)
+			Person p1 = new Person("张三");
+			Person p2 = new Person("李四");
+		事件: 受伤。 造成受伤的原因的很多，所以受伤是抽象的,定义为接口。
+			interface 受伤接口{
+				一拳();
+				一脚();
+				一板砖();
+			}
+		事件处理: 事件处理是针对每种受伤的原因进行具体的处理。
+			受伤处理类 implements 受伤接口{
+				一拳(){	System.out.println("去卫生间洗洗就好了！");}
+				一脚(){	System.out.println("去送到医院去抢救！");}
+				一板砖(){ System.out.println("送到太平间！");}
+			}
+		事件监听:
+			p1.注册监听(受伤接口);   //需要的是传入一个接口的实现类的对象，也就是发生这种伤害的处理动作。 //注册监听,表示从现在起开始关注这个事件源p1,如果事件源p1发生了任何伤害，就会捕获是接口中的那种伤害造成的并进行相应的处理。
+
+适配器模式:
+	解决了接口方法比较多，实现类需要全部实现的问题(哪怕是空实现)。
+	传统: 接口 -->实现类
+	适配器: 接口(接口方法比较多) -->适配器类(实现接口，仅仅空实现) --->实现类(使用那个就重写那个)
+	UserOper.java  用户操作接口
+		public interface UserOper{
+			public abstract void add();
+			public abstract void delete();
+			public adstract void update();
+			public adstract void find();
+		}
+	-----一般常规操作:
+	//因为是接口，所以要使用一个功能，里面的所有的功能都需要实现。
+	UserOperImpl.java  实现接口类
+		public class UserOperImpl implements UserOper{
+			@Override
+			public void add(){
+				System.out.println("添加功能！");
+			}
+			@Override
+			public void delete(){
+				System.out.println("删除功能!");
+			}
+			@Override 这个叫做空实现
+			public void update(){
+			}
+			@Override
+			public void find(){
+				System.out.println("查找功能！");
+			}
+		}
+	UserOperDemo.java	//使用其中一种功能。
+		public class UserOperDemo{
+			public static void main(String[] agrs){
+				UserOper ud = new UserOperImpl();
+				ud.add();  //使用添加功能
+			}
+		}
+		----------使用适配器模式进行优化。
+		UserOperAdapter.java  适配器类
+			public class UserOperAdapter implements UserOper{
+				@Override
+				public void add(){
+					}
+				@Override
+				public void delete(){
+					}
+				@Override 
+				public void update(){
+					}
+				@Override
+				public void find(){
+					}
+			}
+		UserOperImpl2.java	实现类继承适配器类。
+			public class UserOperImpl2 extends UserOperAdapter{
+				@Override
+				public void add(){
+					System.out.println("添加功能!");
+				}
+			}
+		UserOperDemo.java	
+		public class UserOperDemo{
+			public static void main(String[] agrs){
+				UserOper ud2 = new UserOperImpl2();
+				ud2.add();  //使用添加功能
+			}
+		}
+布局方案:窗体中组件的排列方式。
+	FlowLayout流式布局：从上到小，从左到右。
+	默认产生的控件会在第一行居中显示，然后第二个控件从右边开始向左挤第一个控件，第三个控件同理。
+	边界布局: 默认布局
+	默认产生的第一个控件在占满整个屏幕，安装东西南北东进行布局。
+	网格布局:
+	网格包布局:
+	卡片布局: windows7人物管理器的布局样式
+helloworld案列:
+//创建窗体对象
+Frame  f = new Frame();
+
+//设置窗体标题
+f.setTitle("hello world");
+
+//设置窗体大小:
+//[1]
+f.setSize(400,300);	 //单位:像素
+//[2] Dimension(int width,int height)
+Dimension d = new Dimension(400,300);
+f.setSie(d);
+
+//让窗体关闭。 
+/*
+*事件源:窗体 f
+*事件:对窗体的处理
+*事件处理:关闭窗体 System.exit(0);
+* 事件监听：
+*/
+//f.addWindowListener(l); 参数是一个接口.通过匿名内部类实现
+//注册监听
+f.addWindowListener(new WindowListener(){
+	@Override
+	public void windowOpened(WindowEvent e){
+	}
+	@Override
+	public void windowIconified(WindowEvent e){
+	}
+	@Override
+	public void windowDeiconified(WindowEvent e){
+	}
+	@override
+	.....
+	.....
+	//事件处理
+	@Override
+	public void windowClosing(WindowEvent e){
+		System.exit(0); //关闭jvm虚拟机，退出窗体
+	}
+
+})
+
+//设置窗体位置:
+//[1]
+f.setLocation(400,200)  //以左上角为0,0开始定位窗体的位置。   
+//[2] Point(int x,int y)
+Point p = new Point(400,200);
+f.setLocation(p);
+
+//调用一个方法让窗体可见。必须位于最后调用显示窗体方法。
+//f.show()  过时的方法 @Deprecated
+f.setVisible(true);   
+
+---------------------------------------------
+//创建窗体对象并设置窗体标题
+Frame f = new Frame("fat girl");
+//设置窗体位置，并设置窗体大小
+f.setBounds(400,200,400,300); //400,200是窗体的位置；400,300是窗体的大小
+//让窗体关闭。用适配器类实现,要爷爷传孙子。
+f.addWindowListener(new WindowAdapter(){
+	@Override
+	public void windowClosing(WindowEvent e){
+		System.exit(0);
+	}
+})
+
+
+
+//显示窗体
+f.setVisible(true); 
+
+
+2.案列2:把按钮添加到窗体，并设置绑定事件
+Frame f = new Frame("添加按钮，绑定事件!");
+f.setBounds(400,200,400,300);
+
+//设置布局为流式布局
+f.setLayout(new FlowLayout());
+//创建按钮对象
+Button bu = new Button("我是按钮");
+//设置按钮大小--->流式布局不需要设置按钮大小会自动进行设置。
+//bu.setSie(20,10);
+//把按钮添加到组件
+f.add(bu);
+
+
+//设置窗体可以关闭
+f.addWindowListener(new WindowAdapter(){
+	@Override
+	public void windowClosing(WindowEvent e){
+		System.exit(0);
+	}
+})
+//给按钮绑定事件。只有一个方法所有没有必要使用适配器类。
+bu.addActionListener(new ActionListener(){
+	@Override
+	public void actionPerformed(ActionEvent e){
+		System.out.println("按钮被点击了!");
+	}
+})
+
+f.setVisible(True);
+
+3.数据转移案列。把文本框的值转移到文本域中。
+Frame f = new Frame("数据转移");
+//设置窗体属性和布局
+f.setBounds(400,200,400,300);
+f.setLayout(new FlowLayout());
+
+//创建文本框.文本框的长度，可以罕有20个字符
+final TextField tf = new TextField(20);   //局部内部类访问局部变量，必须是常量用final修饰
+//创建Button按钮
+Button bu = new Button("数据转移");
+//创建文本域.10行40列字符
+final TextArea ta = new TextArea(10,40)
+
+//把组件添加到窗体中
+f.add(tf);
+f.add(bu);
+f.add(ta);
+
+//设置窗体关闭。
+f.addWindowListener(new WindowAdapter(){
+	@Override
+	public void windowClosing(WindowEvent e){
+		System.exit(0);
+	}
+})
+
+//给按钮绑定事件 
+bu.addActionListener(new ActionListener(){
+	@Override
+	public void actionPerformed(ActionEvent e){
+		//获取文本框的值
+		String tf_str = tf.getText().trim();  //trim是为了去空格。
+		//清空数据
+		tf.setText("");
+		
+		//设置文本域内容
+		//ta.setText(tf_str);
+		//给文本域追加内容，并换行。
+		ta.append(tf_str+"\r\n");
+		
+		//获取光标到文本框
+		tf.requestFocus();
+	}
+})
+
+f.setVisible(true);

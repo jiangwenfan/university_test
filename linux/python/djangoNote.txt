@@ -1,0 +1,106 @@
+pip install mysql
+
+workon bbs
+djngo-admin startproject activationPlatform
+python3 manage.py startapp simpleShow
+
+mkdir static
+mkdir templates
+
+vim settings.py 
+	INSTALLED_APPS=(
+		......
+		'booktest', #对应用进行注册
+	)
+	'DIRS': [os.path.join(BASE_DIR,'templates')], 
+	
+	DATABASES = {
+		'default': {
+			#'ENGINE': 'django.db.backends.sqlite3',
+			'ENGINE': 'django.db.backends.mysql',
+			#'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+			'NAME': 'djangotest2', #数据库名
+			'USER':'root', #登录用户名
+			'PASSWORD':'password123Q#', #登录密码,字段名必须全部大写，小写会报错。
+			'HOST':'localhost', #指定mysql的主机
+			'PORT':3306,
+		}
+	}
+	
+	LANGUAGE_CODE = 'zh-hans' #使用中文
+	TIME_ZONE = 'Asia/Shanghai' #设置上海时区
+	
+	STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+
+vim 项目名/__init__.py 
+	import pymysql
+	pymysql.install_as_MySQLdb()
+
+1.创建项目的表结构
+vim app名/models.py 
+	class user(models.Model):
+    """administrator"""
+	    def __str__(self):
+			return self.username
+		username = models.CharField(max_length=20)
+		userpassword = models.CharField(max_length=30)
+	
+	class activationInfo(models.Model):
+    """activation info"""
+		def __str__(self):
+			return self.deviceInfo
+		cpuInfo = models.CharField(max_length=30)
+		macInfo = models.CharField(max_length=40)
+		memoryInfo = models.CharField(max_length=100)
+		gpuInfo = models.CharField(max_length=100)
+		keyInfo = models.CharField(max_length=100)
+		deviceInfo = models.CharField(max_length=30) 
+		comment = models.CharField(max_length=30)
+
+python manage.py makemigrations
+python manage.py migrate
+
+2.注册模型类到管理页面，控制管理页面显示样式
+python manager.py createsuperuser
+#admin , password
+
+vim app名/admin.py 
+	from app名字.models import User,ActivationInfo(表名，也就是类名) 
+
+	class UserAdmin(admin.ModelAdmin):
+		pass
+	class ActivationInfoAdmin(admin.ModelAdmin):
+		list_display = ['id','deviceInfo','keyInfo','macInfo','comment'] #这些是models中定义的属性名。
+	admin.site.register(User,UserAdmin)
+	admin.site.register(ActivationInfo,ActivationInfoAdmin) #注册这些类,并且自定义显示样式
+
+
+#在mysql中插入一条测试语句:
+insert into simpleShow_activationinfo value(1,"Intel(R) Xeon(R) Gold 6133 CPU @ 2.50GHz","00:1B:44:11:3A:B7","hailishi Information Handle","Cirrus Logic GD 5446","TPYNC-4J6KF-4B4GP-2HD89-7XMP6","win10 test1","测试设备")
+
+3.视图函数
+访问首页，走index函数，返回key.html页面。
+vim app名字/views.py
+	from django.http import HttpResponse
+	from django.template import loader,RequestContext
+	def index(request):
+		temp = loader.get_template('key.html') #要返回的页面
+		context = RequestContext(request,{})
+		res_html = temp.render(context)
+		return HttpResponse(res_html)
+vim 项目名/urls.py 
+	from simpleShow(app名字) import views
+
+	urlpatterns = [
+		url(r'^admin/', include(admin.site.urls)),
+		url(r'',views.index), #这个表示首页走的是views下的index函数
+	]
+vim templates/key.html 
+	<form method="post" action="/showKey">
+		.....
+	</form>
+
+4.获取到html提交的数据，并进行处理，显示结果。
+vim 项目名/urls.py 
+	url(r'^showKey',views,showKey),
+vim app名字/views.py 

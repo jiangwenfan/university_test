@@ -1,0 +1,24 @@
+控制台IO\文件IO\网络编程(套接字编程，屏蔽了网络底层的传输原理)
+套接字(socket)是网络数据传输用的软件设备，套接字就像插头插到插座上就可以获得电网电力一样。socket在linux中也被认为是文件的一种，
+所以可以使用文件IO函数。
+
+1.socket函数---->创建电话(创建套接字)
+失败时返回-1
+#include <sys/socket.h>
+int socket(int domain,int type,int protocol);
+
+2.bind函数----->分配电话号码(分配IP和端口号)
+失败返回-1,成功返回0
+#include <sys/socket.h>
+int bind(int sockfd,struct* myaddr,socklen_t addrlen);
+
+3.listen函数----->连接电话线,一旦连接电话线，电话转为可接听状态，有人打电话就响铃(可接受请求状态)
+失败返回-1,成功返回0
+#include <sys/socket.h>
+int listen(int sockfd,int backlog)
+
+4.accept函数----->拿起话筒(受理请求连接；为了进行数据传输而请求连接，调用此函数进行受理；默认是阻塞的)
+失败返回-1
+#include <sys/socket.h>
+int accept(int sockfd,struct sockaddr* addr,socklen_t* addrlen)
+

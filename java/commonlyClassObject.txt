@@ -1,0 +1,80 @@
+Object类:
+类Object是类层次结构的根类，每个类都使用Object作为超类，每个类都直接或间接的继承自Object类。
+
+Object类的方法:
+hashCode()方法,返回该对象的哈希码值。
+哈希值是根据哈希算法计算出来的一个值,这个值和地址值有关，但不是实际地址值。
+public int hashCode()
+ 
+getClass()方法,返回此Object的运行时类
+public final class getClass()  返回此 Object 的运行时类
+ 			Class类的方法：
+ 			public String getName()：以 String 的形式返回此 Class 对象所表示的实体
+			
+
+Object类的方法:
+1.hashCode()方法，返回该对象的哈希码值。
+对象.hashCode()
+s1.hashCode()
+
+2.getClass()方法，返回调用该方法对象的类名.
+s.getClass() --->class Son
+
+getName()方法，直接取出类名
+s.getClass().getName()  --->Son 
+
+3.toString()方法
+public static String toString(int i,int radix)
+s.toString() //返回该对象的字符串表示 Student@2a139a55
+
+直接输出一个对象的名称，其实就是调用该对象的toString()方法。
+System.out.println(s);  //Student@2a139a55
+
+4.
+equals()方法默认比较的两个对象的地址值是否相等,通常重写为比较成员变量值是否相同。
+ 
+==:
+ 		基本类型：比较的就是值是否相同
+ 		引用类型：比较的就是地址值是否相同
+ equals:
+	引用类型：默认情况下，比较的是地址值。
+	不过，我们可以根据情况自己重写该方法。一般重写都是自动生成，比较对象的成员变量值是否相同
+
+public class StudentDemo {
+	public static void main(String[] args) {
+		Student s1 = new Student("林青霞", 27);
+		Student s2 = new Student("林青霞", 27);
+		
+		//== 对于引用类型比较的是地址值
+		System.out.println(s1 == s2); // false
+		Student s3 = s1;
+		System.out.println(s1 == s3);// true
+		
+	
+		//比较引用类型的
+		System.out.println(s1.equals(s2)); // obj = s2; //false
+		//System.out.println(s1.equals(s1)); // true
+		System.out.println(s1.equals(s3)); // true
+		
+		Demo d = new Demo();
+		System.out.println(s1.equals(d)); //ClassCastException
+
+	}
+}
+class Demo {}
+
+5.
+protected void finalize()：当垃圾回收器确定不存在对该对象的更多引用时，由对象的垃圾回收器调用此方法。用于垃圾回收，但是什么时候回收不确定。
+protected Object clone():创建并返回此对象的一个副本。
+	A:重写该方法
+Cloneable:此类实现了 Cloneable 接口，以指示 Object.clone() 方法可以合法地对该类实例进行按字段复制。 
+	这个接口是标记接口，告诉我们实现该接口的类就可以实现对象的复制了。
+
+6.
+
+public int hashCode()
+public final Class getClass()
+public String toString()
+public boolean equals(Object obj)
+protected void finalize()
+protected Object clone()

@@ -1,0 +1,259 @@
+threading包里面有一个Thread模块。
+* 线程执行顺序不确定
+* 主线程结束，子线程必结束
+
+import threading
+import time
+
+1.创建一个子线程。
+def test():
+    print("son threading: test hello")
+    time.sleep(2)
+
+if __name__ == '__main__':
+    print("main threading is running ...")
+    t1 = threading.Thread(target=test)
+    t1.start()
+    print("主线程执行完毕!")
+
+result:
+[root@VM-8-3-centos pythonTools]# python3 threadingtest.py 
+main threading is running ...
+son threading: test hello
+主线程执行完毕!
+
+1.1通过range创建多个子线程
+def hello():
+	print("hello")
+	time.sleep(1)
+if __name__ == "__main__":
+	for i in range(5):
+		t=threading.Thread(target=hello) #创建线程对象
+		t.start() #创建，启动线程。
+
+2.查看所有的线程及其信息
+threading.enumerate()
+
+def test1():
+    for i in range(5):
+        print("-----test1---%d---"%i)
+def test2():
+    for i in range(5):
+        print("-----test2----%d---"%i)
+def main():
+    t1 = threading.Thread(target=test1)
+    t2 = threading.Thread(target=test2)
+    t1.start()
+    t2.start()
+    print(threading.enumerate()) #线程执行的顺序不确定，可能会显示3个线程或2个线程或1个线程
+	#子线程执行太快,主线程还没有执行到这个函数，子线程就已经执行完毕退出了。
+if __name__ == "__main__":
+    main()
+
+3.主线程结束，子线程必死无疑。主线程一般等待子线程结束，再结束。[没有必要]
+
+def test1():
+    for i in range(5):
+        print("-----test1---%d---"%i)
+def test2():
+    for i in range(5):
+        print("-----test2----%d---"%i)
+def main():
+    t1 = threading.Thread(target=test1)
+    t2 = threading.Thread(target=test2)
+    t1.start()
+    t2.start() #两个子线程快速执行完毕
+    #默认就是主线程阻塞，等待子线程执行完毕。主线程再结束。
+    print(threading.enumerate()) #只有一个主线程
+
+if __name__ == "__main__":
+    main()
+
+
+4.循环打印线程个数[没有必要]
+```python
+import threading
+import time
+
+def test1():
+    for i in range(5):
+        print("-----test1---%d---"%i)
+        time.sleep(1)
+
+def test2():
+    for i in range(10):
+        print("-----test2----%d---"%i)
+        time.sleep(1)
+
+def main():
+    t1 = threading.Thread(target=test1)
+    t2 = threading.Thread(target=test2)
+
+    t1.start() #创建启动了线程1，打印完一条语句后，进入漫长的一秒等待之中
+    t2.start() #创建启动了线程2，打印玩一条语句后，进入了漫长的一秒等待中
+	#主线程默认就是等待子线程执行完毕，才结束主线程，所以下面代码实际上是没有必要的。
+    while True:
+    	#每隔一秒打印当前线程个数。
+        print(threading.enumerate())
+        if len(threading.enumerate()) <= 1:   #当所有子线程结束的时候，主线程结束。
+        	break 
+        time.sleep(1)
+
+if __name__ == "__main__":
+    main()
+
+
+
+* 通过继承Thread类完成线程创建
+
+#如果任务的逻辑性很强，多线程中每个线程必须是一个类，那么就可以使用这种通过类进行的线程创建。
+class MyThread(threading.Thread):
+    def run(self): #run方法必须定义，start只能调用run方法。
+        for i in range(5):
+            time.sleep(1)
+            print("-----")
+            self.login()
+            self.register() #调用其他方法
+      def login(self):
+      	pass
+      def register(self):
+      	pass
+
+def main():
+    t = MyThread()
+    t.start()  #start方法会自动调用run方法。创建了一个线程启动。
+
+if __name__ == "__main__":
+    main()
+
+
+5.多线程共享全局变量
+num = 100
+def test1():
+    global num #修改全局变量需要加上global声明，查看不需要。
+    num += 100
+    print("in test1 is %d"%num)
+def test2():
+    print("in test2 is %d"%num)
+def main():
+    t1=threading.Thread(target=test1)
+    t2=threading.Thread(target=test2)
+    t1.start()
+    time.sleep(1) #主线程阻塞1秒，确保t1线程已经执行完毕
+    t2.start()
+    print("in main is %d"%num)
+
+if __name__ == "__main__":
+    main()
+
+
+args参数：
+def test1(num):
+    print("num: "+num)
+def main():
+    num = '2';
+    t1 = threading.Thread(target=test1,args=(num,))
+    t1.start()
+if __name__ == '__main__':
+    main()
+result:
+[root@VM-8-3-centos pythonTools]# python3 threadingtest.py 
+num: 2
+
+1.2传入一个列表
+nums = [11,22]
+def test1(temp):
+    temp.append(33)
+    print("in test1 is %s--"%str(temp)) #强制将列转换为字符串
+
+def test2(temp):
+    print("in test2 is %s---"%str(temp))
+
+def main():
+	# target参数告诉程序去哪个函数执行；target参数指定调用函数的时候传递什么参数
+    t1 = threading.Thread(target=test1,args=(nums,))
+    t2 = threading.Thread(target=test2,args=(nums,))
+    t1.start()
+    time.sleep(1)
+    t2.start()
+
+if __name__ == "__main__":
+    main()
+
+
+共享全局变量产生问题：资源竞争。
+传入每个线程要写入的次数,当两个线程同时进行写操作，写的次数很大的时候，很大概率会出现资源竞争，导致结果不是大了就是小了。
+num = 0
+def test1(temp):
+    global num
+    for i in range(temp):
+        num += 1
+    print("in test1 is %d"%num)
+
+def test2(temp):
+    global num
+    for i in range(temp):
+        num += 1
+    print("in test2 is %d"%num)
+
+def main():
+    t1 = threading.Thread(target=test1,args=(100000,))
+    t2 = threading.Thread(target=test2,args=(100000,)) #当传入加的次数够多的时候，就会出现。
+    t1.start()
+    #time.sleep(1)
+    t2.start()
+
+if __name__ == "__main__":
+    main()           
+
+
+* 同步
+* 互斥锁
+使用互斥锁解决资源竞争的问题
+mutex = threading.Lock() 
+mutex.acquire()
+mutex.release()
+```python
+import threading
+import time
+
+num = 0
+mutex = threading.Lock() #创建一个互斥锁，默认是没有上锁的
+def test1(temp):
+    global num
+    mutex.acquire() #上锁
+    #如果之前没有被上锁，那么此时上锁成功。
+    #如果已经北上锁了，那么就无法上锁，并堵塞在这里，直到这个锁被解开为止。
+    for i in range(temp):
+        num += 1
+    mutex.release() #解锁
+    print("in test1 is %d"%num)
+
+def test2(temp):
+    global num
+    mutex.acquire()
+    for i in range(temp):
+        num += 1
+    mutex.release()
+    print("in test2 is %d"%num)
+
+def main():
+    t1 = threading.Thread(target=test1,args=(100000,))
+    t2 = threading.Thread(target=test2,args=(100000,))
+    t1.start()
+    t2.start()
+    time.sleep(2) #等待子线程执行完.
+
+if __name__ == "__main__":
+    main()
+```
+
+* 死锁
+```python
+
+```
+
+* 案例：多线程版udp聊天器
+```python
+
+```

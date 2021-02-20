@@ -1,0 +1,115 @@
+```bash
+echo -e "\n"  #打印换行
+eval echo "  AS "  #去掉首尾空格
+```
+* cut命令
+	cut 是一个选取命令。
+```bash
+-d :自定义分隔符，默认为制表符。
+-f :与-d一起使用，指定显示哪个区域。
+
+echo "aa:bb:cc" | cut -d":" -f2	 #将内容以冒号分隔，取第二个内容bb。
+```
+
+* awk
+
+
+* grep:
+*chattr 可以使文件让root都不能删除
+```bash
+chattr +i hack.sh #给父进程和子进程加上这个扩展属性，让其不能删除。
++i：即Immutable，系统不允许对这个文件进行任何的修改。如果目录具有这个属性，那么任何的进程只能修改目录之下的文件，不允许建立和删除文件。
+注：immutable  [ɪˈmju:təbl]  不可改变的
+-i ：移除i参数。
+##chattr +i /bin/workstart #让父进程无法删除。
+
+rm -rf bb2 father2 #不能删除
+lsattr hack.sh #查看
+chattr -i hack.sh #移除权限。
+```
+
+
+* sed命令
+```bash
+sed(stream editor);是强大的文本流编辑器
+
+命令执行流程:sed软件从文件或管道中读取一行,处理一行,输出一行.
+```
+处理时，把当前处理的行存储在临时缓冲区中，称为"模式空间"(pattern space)，接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送完屏幕。接着处理下一行，这样不断重复，直到文件末尾。文件内容并没有改变，除非你使用重定向存储输出。Sed主要用来自动编辑一个或者多个文件、化简对文件的反复操作、编写转换程序等。
+```bash
+sed --version #版本
+sed [选项] [sed命令] [输入文件]
+```
+是例文件：test.txt
+```clike
+unix is great os. unix is opensource. unix is free os.
+learn operating system.
+unix linux which one you choose.
+unix is easy to learn.unix is a multiuser os.Learn unix .unix is a powerful.
+```
+* 查找与替换
+* s 每行替换一个
+```bash
+sed 's/unix/linux/' geekfile.txt 
+#'xxx': 两个单引号里面的是要进行操作的规则。
+#s表示要替换，/是界定符，unix是要搜索被替换的，linux是替换后的字符串。
+```
+```clike
+linux is great os. unix is opensource. unix is free os. #每行只替换一个，即使有多个也只替换一个。默认替换第一个。
+learn operating system.
+linux linux which one you choose.
+linux is easy to learn.unix is a multiuser os.Learn unix .unix is a powerful.
+```
+* 替换一行中第n个出现的模式
+```bash
+sed 's/unix/linux/2' geekfile.txt #替换每行的第二个unix字符串。
+```
+```clike
+unix is great os. linux is opensource. unix is free os. #每行只替换一个。指定替换第二个
+learn operating system.
+unix linux which one you choose.
+unix is easy to learn.linux is a multiuser os.Learn unix .unix is a powerful.
+```
+* 全局替换
+```bash
+sed 's/unix/linux/g' geekfile.txt  #g表示全局替换
+```
+```clike
+linux is great os. linux is opensource. linux is free os. #将每行中的unix字符串全部替换
+learn operating system.
+linux linux which one you choose.
+linux is easy to learn.linux is a multiuser os.Learn linux .linux is a powerful.
+```
+* 替换特定行号上的字符
+```bash
+sed '3 s/unix/linux/' geekfile.txt #表示替换第三行上的内容
+```
+```clike
+unix is great os. unix is opensource. unix is free os.
+learn operating system.
+linux linux which one you choose.
+unix is easy to learn.unix is a multiuser os.Learn unix .unix is a powerful.
+```
+* 显示仅打印替换的行
+```bash
+sed -n 's/unix/linux/p' geekfile.txt #-n p 参数显示仅仅被替换的行
+```
+```clike
+linux is great os. unix is opensource. unix is free os.
+linux linux which one you choose.
+linux is easy to learn.unix is a multiuser os.Learn unix .unix is a powerful.
+```
+
+* 增
+```bash
+1. a 增加文本内容到指定行后.
+sed '2a 123456test' test.txt  #在第二行后面插入123456test
+2. i 插入文本内容到指定行前.
+sed '2i 456789test' test.txt  #在第二行之前插入456789test
+```
+
+* 删
+* 改
+* 查
+[参考](https://www.geeksforgeeks.org/sed-command-in-linux-unix-with-examples/)
+[参考](https://blog.csdn.net/lzm1340458776/article/details/44160625)

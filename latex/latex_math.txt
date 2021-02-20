@@ -1,0 +1,123 @@
+其他特殊字符:
+累加：
+\sum_{下表表达式}^{上标表达式} {累加表达式}
+$$ \sum_{i=1}^n {f(x)+2}$$
+并集:
+\bigcup_
+$$ \bigcup_{i=1}^{2} \Bbb{R} $$
+交集:
+$$ \bigcap_{i=1}^{2} {22}$$
+
+属于: a属于于b
+a \in b
+
+交集:
+a \bigcap b = \emptyset  %a与b的交集为空集 
+
+并集:
+a \bigcup b = \Omega  %a与b的并集为奥秘噶
+
+无穷:
+\infty 
+
+
+输入省略号:
+\cdots 与文本中线对齐的省略号
+\ldots 与文本底线对齐的省略号
+$$a_1,a_2,a_3,{\cdots\cdots},a_n$$
+
+极限运算：
+\lim_{变量 \to 表达式} 表达式
+$$ \lim_{n \to \infty} \frac{1}{n(n+1)}$$
+
+积分:
+\int_积分下限^积分上限 {被积表达式}
+$$ \int_0^1 {x^2} dx$$
+
+分段函数(条件表达式)：
+$$
+f(x)=\begin{cases}
+		n/2,
+		2n+1,
+	 \end{cases}
+$$
+方程组:
+\begin{cases}
+    a_1x+b_1y+c_1z=d_1 \\ 
+    a_2x+b_2y+c_2z=d_2 \\ 
+    a_3x+b_3y+c_3z=d_3 \\
+\end{cases}
+
+$$
+\left\{ 
+    \begin{array}{c}
+        a_1x+b_1y+c_1z=d_1 \\ 
+        a_2x+b_2y+c_2z=d_2 \\ 
+        a_3x+b_3y+c_3z=d_3 \\
+    \end{array}
+\right. 
+$$
+波浪线:
+$\sim$
+
+烂姆哒:
+\lambda 
+空集:
+\emptyset
+奥秘噶:
+\Omega
+并集:
+\bigcup
+交集:
+\bigcap
+
+向量: 给a产生一个向量
+$$ \vec{a} $$
+
+空格:
+a \quad b
+
+事件取反:
+\bar{y}
+
+右箭头:
+\rightarrow ->
+
+a x b:乘法
+a \times b
+
+a % b: 除法
+a \div b
+
+a <= b:小于等于
+\leq
+a >= b: 大于等于
+\geq
+不等于
+\neq
+否哎fai
+\phi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

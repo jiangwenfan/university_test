@@ -1,0 +1,61 @@
+@[toc]
+### 1. nas文件服务器
+### 2. apt本地安装源
+只针对于ubuntu18
+1. 安装
+```bash
+apt install apt-mirror 
+apt install apache2
+```
+2. vim /etc/apt/mirror.list
+```bash
+# 所有下载数据的根目录是ubuntu18.  ############ubuntu18.04配置文件
+set   base_path    /var/data/ubuntu18/
+set  defaulttarch  amd64
+set nthreads     20
+set _tilde 0
+
+deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+
+clean http://mirrors.aliyun.com/ubuntu
+```
+3. 放置数据
+
+```clike
+将以前准备好的数据ubuntu18目录((114G))　-----放置----->  在/var/data/目录下。
+```
+4. 同步更新:
+```bash
+apt-mirror #很快更新完毕
+```
+5. 使用apache发布源。----->可以考虑替换为nginx.
+https://blog.csdn.net/weixin_41272269/article/details/104730644
+ 
+6.  客户端配置。
+### 3. yum本地安装源
+
+----------------------------ftp服务器
+1. 
+要求:
+1.两个账号共用同一个ftp目录
+2.两个账号具有不同的权限
+3.进行内网穿透
+
+管理员账号:jwf litalin176828
+可读，可写，可删除，可创建，可重命名
+/home/jwf
+
+普通用户:guest1 admin123
+只读
+/home/guest1
+
+-----------------------------远程下载服务器
+windows7 
+挂载nfs磁盘，使用迅雷和idm下载
+
+--物理机，将磁盘以nfs形式进行共享
+--虚拟机将磁盘以nfs挂载，ftp,

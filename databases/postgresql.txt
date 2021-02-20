@@ -1,0 +1,9 @@
+createdb test #创建test数据库
+psql -l #查看数据库
+psql --version #查看版本
+psql test #进入test数据库
+
+修改postgresql密码:
+https://blog.csdn.net/pg_hgdb/article/details/79202912
+升级django:
+https://blog.csdn.net/qq_43699953/article/details/89503170

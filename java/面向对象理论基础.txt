@@ -1,0 +1,98 @@
+* 将程序打包成jar包
+[参考](https://cloud.tencent.com/developer/article/1182412)
+
+* **java.util.Scanner模块**
+```clike
+//从键盘录入一个数字
+import java.util.Scanner;
+    
+Scanner sc=new Scanner(system.in);
+System.out.println("请输入一个数字(0-6):");
+int index=sc.nextInt();
+```
+java的Date类:
+1秒=1000毫秒(ms)
+Date类：表示特定的瞬间，精确到毫秒。
+构造方法:
+	Date() :根据当前的默认毫秒创建日期对象。
+	Date(long date):根据给定的毫秒创建日期对象。
+	
+
+键盘录入:
+```java
+import  java.util.Scanner;  //导包，必须在class的上面。 
+Scanner sc = new Scanner(System.in); //创建键盘录入对象
+int x = sc.nextInt()  //通过对象获取数据
+//练习1： 键盘录入两个数据，并对这两个数据求和，输出其结
+//练习2:	 键盘录入两个数据，获取这两个数据中的最大值
+
+```
+
+
+
+一个案例： 把大象装进冰箱
+1. 面向过程
+```clike
+	面向过程：
+			A:打开冰箱门
+			B:装进大象
+			C:关闭冰箱门
+```
+```clike
+class Demo {
+	public static void main(String[] args) {
+		open();
+		in();
+		close();
+    }
+				
+    public static void open() {
+		System.out.println("打开冰箱门");
+	}
+				
+				public static void in() {
+								System.out.println("装进大象");
+				}
+				
+				public static void close() {
+								System.out.println("关闭冰箱门");
+				}
+			}
+```
+
+2. 面向对象
+```clike
+将事物分析为面向对象：名词提取法
+4. 有那些类：  大象  冰箱  Demo
+5.  每个类有哪些东西:
+	大象：进去
+	冰箱：开门   关门
+	Demo:  main方法
+6. 类与类的直接关系
+		Demo中使用大象和冰箱类的功能。
+```
+
+```clike
+class ELephant {
+	public static void in() {
+					System.out.println("装进大象");
+	}
+}
+class Refrigerator {   //冰箱
+				public static void open() {
+					System.out.println("打开冰箱门");
+				}
+				
+				public static void close() {
+					System.out.println("关闭冰箱门");
+				}
+			}
+class Demo {
+				public static void main(String[] args) {
+					冰箱调用开门
+					大象调用进去
+					冰箱调用关门
+				}
+			}
+```
+

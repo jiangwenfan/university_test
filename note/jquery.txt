@@ -1,0 +1,5 @@
+jquery初始
+导入jquery: <script src="jquery-3.1.1.js"></script>
+用法: $ === jQuery
+基础语法： $(selector).action() [selector:要选择的内容；action():要替换的内容]
+eg:<script> $("div").css("color":"red")</script>

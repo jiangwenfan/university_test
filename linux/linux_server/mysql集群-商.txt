@@ -1,0 +1,160 @@
+ cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DEXTRA_CHARSETS=all -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWIDTH_MEMORY_STORAGE_ENGINE=1 -DWIDTH_READLINE=1 -DENABLED_LOCAL_INFILE=1 -DMYSQL_USER=mysql -DMYSQL_TCP_PORT=3306
+ 
+cp -a /root/mysql/support-files/mysql.server /etc/init.d/mysqld
+chmod +x /etc/init.d/mysqld 
+
+chkconfig --add mysqld 
+chkconfig mysqld on 
+
+systemctl start mysqld 
+
+3.开启mysql-binlog日志备份
+二进制日志(binlog)记录所有对数据库的更改操作。
+vim /etc/my.cnf 
+	log-bin=mysql-bin #编译安装的默认已经添加了
+
+cd /usr/local/mysql/data 这个目录下存放日志和数据库文件
+rm -rf mysql-bin.00000* mysql-bin.index #删除以前的这些
+systemctl restart mysqld 重启，生成一个新的
+mysql -uroot -p123456
+	create database t123456;
+	drop database t123456;
+	quit;
+mysqlbinlog mysql-bin.000001 查看日志
+	# at 107
+	#210121 19:27:28 server id 1  end_log_pos 196 	Query	thread_id=1	exec_time=0	error_code=0 #找到这个创建的时间
+	.................
+	/*!\C utf8 *//*!*/;
+	..................
+	create database t123456 #创建的地方
+	/*!*/;
+	# at 196
+	#210121 19:29:35 server id 1  end_log_pos 283 	Query	thread_id=2	exec_time=0	error_code=0 #找到这个删除的时间
+	SET TIMESTAMP=1611275375/*!*/;
+	drop database t123456  #删除的地方
+
+
+4.mysql集群
+4.1主从备份
+提前是开启mysql-binlog日志备份。
+1.vim /etc/my.cnf 
+	server-id=10 #默认都是1，修改使得每台机器都不一样
+2.在主服务器上授权
+mysql -uroot -p123456 
+	grant replication slave on *.* to aaa@'192.168.2.163' identified by '123456';
+	#grant 特殊的授权权限 on 所有库所有表 授权的用户名@被授权的从服务器地址 identified by 用户的密码
+
+show master status; #查看授权信息 
+
+3.在从服务器上保存授权信息
+msyql -uroot -p123456
+	mysql> change master to
+    -> master_user='aaa', #在主服务器上被授权的用户名
+    -> master_password='123456', #和密码
+    -> master_host='192.168.2.18', #主服务器的地址
+    -> master_log_file='mysql-bin.000006', #主服务器使用的二进制日志
+    -> master_log_pos=258; #当前日志大小 
+
+cat /ur/local/mysql/data/master.info #查看从服务器上的授权信息文件 
+	18
+	mysql-bin.000006
+	258
+	192.168.2.18
+	aaa
+	123456
+	3306
+	60
+	0
+mysql -uroot -p123456 
+	start slave; 开启从服务器
+	show slave status\G; 查看从服务器内容
+		 Relay_Master_Log_File: mysql-bin.000006
+         Slave_IO_Running: Yes #连接线程已启用
+         Slave_SQL_Running: Yes #同理已启用
+         Replicate_Do_DB: 
+         Replicate_Ignore_DB: 
+	#如果连接线程连接失败，iptables -F 在两个服务器上，并重启从服务器。
+
+4.测试
+在主服务器上创建数据库test123，从服务器立马会同步过来。
+但是在从服务器上创建数据库，主服务器并不会同步。
+
+
+4.2主主备份(互为主从)
+1. 1为主，2为从
+在主服务器上，开启如下配置:
+vim /etc/my.cnf 
+	log-bin=mysql-bin 
+	server-id=1 #这个服务器id不能重复
+	replicate-do-db=test #为提高效率，将不必要的资源不写入二进制文件
+	binlog-ignore-db=mysql 
+	binlog-ignore-db=information_schema
+	auto-increment-increment=2 #为防止主键冲突,数据的id号从1开始，每次+2，即1,3,5,7....
+	auto-increment-offset=1 
+systemctl restart mysqld;
+
+mysql -uroot -p123456 #授权从服务器
+	grant replication slave on *.* to aaa@'192.168.2.163' identified by '123456';
+	show master status;
+
+保存授权信息
+change master to 
+master_user='bbb',master_password='123456',master_host='192.168.2.163',
+master_log_file='mysql-bin.000003',mysql_log_pos=106;
+
+start slave; 
+show slave status\G;
+
+2. 2为主，1为从 
+在主服务器上，开启如下配置:
+vim /etc/my.cnf 
+	log-bin=mysql-bin 
+	server-id=1 #这个服务器id不能重复
+	replicate-do-db=test 
+	binlog-ignore-db=mysql 
+	binlog-ignore-db=information_schema
+	auto-increment-increment=2 
+	auto-increment-offset=2 #数据id从2开始,即2,4,6,8....
+systemct restart mysqld;
+
+mysql -uroot -p123456 #保存授权信息
+	change master to 
+	master_user='aaa',master_password='123456',master_host='192.168.2.18',
+	master_log_file='mysql-bin.000006',mster_log_pos=106;
+	
+	start slave;
+	show slave status\G;
+
+创建授权信息
+grant replication slave on *.* to bbb@'192.168.2.18' identified by '123456';
+show master status;
+
+测试:
+在两台服务器上任意一个中的test数据库上创建一个表，两端都会进行同步。
+
+
+4.3 一主多从 
+stop slave; 表示关闭从服务器
+
+主服务器:
+	grant replication salve on *.* to aaa@'%' identified by '123456';
+	show master status;
+	
+从2服务器：
+vim /etc/my.cnf 
+	server-id=20
+systemctl restart mysqld 
+mysql -uroot -p123456:
+	change master to 
+	master_user='aaa',master_password='123456',master_host='192.168.2.18',
+	master_log_file='mysql-bin.000007',master_log_pos=245;
+	
+	start slave;
+	show slave status\G;
+	
+测试:
+主服务器的test数据库中创建一个表，两个从服务器都会进行同步。从服务器必须有相应的数据库，否则不会进行同步，需要手动创建数据库，并进行重启。
+
+4.4 多主一从
+
+4.5 读写分离

@@ -1,0 +1,36 @@
+import java.io.File;  //创建文件,创建目录，创建多级目录 
+// .createNewFile() .mkdir() .mkdirs()
+import java.io.IOException;  //处理创建文件的异常；给创建文件的方法继承。
+
+//方法重写: 子类中出现和父类方法声明一模一样的方法。
+//方法重载: 在同一个类中，方法名一样，参数列表不一样。
+
+通常写一个类，要自己给无参构造和有参构造方法,避免继承时出现问题。
+
+被final修饰的通常无法更改。
+
+//public修饰类，为了生成文档
+public class Tools{
+	private int age;  //私有修饰,为了进行限制判断对象赋值的合法性。
+	
+	public Tools(){}  //无参构造方法。为了避免继承时报错。
+	// private AnimalTool(){}  私有无参构造方法，使类不能创建对象
+	public Tools(String bb){
+		this.age = bb    //私有修饰，通过构造方法也可以赋值
+	}
+	
+	//通过方法进行操作成员变量
+	public void setAge(int a){
+		this.age = a;  //age =a 也行，相当于隐藏了this关键字
+	}
+}
+public class Son extends Tools{
+	public Son(){
+		System.out.println("----");
+	}
+	public Son(String abc){
+		super("hello");  //super关键字调用父类构造方法
+		this();   //this关键字调用本类的构造方法
+		System.out.println(abc);
+	}
+}

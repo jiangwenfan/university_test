@@ -1,0 +1,28 @@
+//不进行异常处理会报错
+xception in thread "main" java.lang.ArithmeticException: / by zero
+	at TryCatch.main(TryCatch.java:5)
+
+处理异常报错:
+int a = 10;
+int b = 0;
+try{
+	System.out.println(a/b);
+}catch(ArithmeticException ae){
+	//变量ae是异常名称和原因
+	System.out.println("除数不能为0");
+}
+System.out.println("over!");
+
+其他同理:
+try{
+
+}
+catch(ArithmeticException ae)
+{
+	System.out.println("除数不能为0");
+}
+catch(ArrayIndexOutOfBoundsException e){ 
+    System.out.println("数组越界"); 
+}catch(Exception e){	//使用父类异常，捕获所有类型的错误。[爷爷是万能匹配]
+	System.out.println("出错了!");
+}

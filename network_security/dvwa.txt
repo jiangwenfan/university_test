@@ -1,0 +1,74 @@
+dvwa靶机部署:
+kali下安装:
+```bash
+#!/bin/bash
+
+echo "下载并解压文件...."
+wget https://github.com/ethicalhack3r/DVWA/archive/master.zip
+unzip master.zip
+rm -rf master.zip
+
+mv DVWA-master dvwa
+
+echo "清空网站根目录"
+rm -rf /var/www/html/*
+mv dvwa/ /var/www/html/
+
+echo "配置php文件"
+apt-get install php-gd
+vim /etc/php/7.2/apache2/php.ini
+## allow_url_fopen=On
+## allow_url_include=On
+## extension=gd2
+
+echo "由于使用的是Mariadb数据库，"
+./mariadb_dvwa.sh
+
+echo "dvwa 配置文件"
+cd  /var/www/html/dvwa/config/
+cp config.inc.php.dist config.inc.php
+echo "public_key = 6LdK7xITAAzzAAJQTfL7fu6I-0aPl8KHHieAT_yJg "
+echo  "private_key = 6LdK7xITAzzAAL_uw9YXVUOPoIHPZLfw2K1n5NVQ "
+vim config.inc.php
+## db_user=dvwa;
+## db_password=root;
+## public_key=  ;  private_key=
+
+#排错
+#php.ini文件如何找到？ 
+#####echo "<?php echo phpinfo();  ?>" /var/www/html/1.php 
+#####浏览ip+1.php  查看php信息
+echo "<?php phpingo() ?>" > /var/www/html/test_phpinfo.php
+```
+
+```bash
+###mariadb_dvwa.sh
+#!/usr/bin/expect
+#创建dvwa数据库，修改数据库密码为root，
+#create database;
+spawn mysql -uroot -proot
+expect "]>"
+send "create database dvwa;\n" 
+expect "sec)"
+send "grant all on dvwa.* to dvwa@localhost identified by 'root';"
+expect "sec)"
+send "flush privileges;"
+```
+
+
+
+---
+DVWA环境搭建：
+https://www.cnblogs.com/ECJTUACM-873284962/p/7784508.html
+1.安装phpstudy
+2.下载dvwa，解压移动到phpstudy的/www目录下
+3.修改dvwa的./config/config.inc.php文件,
+把db_password 修改成 root
+4.访问：192.168.201.222/DVWA-master/index.php,
+创建：setup/reset DB--->create /reset database
+登录：默认用户名 admin 默认密码 password。
+
+metasploit启动问题：
+https://blog.csdn.net/myweaven/article/details/79352296
+https://www.cnblogs.com/Hi-blog/p/6795811.html
+

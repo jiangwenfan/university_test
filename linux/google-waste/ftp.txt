@@ -1,0 +1,30 @@
+# ftp匿名访问
+```bash
+#[ftp-anonymous]
+yum -y install vsftpd
+vim /etc/vsftpd/vsftpd.conf
+	listen_ipv6=no  #或者注释掉ipv6选项。否则报错。
+systemctl start vsftpd
+
+ftp://192.168.10.4
+```
+# 本地用户访问
+```bash
+#[vsftpd_local_user]
+#用户：tony 密码：root123 家目录：/home/tony
+yum -y install vsftpd 
+vim /etc/vsftpd/vsftpd.conf
+	anonymous_enable=NO
+	userlist_enable=YES
+	userlist_deny=YES
+	userlist_file=/etc/vsftpd/user_list
+adduser -d /home/tony -g ftp -s /sbin/nologin tony
+passwd tony 
+	#root123
+systemctl start vsftpd
+
+ftp://192.168.10.4
+```
+
+
+

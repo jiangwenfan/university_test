@@ -1,0 +1,71 @@
+1.ps 查看进程工具
+常用参数:
+a显示和当前终端有关联的所有进程
+u基于用户格式显示
+x显示所有进程，不以终端机来区分
+
+ps -aux |less
+最后一列使用方括号的是内核态进程，没有方括号的是用户态进程。
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.2 191036  4080 ?        Ss   09:39   0:01 /usr/lib/systemd/systemd --switched-root --system --deserialize 22
+root         2  0.0  0.0      0     0 ?        S    09:39   0:00 [kthreadd]
+上面的参数输出每列含意：
+USER: 启动这些进程的用户
+PID: 进程的ID
+%CPU 进程占用的CPU百分比； 
+%MEM 占用内存的百分比； 
+#VSZ：进程占用的虚拟内存大小（单位：KB） 
+RSS：进程占用的物理内存大小（单位：KB） 
+STAT：该程序目前的状态，Linux进程有5种基本状态,基本上全是睡眠状态的。
+	R ：该程序目前正在运作，或者是可被运作；
+	S ：该程序目前正在睡眠当中 (可说是 idle 状态啦！)，但可被某些讯号(signal) 唤醒。
+	T ：该程序目前正在侦测或者是停止了；
+	Z ：该程序应该已经终止，但是其父程序却无法正常的终止他，造成 zombie (疆尸) 程序的状态
+	D ：不可中断状态.  
+	5个基本状态后，还可以加一些字母，比如：Ss、R+，如下图：
+	root     4  0.0  0.0      0     0 ?        S<   09:31   0:00 [kworker/0:0H]
+	root    48  0.0  0.0      0     0 ?        SN   09:31   0:00 [ksmd]
+
+	root   2458  0.0  0.0 113284  1428 ?        Ss   09:32   0:00 /bin/sh /etc/xdg/xfce4/xinitrc -- vt
+    root   2448  0.0  0.0 388820  5572 ?        Sl   09:32   0:00 gdm-session-worker [pam/gdm-password]	
+	root      4626  0.0  0.0 149316  4996 pts/3    S+   11:41   0:00 vim 1.txt  #打开一个vim，没有关闭
+	它们含意如下:：
+	<: 表示进程运行在高优先级上
+	N: 表示进程运行在低优先级上
+	L: 表示进程有页面锁定在内存中
+	s: 表示进程是控制进程
+	l: 表示进程是多线程的
+	+: 表示当前进程运行在前台
+START：该 process 被触发启动的时间；
+TIME ：该 process 实际使用 CPU 运作的时间。
+COMMAND：该程序的实际指令
+
+例子1:
+tty1: 
+vim 1.txt 打开不要关闭
+
+ctrl+z 后台挂起进程
+[1]+  Stopped                 vim 2.txt
+
+tty2: 
+ps -aux #处于前台睡眠状态
+root      4824  0.8  0.0 149308  5012 pts/6    S+   11:53   0:00 vim 2.txt
+
+处于停止状态
+root      4824  0.0  0.0 149308  5012 pts/6    T    11:53   0:00 vim 2.txt
+
+
+注：
+ctrl-c 是发送 SIGINT 信号，终止一个进程
+ctrl-z 是发送 SIGSTOP信号，挂起一个进程。将作业放置到后台(暂停)
+ctrl-d 不是发送信号，而是表示一个特殊的二进制值，表示 EOF。代表输入完成或者注销
+
+例子2:
+tty1:
+tar -zcvf usr-test.tar.gz /usr/
+
+tty2:
+ps -aux | grep tar  #不断查看状态，由S+，R+变为D+
+
+???似乎一直是R+状态
+

@@ -1,0 +1,44 @@
+flume的主要作用是，实时读取服务器本地磁盘的数据，将数据写入到HDFS。
+
+tar -zxvf apache-flume-1.7.0-bin.tar.gz -C /opt/module/
+cd /opt/module/flume1.7/
+mv flume-env.sh.template flume-env.sh 
+vim flume-env.sh 
+	export JAVA_HOME=/opt/module/java...
+
+案列1:
+yum install nc
+nc -lk 44444 #server
+nc hadoop1 44444 #client. 连接，相互发送数据
+mkdir flume/jop #存放任务的
+vim netcat-flume-logger.conf 
+	# Name the components on this agent
+	a1.sources = r1
+	a1.sinks = k1
+	a1.channels = c1
+
+	# Describe/configure the source
+	a1.sources.r1.type = netcat
+	a1.sources.r1.bind = localhost
+	a1.sources.r1.port = 44444
+
+	# Describe the sink
+	a1.sinks.k1.type = logger
+
+	# Use a channel which buffers events in memory
+	a1.channels.c1.type = memory
+	a1.channels.c1.capacity = 1000
+	a1.channels.c1.transactionCapacity = 100
+
+	# Bind the source and sink to the channel
+	a1.sources.r1.channels = c1
+	a1.sinks.k1.channel = c1
+
+#bin/flume-ng agent --conf conf --conf-file example.conf --name a1 -Dflume.root.logger=INFO,console
+bin/flume-ng agent --conf conf/ --conf-file job/netcat-flume-logger.conf --name a1
+-Dflume.root.logger=INFO,console  #启动(flume是个服务端)
+bin/flume-ng agent -n a1 -c conf/ -f job/netcat-flume-logger.conf -Dflume.root.logger=INFO,console #简写的启动命令
+nc localhost 44444 #启动客户端。输入：hello
+
+案列2：
+

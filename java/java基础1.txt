@@ -1,0 +1,318 @@
+运算符
+就是对常量和变量进行操作的符号。
+
+int代表一切整数，float代表一切浮点数。
+int / int = int
+float / int = float
+ 
+
+1.算术运算符：
+++ 对变量进行自增1
+-- 对变量进行自减1
+int age = 22
+age++ :先打印age(22)，然后age自增1(23) ---->先打印，后计算
+++age :先age自增1(23),然后打印age(23)  ---->先计算，后打印	
+			
+2.赋值运算符：
++=  //做加右，再赋值给左边
+age += 10;  //age=age+10; -->32
+
+-= //左减右，再赋值给左边
+age -= 10;  //age=age-10; -->12
+
+*= //左边乘右边，再赋值给左边
+age *= 10;  //age=age*10; --->220
+
+/= //左边除10右边，在赋值给左边。 /获取的是除法操作的商，
+int age = 32;
+age /= 10;  //age=age/10; ---->32/10=3....2 ---->3
+
+%= //左边以10取余，再赋值给左边。   %获取的是除法操作的余数
+age %= 10;  //age=age%10; ---->2  
+
+3.比较运算符：结果永远是boolean类型
+int age = 22;
+int num = 32;
+== 
+System.out.println( age == num);  //返回false
+!=
+System.out.println( age != num);  //返回true
+>
+System.out.println(age > 22);  //false
+<
+System.out.println(age > 22);  //false
+>=
+System.out.println(age > 22);  //true 
+<=
+System.out.println(age > 22);  //true 
+						
+boolean flag = (age != num);  //true 括号可有可无
+
+4.逻辑运算符：
+& 逻辑与
+| 逻辑或
+^ 逻辑异或
+! 逻辑非
+位运算符，
+三目运算符
+
+		int x=3;
+		int y=4;
+		
+		System.out.println(x+y);   //7
+		System.out.println(x-y);	//-1
+		System.out.println(x*y);  //12
+		
+		System.out.println(x/y);	//0      /  取商。     【被除数÷除数=商+余数】
+		//整数相除只能得到整数；如果想要得到完整的小数，需要将操作数中的任意一个数据变为浮点数。
+		//System.out.println(x*1.0/y);
+		
+		System.out.println(x%y);	//  % 取余数
+		
+		System.out.println("自增运算符-------------"+x+y)  //字符串的拼接
+		//单独使用  		x++		++x			y--		--y
+		// System.out.println(10++);		报错；意外的类型；常量是不可以这样做的
+		System.out.println(x++);   //先打印x,然后在自增。 3
+		System.out.println(x);  //上面自增完了，所以打印  4
+		System.out.println(++x);   //先自增，然后在打印    5
+		
+		//参与运算符   	 x++		++x			y--		--y
+		//int a=3   	int b=4
+		System.out.println("a:"+.................)
+
+字符串拼接:
+int age=32;
+int name=" world";
+System.out.println("hello"+name);   //hello world 字符串+字符串
+//System.out.println("hello"+" world");  //hello world
+
+System.out.println("hello"+age); //hello32 字符串+int类型(一切数据类型)
+//System.out.println("hello"+32); //hello32 
+
+分割字符串
+```java
+String str="www-jd-com";
+String[] temporary;
+temporary = str.split("-"); //分割成数组
+
+temporary[0] #获取第一个; www
+```
+
+
+运算符练习题:
+1. 
+```bash
+++ 与 -- 练习题
+```
+
+```clike
+	int a = 10;
+	int b = 11;
+	int c = 12;
+
+	a = b++;   //a=11;b=12 先赋值，再自增
+	c = --a;	//c=9;a=9  先自减，再赋值。
+	b = ++a;   //a=11;b=11  先自增，再赋值。
+	a = c--;	//a=12;c=11 先赋值，再自减。
+	请分别计算出a,b,c的值
+```
+```clike
+int x = 4;
+	int y = (x++)+(++x)+(x*10);
+	//x=5;++5+5+(x*10)
+	//x=6;10+(6*10)    70    
+	
+	//x=6;y=70;
+	请分别计算出x,y的值
+```
+
+
+
+
+
+# 1. 成员变量与局部变量
+* **成员变量**:
+```bash
+在类中方法外； #在类的位置不同
+在堆内存； #在内存中的位置不同
+随着对象的创建而存在，随着对象的消失而消失； #生命周期不同
+有默认初始化值； #初始化值不同
+```
+* **局部变量**:
+```bash
+在方法定义中或者方法声明上；
+在栈内存；
+随着方法的调用而存在，随着方法的调用完毕而消失；
+没有默认初始化值，必须定义，赋值，然后才能使用；
+```
+```java
+class Varialbe {
+	int num = 10; //成员变量. 不赋值默认为0.
+	public void show() {
+		int num2 = 20;  //局部变量. 可能尚未初始化变量num2 //没有默认值
+		System.out.println(num2);
+		System.out.println(num);
+	}
+}
+```
+**局部变量名称可以和成员变量名称一样，在方法中使用的时候，采用的是就近原则。**
+
+# 2. 方法的定义
+```clike
+class Demo{
+		publci static void main(String[] args){
+					showLog();	   //调用无参方法
+					printName("tonyStark")   //调用有参方法
+		}
+		//method set
+		public static void showLog(){
+					System.out.println("this is test!");
+		}
+		public static void printName(String  n){
+					System.out.println("name is :"+n);
+		}
+}
+
+```
+
+数组:
+数组(array)是可以存储多个变量(元素)的容器
+1.多个变量的数据类型要一致。
+2.可以存储所有数据类型(基本数据类型+引用数据类型)。
+3.数组必须先初始化(就是为数组中的数组元素分配内存空间，并为每个数组元素赋值)。
+
+定义格式:
+数据类型[]	数组名    	// int[] a   --->推荐
+// 数据类型   数组名[]	----> int a[]    	
+数组名[索引]	 //通过数组名访问数据的格式
+
+数组初始化方式：   
+1.动态初始化:指定数组长度，由系统为数组分配初始值。
+
+格式:
+数据类型[] 数组名 = new 数据类型[数组长度]   //指定数组长度，动态初始化数组。
+int[] age = new int[10];  //动态初始化数组age。
+/* 	int[]:整形数组;  age:数组名; new:为数组分配内存空间; int[10]:整形数组的长度。	*/
+
+System.out.println(arr)  	 //数组的地址值 [I@15db9742
+System.out.pritln(array[0])   //数组第一个元素的值
+    
+给数组元素赋值:
+num[0]=11  //给0号元素赋值11
+num[2]=33
+
+把一个数组的值复制给另一个数组:
+    给数组赋值地址:
+    int[] num1=new int[3];		//给num1数组动态初始化
+    int[] num2=num1;		//num1和num2数组分别拥有两块内存。
+    
+    num1[0]=111;
+    System.out.println(num1[0]); //111
+    num2[0]=222;
+    System.out.println(num2[0]); //222
+
+2.静态初始化:初始化时指定每个数组元素的初始值，由系统决定数组长度。**
+    格式: 
+数据类型[] 数组名 = {元素1，元素2};
+// 完整格式: 数据类型[] 数组名=new 数据类型[]{元素1，元素2};
+eg: 
+int[] arr={1,2,3};
+//完整格式:	int[] arr=new int[]{1,2,3};
+
+int[] age=new int[10];
+3.数组属性
+int a = age.length //获取数组长度。 10
+
+4.数组常见操作方法
+4.1遍历数组 i=0;i<a.length
+public static void traversalArray(int[] a){
+        for(int i=0;i<a.length;i++){
+            System.out.println(a[i]);
+        }
+    }
+}
+int[] age={11,22,33,44};
+traversalArray(age); //11,22,33,44
+
+4.2获取数组最大值
+//从数组第二位开始遍历取值，每次取到值都和数组第一位进行比较，如果小于第一位的值，则跳过；
+//大于第一位的值，则交换值。
+
+public static int getArryMax(int[] a){
+        int max=a[0];
+        for(int i=0;i<a.length;i++){
+            if(a[i]>max){
+                max=a[i];
+            }
+        }
+        return max;
+    }
+int[] age={11,22,33,44};
+int max=getArryMax(age);  //调用函数，获取最大值
+
+System.out.println("max:"+max); //输出
+
+4.3数组逆序
+思路:
+把0索引和arr.length-1的数据交换，
+把1索引和arr.length-2的数据交换
+...
+只要做到arr.length/2的时候即可。
+
+public static void reverse(int[] a){
+        for(int i=0;i<a.length/2;i++){
+            int temp = a[i];
+            a[i]=a[a.length-(i+1)];
+            a[a.length-(i+1)]=temp;
+        }
+    }
+int[] age={11,22,33,44};
+reverse(age);  //调用函数进行逆序
+//遍历输出
+for(int i=0;i<age.length;i++){
+    System.out.println(age[i]);
+}
+
+
+1.数组查表法
+1.1输入数字，查出数组元素值。
+import java.util.Scanner;
+String[] date={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"};
+Scanner sc = new Scanner(System.in);  //创建输入对象
+
+System.out.println("please input a number:(1-7):");
+int index=sc.nextInt();  //通过输入对象获取输入值
+
+System.out.println("date is :"+date[index-1]); //输出
+    
+1.2 输入数组和数组元素值，获得元素在数组中的索引。 
+//循环遍历数组中的每一个元素值，并且进行匹配，如果匹配成功则返回索引值。
+1.0
+public static int getIndex(int[] a,int num){
+        for(int i=0;i<a.length;i++){
+            if(a[i] == num){
+                return i;
+            }
+        }
+        return -1;  //匹配不到数据时，返回-1
+    }
+int[] age={11,22,33,44,250,350,250,450};
+int num1 = getIndex(age,250);   //获得所索引
+System.out.println(num1);  //输出
+2.0 还没有看懂
+int[] arr={11,22,33,44,250,350,450};
+    int index=getIndex(arr,250)   
+    
+
+    public static int getIndex2(int[] arr,int value){
+        int index=-1;
+        for(int x=0;x<arr.length;x++){
+            if(arr[x] == value){
+                index=x;
+                break;
+            }
+        }
+        return index;
+    }
+
+

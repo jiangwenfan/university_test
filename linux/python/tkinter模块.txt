@@ -1,0 +1,270 @@
+```clike
+pack组件设置位置属性参数：
+    after:    　　　 将组件置于其他组件之后；
+    before:    　　　将组件置于其他组件之前；
+    anchor:    　　  组件的对齐方式，顶对齐'n',底对齐's',左'w',右'e'
+    side:    　　　　组件在主窗口的位置，可以为'top','bottom','left','right'（使用时tkinter.TOP,tkinter.E）；
+    
+	
+	fill            填充方式 (Y,垂直，X，水平）
+    expand          1可扩展，0不可扩展
+
+
+使用 tkinter.Tk() 生成主窗口。 root=tkinter.Tk()
+root.title('标题名')    #修改框体名字。也可在创建时使用className参数来命名
+root.resizable(0,0)		#框体大小可调性，分别表示x,y方向的可变性。
+root.geometry('250x150')  #指定主框体大小
+root.quit()			#退出
+root.update_idletasks()
+root.update()	#刷新页面
+
+标签控件
+label=Label(root,text='签名',font=('华文行楷',20),fg='red')
+label.grid(row=0,column=0)  #定位,默认为0行，0列
+
+
+grid组件使用行列的方法放置组件的位置，参数有：
+    column:         组件所在的列起始位置；
+    columnspam:     组件的列宽；
+    row：      　　　组件所在的行起始位置；
+    rowspam：    　　组件的行宽；
+	
+	
+	
+	
+place组件可以直接使用坐标来放置组件，参数有：
+    anchor:    　　　组件对齐方式；
+    x:        　　　 组件左上角的x坐标；
+    y:        　　   组件右上角的y坐标；
+    relx:         　组件相对于窗口的x坐标，应为0-1之间的小数；
+    rely:           组件相对于窗口的y坐标，应为0-1之间的小数；
+    width:          组件的宽度；
+    heitht:    　   组件的高度；
+    relwidth:       组件相对于窗口的宽度，0-1；
+    relheight:　    组件相对于窗口的高度，0-1；
+	
+	Button        　　按钮；
+    Canvas        　　绘图形组件，可以在其中绘制图形；
+    Checkbutton      复选框；
+    Entry        　　 文本框（单行）；
+    Text             文本框（多行）；
+    Frame         　　框架，将几个组件组成一组
+    Label        　　 标签，可以显示文字或图片；
+    Listbox      　　 列表框；
+    Menu     　　     菜单；
+    Menubutton       它的功能完全可以使用Menu替代；
+    Message          与Label组件类似，但是可以根据自身大小将文本换行；
+    Radiobutton      单选框；
+    Scale      　　   滑块；允许通过滑块来设置一数字值
+    Scrollbar        滚动条；配合使用canvas, entry, listbox, and text窗口部件的标准滚动条；
+    Toplevel         用来创建子窗口窗口组件。
+（在Tkinter中窗口部件类没有分级；所有的窗口部件类在树中都是兄弟。）
+anchor:      　　　　  指定按钮上文本的位置；
+    background(bg)    　  指定按钮的背景色；
+    bitmap:       　　　　 指定按钮上显示的位图；
+    borderwidth(bd)　　　　指定按钮边框的宽度；
+    command:   　　　　　  指定按钮消息的回调函数；
+    cursor:        　　　　指定鼠标移动到按钮上的指针样式；
+    font:           　　  指定按钮上文本的字体；
+    foreground(fg)　　　　 指定按钮的前景色；
+    height:        　　　　指定按钮的高度；
+    image:        　　　　 指定按钮上显示的图片；
+    state:          　　　 指定按钮的状态（disabled）；
+    text:           　　　 指定按钮上显示的文本；
+    width:       　　　　  指定按钮的宽度
+   
+    activeforeground　　　 按下时前景色
+    textvariable    　　  可变文本，与StringVar等配合着用
+background(bg)   　　 文本框背景色；
+    foreground(fg)        前景色；
+    selectbackground　　  选定文本背景色；
+    selectforeground　　  选定文本前景色；
+    borderwidth(bd)    　 文本框边框宽度；
+    font                　字体；
+    show          　　    文本框显示的字符，若为*，表示文本框为密码框；
+    state            　　 状态；
+    width        　　　　  文本框宽度
+    textvariable    　　  可变文本，与StringVar等配合着用
+Anchor        　　　　标签中文本的位置；
+    background(bg)　　　　背景色；
+    foreground(fg)　　    前景色；
+    borderwidth(bd)　　   边框宽度；
+    width        　　　　 标签宽度；
+    height        　　　　标签高度；
+    bitmap        　　　  标签中的位图；
+    font            　　　字体；
+    image        　　 　　标签中的图片；
+    justify        　　　 多行文本的对齐方式；
+    text    　　　　　　   标签中的文本，可以使用'\n'表示换行
+    textvariable  　　　  显示文本自动更新，与StringVar等配合着用
+参数： 
+    tearoff      　   分窗，0为在原窗，1为点击分为两个窗口
+    bg,fg       　　  背景，前景
+    borderwidth    　 边框宽度
+    font              字体
+    activebackgound   点击时背景，同样有activeforeground，activeborderwidth，disabledforeground
+    cursor
+    postcommand
+    selectcolor    　 选中时背景
+    takefocus
+    title       
+    type
+    relief
+   
+方法：
+    menu.add_cascade      添加子选项
+    menu.add_command      添加命令（label参数为显示内容）
+    menu.add_separator    添加分隔线
+    menu.add_checkbutton  添加确认按钮
+    delete                删除
+bind(sequence,func,add)——
+bind_class(className,sequence,func,add)
+bind_all(sequence,func,add)
+事件参数：　　
+sequence      　　　　　　　　所绑定的事件；
+func            　　　　　　 所绑定的事件处理函数；
+add             　　　　　　 可选参数，为空字符或‘+’；
+className    　　　　　　　 　所绑定的类；
+
+鼠标键盘事件
+    <Button-1>        　  　鼠标左键按下，2表示中键，3表示右键；
+    <ButtonPress-1>    　   同上；
+    <ButtonRelease-1>　　　 鼠标左键释放；
+    <B1-Motion>  　　       按住鼠标左键移动；
+    <Double-Button-1>  　　 双击左键；
+    <Enter>       　　      鼠标指针进入某一组件区域；
+    <Leave>    　　         鼠标指针离开某一组件区域；
+    <MouseWheel>  　   　　 滚动滚轮；
+    <KeyPress-A> 　　  　　  按下A键，A可用其他键替代；
+    <Alt-KeyPress-A>　　　   同时按下alt和A；alt可用ctrl和shift替代；
+    <Double-KeyPress-A>　　  快速按两下A；
+    <Lock-KeyPress-A>　　　  大写状态下按A；
+   
+窗口事件
+    Activate        　　　　 当组件由不可用转为可用时触发；
+    Configure      　　　　  当组件大小改变时触发；
+    Deactivate    　　　　　 当组件由可用转变为不可用时触发；
+    Destroy        　　　　  当组件被销毁时触发；
+    Expose         　　　　　当组件从被遮挡状态中暴露出来时触发；
+    Unmap        　　　　　　当组件由显示状态变为隐藏状态时触发；
+    Map         　　　　     当组件由隐藏状态变为显示状态时触发；
+    FocusIn       　　　 　  当组件获得焦点时触发；
+    FocusOut      　　　　　 当组件失去焦点时触发；
+    Property     　　　　    当窗体的属性被删除或改变时触发；
+    Visibility       　　　　当组件变为可视状态时触发；
+
+响应事件
+event对象（def function(event)）：
+    char        　　　　　　  按键字符，仅对键盘事件有效；
+    keycode   　　　　　　  　按键名，仅对键盘事件有效；
+    keysym     　　　　　　　 按键编码，仅对键盘事件有效；
+    num          　　　　　　鼠标按键，仅对鼠标事件有效；
+    type         　　　　    所触发的事件类型；
+    widget      　　　　     引起事件的组件；
+    width,heigh　　　　　　  组件改变后的大小，仅Configure有效；
+    x,y       　  　　　　　　鼠标当前位置，相对于窗口；
+    x_root,y_root　　　　　　 鼠标当前位置，相对于整个屏幕
+messagebox._show函数的控制参数：
+    default         指定消息框按钮；
+    icon            指定消息框图标；
+    message     　 　指定消息框所显示的消息；
+    parent          指定消息框的父组件；
+    title           标题；
+    type            类型；
+
+simpledialog模块参数：
+    title           指定对话框的标题；
+    prompt        　显示的文字；
+    initialvalue    指定输入框的初始值；
+
+　　filedialog　　　　模块参数：
+    filetype   　　  指定文件类型；
+    initialdir 　　  指定默认目录；
+    initialfile 　　 指定默认文件；
+    title    　　　  指定对话框标题
+
+colorchooser模块参数：
+    initialcolor  　 指定初始化颜色；
+    title          　指定对话框标题；
+
+
+tkinter模块
+
+输入框
+entry=Entry(root,font=('微软雅黑',20))
+entry.grid(row=0,column=1) #定位，0行，1列
+
+button=Button(root,text='设计签名',font=('微软雅黑',20),width=10,height=1)
+button.grid(row=1,column=1)
+
+https://blog.csdn.net/qq_31307013/article/details/79834504
+https://www.jb51.net/article/77626.htm
+http://www.cnblogs.com/sunada2005/p/3193300.html
+http://www.runoob.com/python/python-gui-tkinter.html
+https://blog.csdn.net/jcodeer/article/details/1811298
+https://www.cnblogs.com/chenyuebai/p/7150382.html
+http://qinxuye.me/article/details-about-time-module-in-python/
+https://jingyan.baidu.com/article/4b52d702d8567dfc5c774bce.html
+https://blog.csdn.net/u014027051/article/details/53813152
+https://blog.csdn.net/C_Creator/article/details/52383334
+https://blog.csdn.net/junjun5156/article/details/72510927
+http://lib.csdn.net/article/python/3455
+https://blog.csdn.net/shirayukixue/article/details/46454055
+
+```
+
+```clike
+v1.窗口生成
+from tkinter import *
+def gui_start():
+    init_windows=Tk()   #实例化一个父窗口
+	pass
+    init_windows.mainloop()  #父窗口进入事件循环，可以理解为保持窗口运行，否则界面不展示。
+gui_start()
+
+V2.内容布局
+    init_windows.title("文本处理工具 by:托尼.斯塔克")  #窗体标题
+    init_windows.geometry('290x160+10+10')  #290 160为窗口大小，+10 +10定义窗口弹出时的默认展示位置
+    init_windows["bg"]="pink"  #窗口背景色，其他背景色见：blog.csdn.net/chl0000/article/details/7657887
+    init_windows.attributes("-alpha",0.8)   #虚化 值越小虚化程度越高
+参考代码：
+#################################################################
+#author: 陈月白
+#_blogs: http://www.cnblogs.com/chenyuebai/
+#################################################################
+from tkinter import *
+import hashlib
+
+class MY_GUI():
+    def __init__(self,init_window_name):
+        self.init_window_name = init_window_name
+
+
+    #设置窗口
+    def set_init_window(self):
+        self.init_window_name.title("文本处理工具_v1.2   by: 陈月白")      #窗口名
+        self.init_window_name.geometry('1068x680+10+10')                 #290 160为窗口大小，+10 +10 定义窗口弹出时的默认展示位置
+        self.init_window_name["bg"] = "pink"                            #窗口背景色，其他背景色见：blog.csdn.net/chl0000/article/details/7657887
+        self.init_window_name.attributes("-alpha",0.9)                  #虚化，值越小虚化程度越高
+
+
+def gui_start():
+    init_window = Tk()              #实例化出一个父窗口
+    ZMJ_PORTAL = MY_GUI(init_window)
+    # 设置根窗口默认属性
+    ZMJ_PORTAL.set_init_window()
+
+    init_window.mainloop()          #父窗口进入事件循环，可以理解为保持窗口运行，否则界面不展示
+
+
+gui_start()
+
+
+```
+
+	
+	
+	
+	
+	
+	

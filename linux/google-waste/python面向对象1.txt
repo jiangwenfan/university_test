@@ -1,0 +1,198 @@
+类和实例：
+NO.1
+class Student(object):   #创建一个类
+	pass
+bart=Student()     #根据类创建一个实例
+
+
+NO.2
+class Student():
+	pass
+bart=Student()
+bart.name='tony'  #自由的给实例绑定一个name属性。
+bart.score=59     #给实例绑定一个score属性。
+
+bart.name
+bart.score
+
+NO.3: 由于类可以起到模板作用，因此可以在创建实例的时候，把一些我们认为必修绑定的属性强制填写进去。
+		通过定义一个特殊的init方法，在创建实例的时候，就把name,score等属性绑上去。
+class Student():
+	def __init__(self,name,score):  
+		self.name=name
+		self.score=score
+bart=Student('tony',59)  #有了init方法，在创建实例的时候，就不能传入空的参数了，必须传入与init方法相匹配的参数。
+
+bart.name
+bart.score
+
+NO.4: 
+class Student():
+	def __init__(self,name,score):
+		self.name=name
+		self.score=score
+bart=Student('tony',59)
+def print_score(std):           #每个实例都拥有自己的name,score这些数据。我们可以通过函数来访问这些数据，如打印实例的成绩。
+	print('%s:%s"%(std.name,std.score))    #std表示每个实例。
+
+print_score(bart)
+
+NO.5：数据封装
+class Student(object):
+	def __init__(self,name,score):
+		self.name=name
+		self.score=score
+	def print_score(self):   
+		print("%s:%s"%(self.name,self.score))
+bart=Student('tony',59)
+bart.print_score()
+
+NO.6:可以增加新的方法。
+class Student(object):
+	def __init__(self,name,score):
+		self.name=name
+		self.score=score
+	def print_score(self):
+		print("%s:%s"%(self.name,self.score))
+	def get_grade(self):   函数变方法的区别是传入参数必须得有self.
+		if self.score >= 90:
+			return 'A'
+		elif self.score >=60:
+			return 'B'
+		else:
+			'C'
+bart=Student('tony',59)
+bart.print_score()
+a=bart.get_score()
+print(a)
+
+数据封装、继承和多态只是面向对象程序设计中最基础的三个概念。
+高级特性：
+多重继承、定制类、元类
+
+面向对象编程：（简称OOP）
+	把对象作为作为程序的基本单元。一个对象包含了 数据 和 操作数据的函数。
+	把计算机程序视为一组对象的集合，而每个对象都可以接收其他对象发过来的消息，
+	并处理这些消息，程序的执行就是一系列消息在各个对象之间的传递。
+	所有数据类型都可以视为对象，也可以自定义对象。自定义的对象数据类型就是面向对象
+	中的类class概念。
+面向对象的三大特性： 封装，继承，多态
+封装：
+就是将内容装到某个地方，以后再去调用被封装在某处的内容。
+	
+表示一个学生的成绩
+	面向过程的程序：
+std1={'name':'tony','score':98}
+std2={'name':'bob','score':81}
+处理学生成绩可通过函数来实现，
+def print_score(std):
+	print('%s:%s'%(std['nme'],std['score']))
+
+	面向对象的程序：
+我们首先思考的不是程序的执行流程，而是student这种数据类型应该被视为一个对象，
+这个对象拥有name和score这两个属性(property).首先创建出这个学生对应的对象，然后给
+这个对象发一个print_score消息。
+class Student(object):
+	def __init__(self,name,score):
+		self.name=name
+		self.score=score
+	def print_score(self):
+		print('%s:%s'%(self.name,self.score))
+
+	三大特性：
+面向对象编程就是对 类 和 对象的使用。
+类就是一个模板，模板里可以包含多个函数，通过类中的函数实现一些功能。
+对象则是根据模板创建的实例，通过实例执行函数，功能。
+模板中的功能，通过创建实例，实例.方法实现功能调用。
+实例通过方法使用模板中的函数。
+
+v1:
+步骤：
+创建模板，模板中创建所需功能。
+创建实例，通过实例使用功能。【实例.函数(实参)】
+#创建类
+class Foo:
+	#创建类中的函数
+	def bar(self):
+	
+	#do something
+#根据类Foo创建对象obj
+obj=Foo()
+obj.bar() 
+obj.hello('tony')
+继承：
+继承和现实中的继承一样，即：子可以继承父的内容。
+猫：喵喵叫，吃，喝，拉，撒
+狗：汪汪叫，吃，和，拉，撒
+class cat:
+	def miaomiao(self):
+		---
+	def chi(self):
+		---
+	def he(self)：
+		---
+	def la(self):
+		---
+	def sa(self):
+		----
+class gou:
+	def wangwnag(self):
+		--
+	def chi(self):
+		---
+	def he(self):
+	def la(self):
+	def sa(self):
+	
+最初想法，未被验证对错	class dongwu:
+							def __init__(self,chi,he,la,sa):
+								self.chi=chi
+								self.he=he
+								self.la=la
+								self.sa=sa
+							def jiao(self,jiao1):
+								---
+						cat=dongwu(chi,he,la,sa)
+						cat.jiao('miao')
+						dog=dongwu(chi,he,la,sa)
+						dog.jiao('wang')
+对于面向对象的继承来说，其实就是将多个类共有的方法提取到父类中，
+子类仅需继承父类而不必实现每个方法。
+父类(基类)，子类(派生类)
+class 父类：
+	def 父类中的方法(self):
+		#do something
+class 子类（父类）： //子类继承父类，即拥有了父类中的所有方法。
+	def 子类中的方法(self):
+	#do something
+	pass
+zi=子类()  //创建子类对象
+zi.子类中的方法()
+zi.父类中的方法()  //执行从父类中继承的方法
+
+实例属性和类属性：
+实例属性和类属性：
+给实例绑定属性的方法是：实例变量或者self变量
+class Student(object):
+	def __init__(self,name):
+		self.name=name           #通过self变量给实例绑定属性
+s=Student('tony')           #创建一个实例s,并给实例传入名字‘tony'.// print(s.name)
+s.score=90      #自由的给实例绑定一个score属性。
+
+如果类本身需要绑定一个属性，可以直接在类中定义一个属性，这种属性属于类属性。
+class Student(object):
+	name='student'
+当我们定义了一个类属性之后，这个类属性虽然归类所有，但类的所有实例都可以访问的到。
+class Student(object):
+	name='student'
+s=Student()    #创建实例s
+print(s.name)  #打印实例s的name属性。因为实例并没有name属性，所以会继续查找class的name属性
+print(Student.name) #打印类的name属性。
+
+s.name='tony' #给实例绑定name属性。(给实例绑定的name属性，类中有没有这个属性都可以，
+			#有的话覆盖掉实例中的（原类中的属性并不改变），没有的话，相当于在实例中自己创建属于自己的新的属性)
+print(s.name)  #由于实例属性优先级比类属性高，因此，它会屏蔽掉类的name属性。
+print(Student.name) #但是类的属性并不消失，用Studnet.nam仍然可以访问。
+
+del s.name   #如果删除实例的name属性
+print(s.name)  #再次调用s.name,由于实例的name属性没有找到，类的name属性就显示出来了。				

@@ -1,0 +1,175 @@
+------------编译安装lamp:
+不要在一个系统上同时存在 RPM-Apache+源码-Apache
+yum groupinstall "Development Tools" "Development Libraries" -y #安装开发包组。 后一个提示不存在？？
+yum install gcc gcc-c++ openssl-devel -y
+
+
+apr是对后端服务软件进行优化的。
+apr-util是apr的拓展版。
+pcre是httpd的一个依赖包。是一个用C语言编写的正则表达式函数库。
+
+所有源码编译的版本:
+httpd version：httpd-2.4.16
+apr version：apr-1.5.2
+pcre version：pcre-8.37
+apr-util version：apr-util-1.5.4
+mysql version：mysql-5.6.26
+php version：php-5.6.13
+
+apr编译:
+tar xf apr-1.5.2.tar.gz -C /usr/local/src/ #解压  zxvf
+cd /usr/local/src/apr-1.5.2/ && ./configure --prefix=/usr/local/apr && make -j 2 && make install
+#指定安装位置是/usr/local/apr。
+apr-util编译:
+tar xf apr-util-1.5.4.tar.bz2 -C /usr/local/src/ #解压
+cd ../apr-util-1.5.4/ && ./configure --prefix=/usr/local/apr-util --with-apr=/usr/local/apr && make -j 2 && make install
+#--with-apr参数是由当前源码包提供的。./configure -help
+#--with-apr为已安装apr的完整路径
+
+pcre编译:
+tar xf pcre-8.37.tar.bz2 -C /usr/local/src/
+cd /usr/local/src/pcre-8.37/ && ./configure --prefix=/usr/local/pcre && make -j 2 && make install 
+
+apache编译:
+tar xvf httpd-2.4.16.tar.bz2 -C /usr/local/src/ #解压
+./configure --prefix=/usr/local/apache2.4 --enable-so --enable-rewrite --enable-ssl --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mpms-shared=all --with-mpm=event && make -j 2 && make install 
+
+参数详解:
+--prefix=/usr/local/apache2.4                       #安装路径
+--enable-so                                         #支持动态加载模块
+--enable-rewrite                                    #支持网站地址重写
+--enable-ssl                                        #支持SSL加密
+--with-pcre=/usr/local/pcre                         #pcre路径
+--with-apr=/usr/local/apr                           #apr路径
+--with-apr-util=/usr/local/apr-util                 #apr-util路径
+
+一共有三种稳定的MPM（Multi-Processing Module，多进程处理模块）模式。它们分别是prefork，worker和event，它们同时也代表这Apache的演变和发展。
+
+
+
+------配置:
+web/www/万维网服务器提供网上信息浏览服务。
+常见的Web服务器:
+httpd(apache),nginx+php
+tomcat:jsp+html
+win:IIS
+
+lamp = linux apache mysql php
+
+apache(apache httpd server),多平台和安全性，它可通过简单的API扩展，将Perl/python等解释器编译到服务器中。它还是一个模块化的服务器，各个功能使用模块化插拔。apache基金会(ASF)。
+mysql是一个关系型数据库管理系统。
+关系型数据库:它通过数据、关系和对数据的约束三者组成的数据模型来存放和管理数据。
+php(hypertext preprocessor)超文本预处理器，是一个脚本语言,PHP 还可以执行编译后代码，编译可以达到加密和 优化代码运行，使代码运行更快。新版本的php会废弃很多低效语法。
+
+-----:
+yum install -y httpd #yum install -y httpd-devel
+yum install httpd-manual #apache手册文档
+
+yum install elinks #字符界面下的浏览器客户端
+elinks http:www.baidu.com #测试
+
+systemctl start httpd #启动http
+systemctl enable httpd
+netstat -anutp |grep 80
+
+参数说明:
+/etc/httpd/conf/httpd.conf #主配置文件
+	ServerName 192.168.1.235:80 #服务器主机名
+	PidFile run/httpd.pid #运行进程ID存放
+	Timeout 60 #超时时间，多少秒没反应就超时。
+	KeepAlive ON #修改为ON。
+
+配置apache虚拟主机,实现在一台服务器上运行多个网站。
+三种虚拟机主机实现方式:
+1.通过不同ip地址
+2.通过不同的域名
+3.通过不同的端口
+三种方式都需要把虚拟主机功能打开。
+
+1.通过不同IP地址实现(不常用)
+ifconfig eth0:1 192.168.0.56 netmask 255.255.255.0  //单网卡配置双IP地址。临时IP
+mkdir /var/www/html/bbs/
+echo "test bbs" > /var/www/html/bbs/index.html
+echo "test index" > /var/www/html/index.html
+
+//访问测试正常 112也正常
+elinks http://192.168.1.111/index.html
+elinks http://192.168.1.111/bbs/index.html 
+
+vim /etc/httpd/conf.d/bbs.conf
+	<VirtualHost 192.168.1.111:80>
+		ServerAdmin webmaster@dummy-host.example.com
+		DocumentRoot /var/www/html/  ---------->改为自己的网站目录
+		ServerName dummy-host.example.com
+		ErrorLog logs/dummy-host.example.com-error_log
+		CustomLog logs/dummy-host.example.com-access_log common
+	</VirtualHost>
+	<VirtualHost 192.168.1.112:80>
+		ServerAdmin webmaster@dummy-host.example.com
+		DocumentRoot /var/www/html/bbs/  ---------->改为自己的网站目录
+		ServerName dummy-host.example.com
+		ErrorLog logs/dummy-host.example.com-error_log
+		CustomLog logs/dummy-host.example.com-access_log common
+	</VirtualHost>
+
+//测试访问正常
+elinks http://192.168.1.111/index.html  //test index
+elinks http://192.168.1.112/index.html //test bbs
+
+2.通过不同域名：
+在域名管理后台，修改DNS配置，不同的域名解析成同一个IP地址。
+vim /etc/hosts
+	192.168.1.112 www.dog.com
+	192.168.1.112 bbs.dog.com
+
+vim /etc/httpd/conf.d/bbs.conf
+	<VirtualHost *:80>
+		ServerAdmin webmaster@dummy-host.example.com
+		DocumentRoot /var/www/html/  ---------->改为自己的网站目录
+		ServerName www.dog.com  ------------->改为自己的域名
+		ErrorLog logs/www.xuegod.com-error_log
+		CustomLog logs/www.xuegod.com-access_log common
+	</VirtualHost>
+	<VirtualHost *:80>
+		ServerAdmin webmaster@dummy-host.example.com
+		DocumentRoot /var/www/html/bbs/  ---------->改为自己的网站目录
+		ServerName bbs.dog.com	------------->改为自己的域名
+		ErrorLog logs/bbs.xuegod.com-error_log
+		CustomLog logs/bbs.xuegod.com-access_log common
+	</VirtualHost>
+
+测试：
+elinks www.dog.com  //test idnex
+elinks bbs.dog.com  //test bbs
+
+
+方法3：基于端口配置虚拟主机： !!!!!!!!!!error
+[root@xuegod63 conf]# vim /etc/httpd/conf.d/bbs.conf 
+ 改： 
+Listen   80  
+为：
+Listen   80  
+Listen   81  
+# 更改为你要添加的多个端口
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,121 @@
+documentation: 文档 
+community: 社区
+events:事件
+guide:指南
+Audio:音频
+visual:视频
+FAQ:常见问题
+pep index：活力指数
+Essays:文章
+global:全局的
+function：函数
+ Convert：使....
+ string：字符串
+ return：返回
+ argument：参数
+ given:被给
+ floating point：浮点数
+ zero:零
+ or if base is given：或者是给定的基数
+ representation：代表，表现
+ value：数值
+ object:对象
+ router：路由器
+ item：项目
+ tag：标签
+ document：文件
+ element:元素，要素
+ network:网络
+ sources:来源
+ timeline:时间线，时间轴
+ profiles:配置文件，特征文件
+ resources:资源
+ audits:审计
+ console:控制台
+ undefined：未定义的
+ onclick：点击，事件
+ environ:环境
+base :基础
+dimen sions:规模，大小
+ori ginal :原件，原始的。
+loophole:漏洞
+wireless:无线
+relief area:缓冲区
+robust:鲁棒性，坚固的。
+check:检测
+encrypted:加密
+graphical:图形化
+adv anced:高级，进阶
+options:选项
+universally:普遍的
+even if :即使，虽然，尽管
+disk:磁盘
+label:标签
+mysql:
+chart 图表
+spec ial ty 专业
+category 类
+number 数字
+birthday 生日
+nation 民族
+resume 简历
+native_place 籍贯
+dean 院长
+de scri be 
+view 视图
+column 列
+denied 拒绝
+privilege 权限
+revoke 撤回
+grant 授予
+option 选择，选项。
+in cre ment
+engine=innodb
+filtered 被过滤的
+unfiltered 被过滤的
+item 条款，项
+order 订单
+contact 联系
+Zip 邮政编码
+access 使用
+affected 影响
+check spelling 检查拼写
+inspect Element 检查元素
+save page as 页面保存为
+save page to pocket 页面保持到口袋
+select all 全选
+view page source 查看页面源代码
+view page info 查看页面信息
+Reload Tab 重新加载选项卡
+Mute Tab 静音选项卡
+Pin Tab 固定标签页
+Reload 重载
+undo 撤销
+Tab 选项卡
+bookmark 书签
+file 文件
+install 安装
+apt-get 恰当的安装
+operating system   操作系统
+path  路径
+part  角色，部分
+current  当前 
+module  模块
+traceback  回溯
+recent 	最近的
+script  脚本
+distinct  独特的，明显的
+disk  磁盘
+partition  分区
+primary 主要的
+【diskpart === 进入磁盘部分】
+列表，显示：list
+【lis dis ===list disk ===显示所有磁盘】
+选定：selected
+【sel dis 1===selected disk 1 ===选定磁盘1】
+create partition primary
+格式化：format
+文件系统:file system ===fs
+format fs=fat32 quick
+延伸，扩展：extended
+私有的：private

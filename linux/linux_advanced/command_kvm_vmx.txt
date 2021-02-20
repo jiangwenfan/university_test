@@ -1,0 +1,98 @@
+命令行界面安装kvm虚拟机
+server：1.63
+1.在命令行界面安装kvm虚拟机 
+1.0准备工作
+mount /dev/sdb1 /var/lib/libvirt/images/ #将新添加磁盘sdb1挂载到images目录中。images目录中不能有数据。
+#上传一个Centos7.iso到images目录下。
+
+yum install tigervnc #vnc远程桌面客户端
+yum install virt-viewer #虚拟机查看器(virtual machine viewer)
+#yum info virt-viewer 
+#rpm -qpi virt-viewer-.rpm 
+#使用virt-manager和tigervnc远程管理虚拟机时，需要开启虚拟机的vnc服务。
+
+systemctl status libvirtd #确保服务开启
+
+1.1 开始安装
+virt-install 
+#man virt-install 查看帮助手册
+常用参数:
+--name 指定虚拟机(guest)名字 --name centos7
+--ram 指定虚拟机的内存大小  --ram 1024
+--vcpus 指定虚拟机的cpu数量 --vcpus=2
+--disk path 指定虚拟机磁盘的存储路径，size=10 指定虚拟机的磁盘大小，单位是G
+eg: --disk path=/home/m.2/centos7.img,size=10
+--accelerate kvm或qemu内核加速器,如果都有，优先使用kvm加速器。
+--cdrom 指定虚拟机的虚拟光驱(安装镜像文件)
+eg: --cdrom /home/m.2/centos7.iso 
+--network 指定虚拟机的网卡模式
+eg: --network bridge=br0 
+
+--location=LOCATION：安装源URL，支持FTP、HTTP及NFS等，如ftp://172.16.0.1/pub；
+--os-type=DISTRO_TYPE：操作系统类型，如linux、unix或windows等；
+--os-variant=DISTRO_VARIANT：某类型操作系统的变体，如rhel5、fedora8等；
+-x EXTRA, --extra-args=EXTRA：根据--location指定的方式安装GuestOS时，用于传递给内核的额外选项，例如指定kickstart文件的位置，--extra-args "ks=http://172.16.0.1/class.cfg"
+
+--disk=DISKOPTS：指定存储设备及其属性；格式为--disk /some/storage/path,opt1=val1，opt2=val2等；常用的选项有：
+bus：磁盘总结类型，其值可以为ide、scsi、usb、virtio或xen；
+size：新建磁盘映像的大小，单位为GB；
+format：磁盘映像格式，如raw、qcow2、vmdk等；
+sparse：磁盘映像使用稀疏格式，即不立即分配指定大小的空间；
+
+--graphics TYPE,opt1=val1,opt2=val2：指定图形显示相关的配置，此选项不会配置任何显示硬件（如显卡），而是仅指定虚拟机启动后对其进行访问的接口；
+TYPE：指定显示类型，可以为vnc、sdl、spice或none等，默认为vnc；
+port：TYPE为vnc或spice时其监听的端口；
+listen：TYPE为vnc或spice时所监听的IP地址，默认为127.0.0.1，可以通过修改/etc/libvirt/qemu.conf定义新的默认值；
+password：TYPE为vnc或spice时，为远程访问监听的服务进指定认证密码；
+--noautoconsole：禁止自动连接至虚拟机的控制台；
+
+更多详细参数:
+https://blog.csdn.net/Allison_ywt/article/details/51647980
+
+创建最简单的虚拟机:
+virt-install --name centos-72 --ram 1024 --vcpus=1 --disk
+path=/var/lib/libvirt/images/centos-72.img,size=5 --accelerate --cdrom
+/var/lib/libvirt/images/CentOS-7.4-x86_64-DVD.iso --network bridge=br0 --graphics vnc
+
+创建支持嵌套虚拟化的虚拟机:
+#--cpu=host-model 指定cpu运行的模式，是嵌套虚拟化的核心
+1.最简单的创建方式:
+virt-install --name centos7-vmx --ram 4096 --vcpus=2 --disk path=/home/m.2/centos7-vmx.qcow2,size=20 --accelerate --cdrom /home/data_tem/centos7.iso --network bridge=br0 --graphics vnc --cpu=host-model
+2.指定系统版本创建更好的性能:
+virt-install --name centos7 --memory=2048 --arch=x86_64 --cpu=host-model --vcpus=2 --check-cpu --os-type=linux --os-variant='Centos7'  --cdrom=/home/iso/centos7.iso --disk path=/home/VMDATA/manager03.img,size=20  --network bridge=br0 --noautoconsole --graphics vnc,password=xxxx,listen=0.0.0.0,port=8000
+3.其他创建方式
+virt-install --name=centos6 --ram 512 --vcpus 2 \
+--disk path=/opt/kvm/centos6.6.qcow2,size=10,format=qcow2,bus=virtio,sparse \
+--cdrom /opt/centos6.6.iso \
+--graphic vnc,listen=0.0.0.0,port=5910 \
+--os-type=linux --virt-type=kvm --hvm --accelerate --network bridge=br0 --autostart
+
+远程连接:
+vncviewer 127.0.0.1
+
+
+
+2.在命令行无人值守安装kvm虚拟机
+
+
+
+
+
+
+
+
+
+
+
+创建支持嵌套虚拟化的虚拟机:
+1.创建命令参考上面
+2.创建完毕，进入系统查看cpuinfo信息，其中包含vmx,所以支持虚拟化技术
+
+					
+
+
+
+
+
+
+

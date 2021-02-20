@@ -1,0 +1,1974 @@
+VIRT-INSTALL(1)             
+Virtual Machine Manager         
+虚拟机管理器 VIRT-INSTALL (1)
+
+
+
+NAME
+姓名
+       virt-install - provision new virtual machines
+Virt-install-provisionnewvirtualmachines
+
+SYNOPSIS
+剧情简介
+       virt-install [OPTION]...
+Virt-install [ OPTION ] ...
+
+DESCRIPTION
+描述
+       virt-install is a command line tool for creating new KVM, Xen, or Linux container guests using the "libvirt" hypervisor management library.  See
+Virt-install 是一个命令行工具，用于使用“ libvirt” hypervisor 管理库创建新的 KVM、 Xen 或 Linux 容器客户机。参见
+       the EXAMPLES section at the end of this document to quickly get started.
+本文档末尾的 EXAMPLES 部分，以便快速开始。
+
+       virt-install tool supports graphical installations using (for example) VNC or SPICE, as well as text mode installs over serial console. The guest
+Virt-install 工具支持使用(例如) VNC 或 SPICE 进行图形化安装，以及通过串行控制台进行文本模式安装。客人
+       can be configured to use one or more virtual disks, network interfaces, audio devices, physical USB or PCI devices, among others.
+可以配置为使用一个或多个虚拟磁盘、网络接口、音频设备、物理 USB 或 PCI 设备等。
+
+       The installation media can be held locally or remotely on NFS, HTTP, FTP servers. In the latter case "virt-install" will fetch the minimal files
+安装媒体可以在本地或远程保存在 NFS、 HTTP、 FTP 服务器上。在后一种情况下，“ virt-install”将获取最小的文件
+       necessary to kick off the installation process, allowing the guest to fetch the rest of the OS distribution as needed. PXE booting, and importing
+这是启动安装过程所必需的，允许客户端根据需要获取操作系统发行版的其余部分。PXE 启动和导入
+       an existing disk image (thus skipping the install phase) are also supported.
+一个现有的磁盘映像(从而跳过安装阶段)也被支持。
+
+       Given suitable command line arguments, "virt-install" is capable of running completely unattended, with the guest 'kickstarting' itself too. This
+如果给定适当的命令行参数，“ virt-install”可以在无人参与的情况下运行，客户端也可以自行启动
+       allows for easy automation of guest installs.
+允许轻松自动化的客户安装。
+
+Many arguments have sub options, specified like opt1=foo,opt2=bar, etc. Try --option=? to see a complete list of sub options associated with that
+许多参数都有子选项，如 opt1 = foo、 opt2 = bar 等。尝试 -- option = ？查看与之相关的子选项的完整列表
+       argument, example: virt-install --disk=?
+参数，例如: virt-install -- disk = ？
+
+       Most options are not required. Minimum requirements are --name, --memory, guest storage (--disk or --filesystem), and an install option.
+大多数选项不是必需的。最低要求是 -- name、 -- memory、 guest storage (-- disk or -- file system)和一个安装选项。
+
+CONNECTING TO LIBVIRT
+连接到 LIBVIRT
+       --connect URI
+-- 连接 URI
+           Connect to a non-default hypervisor. If this isn't specified, libvirt will try and choose the most suitable default.
+连接到一个非默认的管理程序。如果没有指定，libvirt 将尝试选择最合适的默认。
+
+           Some valid options here are:
+以下是一些有效的选择:
+
+           qemu:///system
+Qemu:///system
+               For creating KVM and QEMU guests to be run by the system libvirtd instance.  This is the default mode that virt-manager uses, and what most
+用于创建由系统 libvirtd 实例运行的 KVM 和 QEMU 来宾。这是 virt 管理器使用的默认模式
+               KVM users want.
+KVM 用户想要的。
+
+           qemu:///session
+Qemu://session
+               For creating KVM and QEMU guests for libvirtd running as the regular user.
+用于为作为常规用户运行的 libvirtd 创建 KVM 和 QEMU 来宾。
+
+           xen:///
+Xen://
+               For connecting to Xen.
+用于连接到 Xen。
+
+           lxc:///
+Lxc://
+               For creating linux containers
+用于创建 linux 容器
+
+GENERAL OPTIONS
+一般选择
+       General configuration parameters that apply to all types of guest installs.
+适用于所有类型的客户端安装的一般配置参数。
+
+       -n NAME
+姓名
+       --name NAME
+-- 姓名
+           Name of the new guest virtual machine instance. This must be unique amongst all guests known to the hypervisor on the connection, including
+新客户虚拟机实例的名称。在连接的 hypervisor 所知的所有客户端中这必须是唯一的，包括
+           those not currently active. To re-define an existing guest, use the virsh(1) tool to shut it down ('virsh shutdown') & delete ('virsh
+那些目前不活跃的。要重新定义现有的客户机，请使用 virsh (1)工具关闭它(‘ virsh shutdown’)和删除它(‘ virsh
+           undefine') it prior to running "virt-install".
+Undefine’) ，然后运行“ virt-install”。
+
+       --memory OPTIONS
+-- 记忆选项
+           Memory to allocate for the guest, in MiB. This deprecates the -r/--ram option.  Sub options are available, like 'maxmemory', 'hugepages',
+在 MiB 中为客户分配的内存。这不支持 -r/-- ram 选项。可以使用 Sub 选项，如“ maxmemory” ，“ hugepages” ,
+           'hotplugmemorymax' and 'hotplugmemoryslots'.  The memory parameter is mapped to <currentMemory> element, the 'maxmemory' sub-option is mapped
+“ hotplugmemorymax”和“ hotplugmemoryslots”。内存参数映射到“ currentmemory”元素，“ maxmemory”子选项映射
+           to <memory> element and 'hotplugmemorymax' and 'hotplugmemoryslots' are mapped to <maxMemory> element.
+到 < memory > 元素，‘ hotplugmemorymax’和‘ hotplugmemorylots’映射到 < maxmemory > 元素。
+
+           To configure memory modules which can be hotunplugged see --memdev description.
+要配置可以热插拔的内存模块，请参见 -- memdev 描述。
+
+           Use --memory=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsMemoryAllocation>
+使用 -- memory = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsmemoryallocation > 
+
+       --memorybacking OPTIONS
+-- 回忆选项
+           This option will influence how virtual memory pages are backed by host pages.
+这个选项会影响虚拟内存页面被主机页面支持的方式。
+
+           Use --memorybacking=? to see a list of all available sub options. Complete details at
+使用 -- memorybacking = ? 查看所有可用子选项的列表
+           <http://libvirt.org/formatdomain.html#elementsMemoryBacking>
+Http://libvirt.org/formatdomain. html # elementsmemorybacking > 
+
+       --arch ARCH
+-- ARCH
+           Request a non-native CPU architecture for the guest virtual machine.  If omitted, the host CPU architecture will be used in the guest.
+请求客户虚拟机的非本机 CPU 架构。如果省略，主机 CPU 架构将用于客户端。
+
+       --machine MACHINE
+机器
+           The machine type to emulate. This will typically not need to be specified for Xen or KVM, but is useful for choosing machine types of more
+要模拟的机器类型。这通常不需要为 Xen 或 KVM 指定，但是对于选择更多的机器类型很有用
+           exotic architectures.
+外来的架构。
+
+       --metadata OPT=VAL,[...]
+——元数据 OPT = VAL，[ ... ]
+           Specify metadata values for the guest. Possible options include name, uuid, title, and description. This option deprecates -u/--uuid and
+为客户指定元数据值。可能的选项包括名称、 uuid、标题和描述。此选项不建议使用 -u/-- uuid 和
+           --description.
+描述。
+
+           Use --metadata=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsMetadata>
+使用 -- metadata = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsmetadata > 
+
+       --events OPT=VAL,[...]
+-- 事件 OPT = VAL，[ ... ]
+           Specify events values for the guest. Possible options include on_poweroff, on_reboot, and on_crash.
+为来宾指定事件值。可能的选项包括在 _poweroff、在 _reboot 和在 _crash 上。
+
+           Use --events=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsEvents>
+使用 -- events = ? 查看所有可用子选项的列表。详细信息请访问 http://libvirt.org/formatdomain. html # elementevents > 
+
+       --resource OPT=VAL,[...]
+-- 资源 OPT = VAL，[ ... ]
+           Specify resource partitioning for the guest.
+为客户指定资源分区。
+
+           Use --resource=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#resPartition>
+使用 -- resource = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # respartition > 
+
+       --sysinfo OPT=VAL,[...]
+-- sysinfo OPT = VAL，[ ... ]
+           Configure sysinfo/SMBIOS values exposed to the guest OS. '--sysinfo host' can be used to expose the host's SMBIOS info to the VM, otherwise
+配置向来宾操作系统公开的 sysinfo/SMBIOS 值-- sysinfo host’可以用来向虚拟机公开主机的 SMBIOS 信息，否则
+           values can be manually specified.
+值可以手动指定。
+
+           Use --sysinfo=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsSysinfo>
+使用 -- sysinfo = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementssysinfo > 
+
+       --qemu-commandline ARGS
+-- qemu-命令行 ARGS
+           Pass options directly to the qemu emulator. Only works for the libvirt qemu driver. The option can take a string of arguments, for example:
+将选项直接传递到 qemu 模拟器。只适用于 libvirt qemu 驱动程序。这个选项可以包含一串参数，例如:
+
+             --qemu-commandline="-display gtk,gl=on"
+-- qemu-commandline = “-display gtk，gl = on”
+
+           Environment variables are specified with 'env', for example:
+Environment 变量用“ env”指定，例如:
+
+             --qemu-commandline=env=DISPLAY=:0.1
+-- qemu-commandline = env = DISPLAY = : 0.1
+
+           Complete details about the libvirt feature: <https://libvirt.org/drvqemu.html#qemucommand>
+关于 libvirt 特性的完整细节: < https://libvirt.org/drvqemu. html # qemucommand > 
+
+       --vcpus OPTIONS
+-- vcpus OPTIONS
+           Number of virtual cpus to configure for the guest. If 'maxvcpus' is specified, the guest will be able to hotplug up to MAX vcpus while the
+为客户配置的虚拟 cpu 数量。如果指定了“ maxvcpu” ，客户端将能够热插拔到 MAX vcpu，而
+           guest is running, but will startup with VCPUS.
+Guest 正在运行，但将使用 vcpu 启动。
+
+           CPU topology can additionally be specified with sockets, cores, and threads.  If values are omitted, the rest will be autofilled preferring
+CPU 拓扑还可以通过套接字、核心和线程指定。如果省略了值，其余的会自动填充
+           sockets over cores over threads.
+比线程更重要的套接字。
+
+           'cpuset' sets which physical cpus the guest can use. "CPUSET" is a comma separated list of numbers, which can also be specified in ranges or
+“ cpuset”设置客户可以使用的物理 cpu。CPUSET 是一个以逗号分隔的数字列表，也可以用范围或
+           cpus to exclude. Example:
+要排除的 cpu 例子:
+
+               0,2,3,5     : Use processors 0,2,3 and 5
+0,2,3,5: 使用处理器0,2,3和5
+               1-5,^3,8    : Use processors 1,2,4,5 and 8
+1-5，^ 3,8: 使用处理器1,2,4,5和8
+
+           If the value 'auto' is passed, virt-install attempts to automatically determine an optimal cpu pinning using NUMA data, if available.
+如果传递了值“ auto” ，则 virt-install 尝试使用 NUMA 数据(如果可用的话)自动确定最佳 cpu 钉扎。
+
+           Use --vcpus=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsCPUAllocation>
+使用 -- vcpus = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementscpuallocation > 
+
+       --numatune OPTIONS
+-- numatune OPTIONS
+           Tune NUMA policy for the domain process. Example invocations
+调优域进程的 NUMA 策略
+
+               --numatune 1,2,3,4-7
+1,2,3,4-7
+               --numatune 1-3,5,mode=preferred
+-- numatune 1-3,5，mode = preferred
+
+           Specifies the numa nodes to allocate memory from. This has the same syntax as "--vcpus cpuset=" option. mode can be one of 'interleave',
+指定要分配内存的 numa 节点。这与“ -- vcpus cpuset = ”选项的语法相同。模式可以是一个’交织’ ,
+           'preferred', or 'strict' (the default). See 'man 8 numactl' for information about each mode.
+“首选” ，或“严格”(默认)。有关每种模式的信息，请参见“ man8numactl”。
+
+           Use --numatune=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsNUMATuning>
+使用 -- numatune = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsnumatuning > 
+
+       --memtune OPTIONS
+-- memtune OPTIONS
+           Tune memory policy for the domain process. Example invocations
+调整域进程的内存策略。例子调用
+
+               --memtune 1000
+-- memtune 1000
+               --memtune hard_limit=100,soft_limit=60,swap_hard_limit=150,min_guarantee=80
+-- memtune hard _ limit = 100，soft _ limit = 60，swap _ hard _ limit = 150，min _ guarantee = 80
+
+           Use --memtune=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsMemoryTuning>
+使用 -- memtune = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsmemorytuning > 
+
+       --blkiotune OPTIONS
+-- blkiotune OPTIONS
+           Tune blkio policy for the domain process. Example invocations
+调整域进程的 blkio 策略。例子调用
+
+               --blkiotune 100
+-- blkiotune 100
+               --blkiotune weight=100,device_path=/dev/sdc,device_weight=200
+-- blkiotune weight = 100，device _ path =/dev/sdc，device _ weight = 200
+
+           Use --blkiotune=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsBlockTuning>
+使用 -- blkiotune = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsblocktuning > 
+
+       --cpu MODEL[,+feature][,-feature][,match=MATCH][,vendor=VENDOR],...
+-- cpu MODEL [ ，+ feature ][ ,-feature ][ ，MATCH = MATCH ][ ，VENDOR = VENDOR ] ，...
+           Configure the CPU model and CPU features exposed to the guest. The only required value is MODEL, which is a valid CPU model as known to
+配置暴露给客户的 CPU 模型和 CPU 特性。唯一需要的值是 MODEL，它是一个有效的 CPU 模型
+           libvirt.
+Libvirt.
+
+           Libvirt's feature policy values force, require, optional, disable, or forbid, or with the shorthand '+feature' and '-feature', which equal
+Libvirt 的特性策略值强制、要求、可选、禁用或禁止，或者使用简写“ + feature”和“-feature” ，它们相等
+           'force=feature' and 'disable=feature' respectively.
+分别为‘ force = feature’和‘ disable = feature’。
+
+           If exact CPU model is specified virt-install will automatically copy CPU features available on the host to mitigate recent CPU speculative
+如果指定了确切的 CPU 模型，则 virt-install 将自动复制主机上可用的 CPU 特性，以减轻最近的 CPU 投机行为
+           execution side channel and Microarchitectural Store Buffer Data security vulnerabilities.  This however will have some impact on performance
+执行端通道和 Microarchitectural Store Buffer Data 安全漏洞，但是这会对性能产生一些影响
+           and will break migration to hosts without security patches. In order to control this behavior there is a secure parameter. Possible values are
+并且在没有安全补丁的情况下破坏到主机的迁移。为了控制这种行为，有一个安全参数。可能的值是
+           on and off, with on as the default. It is highly recommended to leave this enabled and ensure all virtualization hosts have fully up to date
+打开和关闭，以 on 作为默认值。强烈建议保持这种状态，并确保所有虚拟主机都是最新的
+           microcode, kernel & virtualization software installed.
+微代码，内核和虚拟化软件安装。
+
+           Some examples:
+一些例子:
+
+           --cpu core2duo,+x2apic,disable=vmx
+-- cpu core2duo，+ x2apic，disable = vmx
+               Expose the core2duo CPU model, force enable x2apic, but do not expose vmx
+公开 core2duo CPU 模型，强制启用 x2apic，但不公开 vmx
+
+           --cpu host
+Cpu 主机
+               Expose the host CPUs configuration to the guest. This enables the guest to take advantage of many of the host CPUs features (better
+将主机 cpu 配置公开给客户端。这使得客户端可以利用主机 cpu 的许多特性(更好)
+               performance), but may cause issues if migrating the guest to a host without an identical CPU.
+性能) ，但是如果将客户机迁移到没有相同 CPU 的主机上，可能会导致问题。
+
+           --cpu host-model-only
+-- cpu 主机型号
+               Expose the nearest host CPU model configuration to the guest.  It is the best CPU which can be used for a guest on any of the hosts.
+将最近的主机 CPU 模型配置公开给客户端。它是最好的 CPU，可以用于任何主机上的客户端。
+
+           --cpu cell0.memory=1234,cell0.cpus=0-3,cell1.memory=5678,cell1.cpus=4-7
+-- cpu cell0.memory = 1234，cell0.cpu = 0-3，cell1.memory = 5678，cell1.cpu = 4-7
+               Example of specifying two NUMA cells. This will generate XML like:
+指定两个 NUMA 单元格的示例。这将生成如下 XML:
+
+                 <cpu>
+< cpu > 
+                   <numa>
+< numa > 
+                     <cell cpus="0-3" memory="1234"/>
+< cell cpu = " 0-3" memory = " 1234"/> 
+                     <cell cpus="4-7" memory="5678"/>
+< cell cpu = " 4-7" memory = " 5678"/> 
+                   </numa>
+</numa > 
+                 </cpu>
+</cpu > 
+
+           --cpu host-passthrough,cache.mode=passthrough
+-- cpu 主机-passthrough，cache.mode = passthrough
+               Example of passing through the host cpu's cache information.
+传递主机 cpu 缓存信息的示例。
+
+           Use --cpu=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsCPU>
+使用 -- cpu = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementscpu > 
+
+       --cputune OPTIONS
+-- cputune OPTIONS
+           Tune CPU parameters for the guest.
+为客户调整 CPU 参数。
+
+           Configure which of the host's physical CPUs the domain VCPU will be pinned to. Example invocation
+配置域 VCPU 将被固定到主机的哪个物理 cpu 上
+
+               --cputune vpcupin0.vcpu=0,vpcupin0.cpuset=0-3,vpcupin1.vcpu=1,vpcupin1.cpuset=4-7
+-- cputune vpcupin0.vcpu = 0，vpcupin0.cpuset = 0-3，vpcupin1.vcpu = 1，vpcupin1.cpuset = 4-7
+
+           Use --cputune=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsCPUTuning>
+使用 -- cputune = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementscputuning > 
+
+       --security type=TYPE[,label=LABEL][,relabel=yes|no]
+-- security TYPE = TYPE [ ，LABEL = LABEL ][ ，relabel = yes | no ]
+           Configure domain security driver settings. Type can be either 'static' or 'dynamic'. 'static' configuration requires a security LABEL.
+配置域安全驱动程序设置。类型可以是“静态”或“动态”。“静态”配置需要安全标签。
+           Specifying LABEL without TYPE implies static configuration.
+指定没有 TYPE 的 LABEL 意味着静态配置。
+
+           To have libvirt automatically apply your static label, you must specify relabel=yes. Otherwise disk images must be manually labeled by the
+要让 libvirt 自动应用静态标签，必须指定 relabel = yes。否则磁盘映像必须由
+           admin, including images that virt-install is asked to create.
+Admin，包括要求 virt-install 创建的映像。
+
+           Use --security=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#seclabel>
+使用 -- security = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # seclabel > 
+
+       --features FEAT=on|off,...
+-- features FEAT = on | off，...
+           Set elements in the guests <features> XML on or off. Examples include acpi, apic, eoi, privnet, and hyperv features. Some examples:
+在客户端设置元素 < features > XML 开启或关闭。例子包括 acpi，apic，eoi，privnet 和 hyperv 功能。一些例子:
+
+           --features eoi=on
+-- features eoi = on
+               Enable APIC PV EOI
+启用 apicpv 意向书
+
+           --features hyperv_vapic=on,hyperv_spinlocks=off
+——特性 hyperv _ vapic = on，hyperv _ spinlocks = off
+               Enable hypver VAPIC, but disable spinlocks
+启用 hypver VAPIC，但禁用自旋锁
+
+           --features kvm_hidden=on
+——特性 kvm _ hidden = on
+               Allow the KVM hypervisor signature to be hidden from the guest
+允许 KVM 管理程序签名对客户机隐藏
+
+           --features pvspinlock=on
+-- features pvspinlock = on
+               Notify the guest that the host supports paravirtual spinlocks for example by exposing the pvticketlocks mechanism.
+通知客户端主机支持半虚拟自旋锁，例如通过公开 pvticketlocks 机制。
+
+           --features gic_version=2
+-- features gic _ version = 2
+               This is relevant only for ARM architectures. Possible values are "host" or version number.
+这只与 ARM 架构有关，可能的值是“主机”或版本号。
+
+           --features smm=on
+-- features smm = on
+               This enables System Management Mode of hypervisor. Some UEFI firmwares may require this feature to be present. (QEMU supports SMM only with
+这使系统管理模式的管理程序。一些 UEFI 固件可能需要这个特性。(QEMU 只支持 SMM
+               q35 machine type.)
+Q35机型。)
+
+           Use --features=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsFeatures>
+使用 -- features = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsfeatures > 
+
+       --clock offset=OFFSET,TIMER_OPT=VAL,...
+-- 时钟偏移 = 偏移，计时器 _opt = VAL，..。
+           Configure the guest's <clock> XML. Some supported options:
+配置客户的 < clock > XML。一些支持的选项:
+
+           --clock offset=OFFSET
+-- 时钟偏移 = 偏移
+               Set the clock offset, ex. 'utc' or 'localtime'
+设置时钟偏移，除‘ utc’或‘ localtime’外
+
+           --clock TIMER_present=no
+-- clock TIMER _ present = no
+               Disable a boolean timer. TIMER here might be hpet, kvmclock, etc.
+禁用一个布尔计时器。 TIMER 可能是 hpet，kvmclock 等等。
+
+           --clock TIMER_tickpolicy=VAL
+-- clock TIMER _ tickpolicy = VAL
+               Set a timer's tickpolicy value. TIMER here might be rtc, pit, etc. VAL might be catchup, delay, etc. Refer to the libvirt docs for all
+设置计时器的 tickpolicy 值。TIMER 可能是 rtc，pit，等等。VAL 可能是追赶，延迟等等。参考 libvirt 文档
+               values.
+值。
+
+           Use --clock=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsTime>
+使用 -- clock = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementstime > 
+
+       --pm OPTIONS
+-- 下午选项
+           Configure guest power management features. Example suboptions include suspend_to_mem=on|off and suspend_to_disk=on|off
+配置来宾电源管理特性。示例子选项包括 suspend _ to _ mem = on | off 和 suspend _ to _ disk = on | off
+
+           Use --pm=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsPowerManagement>
+使用 -- pm = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementspowermanagement > 
+
+INSTALLATION OPTIONS
+安装选项
+       -c OPTIONS
+C 选项
+       --cdrom OPTIONS
+-- 光盘选项
+           File or device used as a virtual CD-ROM device.  It can be path to an ISO image or a URL from which to fetch/access a minimal boot ISO image.
+用作虚拟 CD-ROM 设备的文件或设备。它可以是一个 ISO 镜像的路径或者一个 URL，从中获取/访问一个最小的引导 ISO 镜像。
+           The URLs take the same format as described for the "--location" argument. If a cdrom has been specified via the "--disk" option, and neither
+Url 采用与“ -- location”参数所描述的相同格式。如果通过“ -- disk”选项指定了一个光盘，那么
+           "--cdrom" nor any other install option is specified, the "--disk" cdrom is used as the install media.
+也不指定任何其他安装选项，“ -- disk” cdrom 被用作安装媒体。
+
+       -l LOCATION
+位置
+       --location OPTIONS
+-- 地点选择
+           Distribution tree installation source. virt-install can recognize certain distribution trees and fetches a bootable kernel/initrd pair to
+分布树安装源。 virt-install 可以识别特定的分布树，并获取一个可引导的内核/initrd 对到
+           launch the install.
+启动安装程序。
+
+           With libvirt 0.9.4 or later, network URL installs work for remote connections.  virt-install will download kernel/initrd to the local machine,
+在 libvirt 0.9.4或更高版本中，网络 URL 安装用于远程连接。Virt-install 将把 kernel/initrd 下载到本地机器,
+           and then upload the media to the remote host. This option requires the URL to be accessible by both the local and remote host.
+然后将媒体上传到远程主机。这个选项要求本地主机和远程主机都可以访问 URL。
+
+           --location allows things like --extra-args for kernel arguments, and using --initrd-inject. If you want to use those options with CDROM media,
+-- location 允许使用 -- extra-args 作为内核参数，并使用 -- initrd-inject。如果你想在 CDROM 媒体上使用这些选项,
+           you have a few options:
+你有几个选择:
+
+           * Run virt-install as root and do --location ISO
+* Run virt-install as root and do -- location ISO
+
+           * Mount the ISO at a local directory, and do --location DIRECTORY
+* 在本地目录中安装 ISO，并执行 -- location DIRECTORY
+
+           * Mount the ISO at a local directory, export that directory over local http, and do --location http://localhost/DIRECTORY
+* 在本地目录中挂载 ISO，通过本地 http 导出该目录，然后执行 -- location http://localhost/DIRECTORY
+
+           The "LOCATION" can take one of the following forms:
+「地点」可采用下列其中一种形式:
+
+           http://host/path
+Http://host/path
+               An HTTP server location containing an installable distribution image.
+一个包含可安装分布映像的 HTTP 服务器位置。
+
+           ftp://host/path
+Ftp://host/path
+               An FTP server location containing an installable distribution image.
+包含可安装分发映像的 FTP 服务器位置。
+
+           nfs:host:/path or nfs://host/path
+Host:/path 或 nfs://host/path
+               An NFS server location containing an installable distribution image. This requires running virt-install as root.
+一个包含可安装分布映像的 NFS 服务器位置，这需要以 root 身份运行 virt-install。
+
+           DIRECTORY
+目录
+               Path to a local directory containing an installable distribution image. Note that the directory will not be accessible by the guest after
+包含可安装分发映像的本地目录的路径。请注意，该目录将不会被访问后的客户端
+               initial boot, so the OS installer will need another way to access the rest of the install media.
+因此操作系统安装程序需要另一种方式来访问剩余的安装媒体。
+
+           ISO Mount the ISO and probe the directory. This requires running virt-install as root, and has the same VM access caveat as DIRECTORY.
+装入 ISO 并探测目录。这需要以 root 用户身份运行 virt-install，并且有和 DIRECTORY 相同的 VM 访问警告。
+
+           Some distro specific url samples:
+一些发行版特定的 url 示例:
+
+           Fedora/Red Hat Based
+基于 Fedora/Red Hat 的
+               http://download.fedoraproject.org/pub/fedora/linux/releases/25/Server/x86_64/os
+http://download.fedoraproject.org/pub/fedora/linux/releases/25/Server/x86 _ 64/os
+
+           Debian
+Debian
+               http://ftp.us.debian.org/debian/dists/stable/main/installer-amd64/
+Http://ftp.us.debian. org/debian/dists/stable/main/installer-amd64/
+
+           Ubuntu
+Ubuntu
+               http://us.archive.ubuntu.com/ubuntu/dists/wily/main/installer-amd64/
+Http://us.archive.ubuntu. com/ubuntu/dists/wily/main/installer-amd64/
+
+           Suse
+Suse
+               http://download.opensuse.org/distribution/11.0/repo/oss/
+Http://download.opensuse. org/distribution/11.0/repo/oss/
+
+           Mandriva
+Mandriva
+               ftp://ftp.uwsg.indiana.edu/linux/mandrake/official/2009.0/i586/
+Ftp://ftp.uwsg.indiana.edu/linux/mandrake/official/2009.0/i586/
+
+           Mageia
+麦琪拉
+               ftp://distrib-coffee.ipsl.jussieu.fr/pub/linux/Mageia/distrib/1
+ftp://distrib-coffee.ipsl.jussieu.fr/pub/linux/Mageia/distrib/1
+
+       --pxe
+-- pxe
+           Use the PXE boot protocol to load the initial ramdisk and kernel for starting the guest installation process.
+使用 PXE 引导协议加载初始 ramdisk 和内核以启动来宾安装过程。
+
+       --import
+进口的
+           Skip the OS installation process, and build a guest around an existing disk image. The device used for booting is the first device specified
+跳过操作系统安装过程，围绕现有的磁盘映像构建一个客户端。用于引导的设备是指定的第一个设备
+           via "--disk" or "--filesystem".
+通过“ -- disk”或“ -- filesystem”。
+
+       --livecd
+活生生的
+           Specify that the installation media is a live CD and thus the guest needs to be configured to boot off the CDROM device permanently. It may be
+指定安装介质是一张 live CD，因此客户端需要配置为永久启动光驱设备。它可能是
+           desirable to also use the "--disk none" flag in combination.
+最好也结合使用“ -- disknone”标志。
+
+       -x EXTRA
+- x 号外
+       --extra-args OPTIONS
+额外的 args 选项
+           Additional kernel command line arguments to pass to the installer when performing a guest install from "--location". One common usage is
+从“ -- location”执行来宾安装时传递给安装程序的其他内核命令行参数。一个常见的用法是
+           specifying an anaconda kickstart file for automated installs, such as --extra-args "ks=http://myserver/my.ks"
+为自动安装指定一个 anaconda kickstart 文件，比如 -- extra-args“ ks = http://myserver/my.ks" 
+
+       --initrd-inject PATH
+-- initrd-inject PATH
+           Add PATH to the root of the initrd fetched with "--location". This can be used to run an automated install without requiring a network hosted
+将 PATH 添加到用“ -- location”获取的 initrd 的根。这可以用来运行自动安装而不需要托管网络
+           kickstart file:
+Kickstart 文件:
+
+           --initrd-inject=/path/to/my.ks --extra-args "ks=file:/my.ks"
+-- initrd-inject =/path/to/my. ks -- extra-args“ ks = file:/my.ks”
+
+       --os-variant OS_VARIANT
+-- OS-variant OS _ variant
+           Optimize the guest configuration for a specific operating system (ex.  'fedora18', 'rhel7', 'winxp'). While not required, specifying this
+优化特定操作系统的来宾配置(例如‘ fedora18’、‘ rhel7’、‘ winxp’)
+           options is HIGHLY RECOMMENDED, as it can greatly increase performance by specifying virtio among other guest tweaks.
+选项是强烈推荐的，因为它可以通过指定 virtio 和其他来宾调整来大大提高性能。
+
+           By default, virt-install will attempt to auto detect this value from the install media (currently only supported for URL installs).
+默认情况下，virt-install 将尝试从安装媒体中自动检测此值(目前仅支持 URL 安装)。
+           Autodetection can be disabled with the special value 'none'. Autodetection can be forced with the special value 'auto'.
+特殊值“ none”可以禁用自动检测。特殊值“ auto”可以强制自动检测。
+
+           Use the command "osinfo-query os" to get the list of the accepted OS variants.
+使用命令“ osinfo-query OS”获取已接受的操作系统变体列表。
+
+       --boot BOOTOPTS
+-- boot boottopts
+           Optionally specify the post-install VM boot configuration. This option allows specifying a boot device order, permanently booting off
+可选地指定安装后的 VM 启动配置。这个选项允许指定启动设备顺序，永久性地关闭启动
+           kernel/initrd with option kernel arguments, and enabling a BIOS boot menu (requires libvirt 0.8.3 or later)
+带有选项内核参数的 kernel/initrd，并启用 BIOS 启动菜单(需要 libvirt 0.8.3或更高版本)
+
+           --boot can be specified in addition to other install options (such as --location, --cdrom, etc.) or can be specified on its own. In the latter
+-- boot 可以在其他安装选项(如 -- location、 -- cdrom 等)之外指定，也可以自己指定。在后者中
+           case, behavior is similar to the --import install option: there is no 'install' phase, the guest is just created and launched as specified.
+在这种情况下，行为类似于 -- import install 选项: 没有“安装”阶段，客户端只是按照指定的方式创建和启动。
+
+           Some examples:
+一些例子:
+
+           --boot cdrom,fd,hd,network,menu=on
+-- boot cdrom，fd，hd，network，menu = on
+               Set the boot device priority as first cdrom, first floppy, first harddisk, network PXE boot. Additionally enable BIOS boot menu prompt.
+设置引导设备的优先级为第一个光盘，第一个软盘，第一个硬盘，网络 PXE 引导。另外启用 BIOS 启动菜单提示。
+
+           --boot kernel=KERNEL,initrd=INITRD,kernel_args="console=/dev/ttyS0"
+-- boot KERNEL = KERNEL，INITRD = INITRD，KERNEL _ args = “ console =/dev/ttyS0”
+               Have guest permanently boot off a local kernel/initrd pair, with the specified kernel options.
+使用指定的内核选项，让 guest 永久启动一个本地内核/initrd 对。
+
+           --boot kernel=KERNEL,initrd=INITRD,dtb=DTB
+-- boot KERNEL = KERNEL，INITRD = INITRD，DTB = DTB
+               Have guest permanently boot off a local kernel/initrd pair with an external device tree binary. DTB can be required for some non-x86
+让 guest 用外部设备树二进制永久引导本地内核/initrd 对。一些非 x86可能需要 DTB
+               configurations like ARM or PPC
+配置，如 ARM 或 PPC
+
+           --boot loader=BIOSPATH
+-- boot loader = BIOSPATH
+               Use BIOSPATH as the virtual machine BIOS.
+使用 BIOSPATH 作为虚拟机 BIOS。
+
+           --boot menu=on,useserial=on
+-- boot menu = on，useserial = on
+               Enable the bios boot menu, and enable sending bios text output over serial console.
+启用 bios 启动菜单，通过串行控制台发送 bios 文本输出。
+
+           --boot init=INITPATH
+-- boot init = INITPATH
+               Path to a binary that the container guest will init. If a root "--filesystem" has been specified, virt-install will default to /sbin/init,
+容器来宾将初始化的二进制文件的路径。如果指定了根“ -- filesystem” ，virt-install 默认为/sbin/init,
+               otherwise will default to /bin/sh.
+否则默认为/bin/sh。
+
+           --boot uefi
+-- boot uefi
+               Configure the VM to boot from UEFI. In order for virt-install to know the correct UEFI parameters, libvirt needs to be advertising known
+配置虚拟机以从 UEFI 引导。为了让 virt-install 知道正确的 UEFI 参数，libvirt 需要被广告知道
+               UEFI binaries via domcapabilities XML, so this will likely only work if using properly configured distro packages.
+通过 domcapabilities XML 的 UEFI 二进制文件，所以这可能只有在使用正确配置的发行包时才能起作用。
+
+           --boot loader=/.../OVMF_CODE.fd,loader_ro=yes,loader_type=pflash,nvram_template=/.../OVMF_VARS.fd,loader_secure=no
+-- boot loader =/.../OVMF _ code. fd，loader _ ro = yes，loader _ type = pflash，nvram _ template =/.../OVMF _ vars. fd，loader _ secure = no
+               Specify that the virtual machine use the custom OVMF binary as boot firmware, mapped as a virtual flash chip. In addition, request that
+指定虚拟机使用自定义的 OVMF 二进制文件作为引导固件，映射为虚拟闪存芯片。另外，请求
+               libvirt instantiate the VM-specific UEFI varstore from the custom "/.../OVMF_VARS.fd" varstore template. This is the recommended UEFI
+Libvirt 从定制的“/.../OVMF _ vars. fd” varstore 模板中实例化特定于 vm 的 UEFI varstore。这是推荐的 UEFI
+               setup, and should be used if --boot uefi doesn't know about your UEFI binaries. If your UEFI firmware supports Secure boot feature you can
+如果 -- boot UEFI 不知道您的 UEFI 二进制文件，则应该使用它。如果你的 UEFI 固件支持安全引导功能，你可以
+               enable it via loader_secure.
+通过加载程序启用它。
+
+           Use --boot=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsOS>
+使用 -- boot = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsos > 
+
+       --idmap OPTIONS
+-- idmap OPTIONS
+           If the guest configuration declares a UID or GID mapping, the 'user' namespace will be enabled to apply these.  A suitably configured UID/GID
+如果来宾配置声明了 UID 或 GID 映射，则启用“ user”命名空间来应用这些。一个适当配置的 UID/GID
+           mapping is a pre-requisite to make containers secure, in the absence of sVirt confinement.
+映射是在没有 sVirt 约束的情况下保证容器安全的先决条件。
+
+           --idmap can be specified to enable user namespace for LXC containers
+可以指定 idmap 以启用 LXC 容器的用户命名空间
+
+           Example:
+例子:
+               --idmap uid_start=0,uid_target=1000,uid_count=10,gid_start=0,gid_target=1000,gid_count=10
+-- idmap uid _ start = 0，uid _ target = 1000，uid _ count = 10，gid _ start = 0，gid _ target = 1000，gid _ count = 10
+
+           Use --idmap=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsOSContainer>
+使用 -- idmap = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsoscontainer > 
+
+STORAGE OPTIONS
+储存选择
+       --disk OPTIONS
+-- 磁盘选项
+           Specifies media to use as storage for the guest, with various options. The general format of a disk string is
+使用各种选项指定用作客户存储的媒体。磁盘字符串的一般格式为
+
+               --disk opt1=val1,opt2=val2,...
+磁盘 opt1 = val1，opt2 = val2，..。
+
+           The simplest invocation to create a new 10G disk image and associated disk device:
+创建新的10G 磁盘映像和相关磁盘设备的最简单调用:
+
+               --disk size=10
+-- 磁盘大小 = 10
+
+           virt-install will generate a path name, and place it in the default image location for the hypervisor. To specify media, the command can either
+Virt-install 将生成一个路径名，并将其放置在 hypervisor 的默认映像位置。为了指定媒体，命令可以
+           be:
+如下:
+
+               --disk /some/storage/path[,opt1=val1]...
+-- disk/some/storage/path [ ，opt1 = val1] ...
+
+           or explicitly specify one of the following arguments:
+或明确指定下列参数之一:
+
+           path
+路径
+               A path to some storage media to use, existing or not. Existing media can be a file or block device.
+指向要使用的某些存储媒体的路径，不管是否存在。存在媒体可以是文件或块设备。
+
+               Specifying a non-existent path implies attempting to create the new storage, and will require specifying a 'size' value. Even for remote
+指定一个不存在的路径意味着尝试创建新的存储，并且需要指定一个“ size”值。即使对于远程
+               hosts, virt-install will try to use libvirt storage APIs to automatically create the given path.
+Host，virt-install 将尝试使用 libvirt 存储 api 自动创建给定的路径。
+
+               If the hypervisor supports it, path can also be a network URL, like http://example.com/some-disk.img . For network paths, they hypervisor
+如果 hypervisor 支持它，那么 path 也可以是一个网络 URL，比如 http://example.com/some-disk.img
+               will directly access the storage, nothing is downloaded locally.
+将直接访问存储，没有任何东西是在本地下载。
+
+           pool
+游泳池
+               An existing libvirt storage pool name to create new storage on. Requires specifying a 'size' value.
+现有的 libvirt 存储池名称要在.. 上创建新存储，需要指定一个“ size”值。
+
+           vol An existing libvirt storage volume to use. This is specified as 'poolname/volname'.
+要使用的现有 libvirt 存储卷。这被指定为“ poolname/volname”。
+
+           Other available options:
+其他可行方案:
+
+           device
+装置
+               Disk device type. Value can be 'cdrom', 'disk', 'lun' or 'floppy'. Default is 'disk'. If a 'cdrom' is specified, and no install method is
+磁盘设备类型。Value 可以是“ cdrom”、“ disk”、“ lun”或“ floppy”。默认值是“ disk”。如果指定了“ cdrom” ，并且没有安装方法是
+               chosen, the cdrom is used as the install media.
+选择光盘作为安装介质。
+
+           boot_order
+启动指令
+               Guest installation with multiple disks will need this parameter to boot correctly after being installed. A boot_order parameter will take
+带有多个磁盘的 Guest 安装需要此参数才能在安装后正确引导
+               values 1,2,3,... Devices with lower value has higher priority.
+值1,2,3，... 值较低的设备优先级较高。
+
+           bus Disk bus type. Value can be 'ide', 'sata', 'scsi', 'usb', 'virtio' or 'xen'.  The default is hypervisor dependent since not all hypervisors
+总线磁盘总线类型。Value 可以是‘ ide’、‘ sata’、‘ scsi’、‘ usb’、‘ virtio’或‘ xen’。默认值是依赖于管理程序的，因为并不是所有的管理程序
+               support all bus types.
+支持所有类型的巴士。
+
+           removable
+可移动的
+               Sets the removable flag (/sys/block/$dev/removable on Linux). Only used with QEMU and bus=usb. Value can be 'on' or 'off'.
+设置可移动的标志(/sys/block/$dev/removable on Linux)。仅用于 QEMU 和 bus = usb。 Value 可以是‘ on’或‘ off’。
+
+           readonly
+只读
+               Set drive as readonly (takes 'on' or 'off')
+将驱动器设置为只读(选择“开启”或“关闭”)
+
+           shareable
+可分享的
+               Set drive as shareable (takes 'on' or 'off')
+设置驱动器为可共享(可选择“开启”或“关闭”)
+
+           size
+大小
+               size (in GiB) to use if creating new storage
+创建新存储时使用的大小(以 GiB 表示)
+
+           sparse
+稀疏
+               whether to skip fully allocating newly created storage. Value is 'yes' or 'no'. Default is 'yes' (do not fully allocate) unless it isn't
+是否跳过完全分配新创建的存储。值是“是”或“否”。默认值是“ yes”(不要完全分配) ，除非它不是
+               supported by the underlying storage type.
+由基础存储类型支持。
+
+               The initial time taken to fully-allocate the guest virtual disk (sparse=no) will be usually balanced by faster install times inside the
+完全分配来宾虚拟磁盘(稀疏 = 否)所花费的初始时间通常会被内部更快的安装时间平衡
+               guest. Thus use of this option is recommended to ensure consistently high performance and to avoid I/O errors in the guest should the host
+译者:。因此，建议使用这个选项，以确保持续的高性能，并避免在客户端发生 I/O 错误
+               filesystem fill up.
+文件系统填满。
+
+           backing_store
+支持商店
+               Path to a disk to use as the backing store for the newly created image.
+用作新创建映像的备份存储器的磁盘路径。
+
+           backing_format
+支持 _ 格式
+               Disk image format of backing_store
+Back_store 的磁盘映像格式
+
+           cache
+缓存
+               The cache mode to be used. The host pagecache provides cache memory.  The cache value can be 'none', 'writethrough', 'directsync', 'unsafe'
+要使用的缓存模式。主机页面缓存提供缓存内存。缓存值可以是‘ none’ ，‘ writethrough’ ，‘ directsync’ ，‘ unsafe’
+               or 'writeback'.  'writethrough' provides read caching. 'writeback' provides read and write caching. 'directsync' bypasses the host page
+“ writethrough”提供读缓存。“ writeback”提供读和写缓存。“ directsync”绕过主页
+               cache. 'unsafe' may cache all content and ignore flush requests from the guest.
+“不安全”可能会缓存所有内容并忽略来自客户端的刷新请求。
+
+           discard
+弃掉
+               Whether discard (also known as "trim" or "unmap") requests are ignored or passed to the filesystem. The value can be either "unmap" (allow
+是否丢弃(也称为“ trim”或“ unmap”)请求被忽略或传递给文件系统。值可以是“ unmap”(允许
+               the discard request to be passed) or "ignore" (ignore the discard request). Since 1.0.6 (QEMU and KVM only)
+要传递的放弃请求)或“忽略”(忽略放弃请求)
+
+           format
+格式
+               Disk image format. For file volumes, this can be 'raw', 'qcow2', 'vmdk', etc. See format types in <http://libvirt.org/storage.html> for
+磁盘映像格式。对于文件卷，可以是‘ raw’、‘ qcow2’、‘ vmdk’等
+               possible values. This is often mapped to the driver_type value as well.
+可能的值。这通常也映射到驱动程序 _ 类型值。
+
+               If not specified when creating file images, this will default to 'qcow2'.
+如果在创建文件映像时没有指定，则默认为“ qcow2”。
+
+               If creating storage, this will be the format of the new image. If using an existing image, this overrides libvirt's format auto-detection.
+如果创建存储，这将是新映像的格式。如果使用现有的图像，这将覆盖 libvirt 的格式自动检测。
+
+           driver_name
+司机姓名
+               Driver name the hypervisor should use when accessing the specified storage. Typically does not need to be set by the user.
+访问指定存储时，管理程序应使用的驱动程序名称。通常不需要由用户设置。
+
+           driver_type
+驱动程序类型
+               Driver format/type the hypervisor should use when accessing the specified storage. Typically does not need to be set by the user.
+访问指定存储时，管理程序应该使用的 Driver 格式/类型。通常不需要由用户设置。
+
+           io  Disk IO backend. Can be either "threads" or "native".
+IO 磁盘 IO 后端。可以是“线程”或“本机”。
+
+           error_policy
+错误保险单
+               How guest should react if a write error is encountered. Can be one of "stop", "ignore", or "enospace"
+如果遇到写入错误，客户应该如何反应。可以是“停止”、“忽略”或“ enospace”之一
+
+           serial
+连环杀手
+               Serial number of the emulated disk device. This is used in linux guests to set /dev/disk/by-id symlinks. An example serial number might be:
+模拟磁盘设备的序列号。这在 linux 客户端用来设置/dev/disk/by-id 符号链接。一个序列号的例子可能是:
+               WD-WMAP9A966149
+WD-WMAP9A966149
+
+           startup_policy
+启动政策
+               It defines what to do with the disk if the source file is not accessible.  See possible values in
+它定义了如果源文件不可访问时如何处理磁盘
+               <http://www.libvirt.org/formatdomain.html#elementsDisks>, "startupPolicy" attribute of the <disk> element
+< http://www.libvirt.org/formatdomain. html # elementsdisk > ，< disk > 元素的“ startupPolicy”属性
+
+           snapshot_policy
+快照政策
+               Defines default behavior of the disk during disk snapshots.  See possible values in
+定义磁盘快照期间磁盘的默认行为
+               <http://www.libvirt.org/formatdomain.html#elementsDisks>, "snapshot" attribute of the <disk> element.
+< http://www.libvirt.org/formatdomain. html # elementsdisk > ，< disk > 元素的“ snapshot”属性。
+
+           See the examples section for some uses. This option deprecates -f/--file, -s/--file-size, --nonsparse, and --nodisks.
+这个选项不建议使用 -f/-- file、-s/-- file-size、 -- nonsparse 和 -- nodisk。
+
+           Use --disk=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsDisks>
+使用 -- disk = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsdisk > 
+
+       --filesystem
+-- 文件系统
+           Specifies a directory on the host to export to the guest. The most simple invocation is:
+指定要导出给客户端的主机目录。最简单的调用是:
+
+               --filesystem /source/on/host,/target/point/in/guest
+——文件系统/源/on/host,/target/point/in/guest
+
+           Which will work for recent QEMU and linux guest OS or LXC containers. For QEMU, the target point is just a mounting hint in sysfs, so will not
+它适用于最近的 QEMU 和 linux 客户操作系统或 LXC 容器。对于 QEMU，目标点只是 sysfs 中的一个安装提示，所以不会
+           be automatically mounted.
+自动安装。
+
+           The following explicit options can be specified:
+可以指定下列显式选项:
+
+           type
+类型
+               The type or the source directory. Valid values are 'mount' (the default) or 'template' for OpenVZ templates.
+类型或源目录。有效值为 OpenVZ 模板的“ mount”(默认值)或“ template”。
+
+           mode
+模式
+               The access mode for the source directory from the guest OS. Only used with QEMU and type=mount. Valid modes are 'passthrough' (the
+来自客户操作系统的源目录的访问模式。仅用于 QEMU 和 type = mount。有效的模式是“通过”(
+               default), 'mapped', or 'squash'. See libvirt domain XML documentation for more info.
+默认)、“映射”或“压缩”。更多信息参见 libvirt 域 XML 文档。
+
+           source
+资料来源
+               The directory on the host to share.
+主机上要共享的目录。
+
+           target
+目标
+               The mount location to use in the guest.
+在客人身上使用的安装位置。
+
+           Use --filesystem=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsFilesystems>
+使用 -- filesystem = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsfilesystems > 
+
+NETWORKING OPTIONS
+网络选择
+       -w OPTIONS
+- 选择
+       --network OPTIONS
+网络选项
+           Connect the guest to the host network. The value for "NETWORK" can take one of 4 formats:
+将客户端连接到主机网络。“ NETWORK”的值可以采用以下四种格式之一:
+
+           bridge=BRIDGE
+桥，桥
+               Connect to a bridge device in the host called "BRIDGE". Use this option if the host has static networking config & the guest requires full
+在主机中连接一个叫做“ BRIDGE”的桥接设备。如果主机有静态网络配置，客户需要完整配置，请使用此选项
+               outbound and inbound connectivity  to/from the LAN. Also use this if live migration will be used with this guest.
+对局域网的出站和入站连接。如果实时迁移将与这个客户端一起使用，也可以使用这个。
+
+           network=NAME
+网络 = 名称
+               Connect to a virtual network in the host called "NAME". Virtual networks can be listed, created, deleted using the "virsh" command line
+在主机上连接一个叫做“ NAME”的虚拟网络。使用“ virsh”命令行可以列出、创建、删除虚拟网络
+               tool. In an unmodified install of "libvirt" there is usually a virtual network with a name of "default". Use a virtual network if the host
+工具。在未修改的“ libvirt”安装中，通常会有一个名为“ default”的虚拟网络。使用虚拟网络，如果主机
+               has dynamic networking (eg NetworkManager), or using wireless. The guest will be NATed to the LAN by whichever connection is active.
+动态网络(如网络管理器) ，或者使用无线网络。无论哪个连接处于活动状态，客户都将被固定到局域网。
+
+           type=direct,source=IFACE[,source_mode=MODE]
+Type = direct，source = IFACE [ ，source _ MODE = MODE ]
+               Direct connect to host interface IFACE using macvtap.
+使用 macvtap 直接连接到主机接口 IFACE。
+
+           user
+用户
+               Connect to the LAN using SLIRP. Only use this if running a QEMU guest as an unprivileged user. This provides a very limited form of NAT.
+使用 SLIRP 连接到局域网。只有在 QEMU 客户端作为非特权用户运行时才使用此方法。这提供了一种非常有限的 NAT 形式。
+
+           none
+一个都没有
+               Tell virt-install not to add any default network interface.
+告诉 virt-install 不要添加任何默认的网络接口。
+
+           If this option is omitted a single NIC will be created in the guest. If there is a bridge device in the host with a physical interface
+如果省略此选项，将在 guest 中创建单个 NIC。如果主机中有一个具有物理接口的桥接设备
+           enslaved, that will be used for connectivity. Failing that, the virtual network called "default" will be used. This option can be specified
+被奴役的，将被用于连接。如果做不到这一点，将使用名为“默认”的虚拟网络。可以指定此选项
+           multiple times to setup more than one NIC.
+多次设置多个网卡。
+
+           Other available options are:
+其他可供选择的方法包括:
+
+           model
+模特
+               Network device model as seen by the guest. Value can be any nic model supported by the hypervisor, e.g.: 'e1000', 'rtl8139', 'virtio', ...
+客人看到的网络设备模型。Value 可以是任何由 hypervisor 支持的 nic 模型，例如: ‘ e1000’ ，‘ rtl8139’ ，‘ virtio’ ，..。
+
+           mac Fixed MAC address for the guest; If this parameter is omitted, or the value "RANDOM" is specified a suitable address will be randomly
+MAC 固定的客户 MAC 地址; 如果省略了这个参数，或者指定了值“ RANDOM” ，合适的地址将是随机的
+               generated. For Xen virtual machines it is required that the first 3 pairs in the MAC address be the sequence '00:16:3e', while for QEMU or
+产生的。对于 Xen 虚拟机，要求 MAC 地址中的前3对是序列‘00:16:3e’ ，而对于 QEMU 或
+               KVM virtual machines it must be '52:54:00'.
+KVM 虚拟机必须是“52:54:00”。
+
+           filterref
+过滤器
+               Controlling firewall and network filtering in libvirt. Value can be any nwfilter defined by the "virsh" 'nwfilter' subcommands. Available
+在 libvirt 中控制防火墙和网络过滤。 Value 可以是由“ virsh”“ nwfilter”子命令定义的任何 nwfilter
+               filters can be listed by running 'virsh nwfilter-list', e.g.: 'clean-traffic', 'no-mac-spoofing', ...
+过滤器可以通过运行‘ virsh nwfilter-list’来列出，例如: ‘ clean-traffic’ ，‘ no-mac-spoofing’ ，..。
+
+           virtualport_type
+Virtualport _ 类型
+               The type of virtual port profile, one the following values
+虚拟端口配置文件的类型，其中一个值如下
+
+               "802.Qbg"
+“802qbg”
+                   The following additional parameters are accepted
+接受以下附加参数
+
+                   virtualport_managerid
+Virtualport_managerid
+                       The VSI Manager ID identifies the database containing the VSI type and instance definitions. This is an integer value and the value
+VSI Manager ID 标识包含 VSI 类型和实例定义的数据库。这是一个整数值和值
+                       0 is reserved.
+0是保留的。
+
+                   virtualport_typeid
+Virtualport _ typeid
+                       The VSI Type ID identifies a VSI type characterizing the network access. VSI types are typically managed by network administrator.
+VSI 类型 ID 标识了表征网络访问的 VSI 类型。 VSI 类型通常由网络管理员管理。
+                       This is an integer value.
+这是一个整数值。
+
+                   virtualport_typeidversion
+Virtualport _ typeidversion
+                       The VSI Type Version allows multiple versions of a VSI Type. This is an integer value.
+VSI 类型版本允许多个版本的 VSI 类型。这是一个整数值。
+
+                   virtualport_instanceid
+Virtualport _ instanceid
+                       The VSI Instance ID Identifier is generated when a VSI instance (i.e. a virtual interface of a virtual machine) is created. This is
+VSI 实例 ID 标识符是在创建 VSI 实例(即虚拟机的虚拟接口)时生成的。这是
+                       a globally unique identifier.
+全局唯一标识符。
+
+               "802.Qbh"
+“802 Qbh”
+                   The following additional parameters are accepted
+接受以下附加参数
+
+                   virtualport_profileid
+虚拟端口 _ 配置文件
+                       The profile ID contains the name of the port profile that is to be applied to this interface. This name is resolved by the port
+概要文件 ID 包含应用于此接口的端口概要文件的名称。该名称由端口解析
+                       profile database into the network parameters from the port profile, and those network parameters will be applied to this interface.
+配置文件数据库到网络参数从端口配置文件，这些网络参数将被应用到这个接口。
+
+               "openvswitch"
+“ openvswitch”
+                   The following additional parameters are accepted
+接受以下附加参数
+
+                   virtualport_profileid
+虚拟端口 _ 配置文件
+                       The OpenVSwitch port profile for the interface
+接口的 OpenVSwitch 端口配置文件
+
+                   virtualport_interfaceid
+虚拟端口 _ 接口
+                       A UUID to uniquely identify the interface. If omitted one will be generated automatically
+唯一标识接口的 UUID。如果省略，将自动生成一个
+
+               "midonet"
+“ midonet”
+                   The following additional parameters are accepted
+接受以下附加参数
+
+                   virtualport_interfaceid
+虚拟端口 _ 接口
+                       A UUID identifying the port in the network to which the interface will be bound
+标识接口将绑定到的网络端口的 UUID
+
+           Use --network=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsNICS>
+使用 -- network = ? 查看所有可用子选项的列表。详细信息请访问 http://libvirt.org/formatdomain. html # elementsnics > 
+
+           This option deprecates -m/--mac, -b/--bridge, and --nonetworks
+此选项不支持 -m/-- mac、-b/-- bridge 和 -- nonetworks
+
+GRAPHICS OPTIONS
+图形选项
+       If no graphics option is specified, "virt-install" will try to select the appropriate graphics if the DISPLAY environment variable is set,
+如果没有指定图形选项，如果设置了 DISPLAY 环境变量，“ virt-install”将尝试选择适当的图形,
+       otherwise '--graphics none' is used.
+否则“——不使用图形”。
+
+       --graphics TYPE,opt1=arg1,opt2=arg2,...
+-- graphics TYPE，opt1 = arg1，opt2 = arg2，...
+           Specifies the graphical display configuration. This does not configure any virtual hardware, just how the guest's graphical display can be
+指定图形显示配置。这不配置任何虚拟硬件，只是客户的图形显示如何可以
+           accessed.  Typically the user does not need to specify this option, virt-install will try and choose a useful default, and launch a suitable
+进入。通常用户不需要指定这个选项，virt-install 会尝试选择一个有用的默认值，然后启动一个合适的
+           connection.
+: 连接。
+
+           General format of a graphical string is
+图形字符串的一般格式为
+
+               --graphics TYPE,opt1=arg1,opt2=arg2,...
+-- graphics TYPE，opt1 = arg1，opt2 = arg2，...
+
+           For example:
+例如:
+
+               --graphics vnc,password=foobar
+-- graphics vnc，password = foobar
+
+           The supported options are:
+受支持的方案包括:
+
+           type
+类型
+               The display type. This is one of:
+显示类型。这是:
+
+               vnc
+Vnc
+
+               Setup a virtual console in the guest and export it as a VNC server in the host. Unless the "port" parameter is also provided, the VNC
+在客户端设置虚拟控制台，并将其导出为主机中的 VNC 服务器。除非还提供了“ port”参数，否则 VNC
+               server will run on the first free port number at 5900 or above. The actual VNC display allocated can be obtained using the "vncdisplay"
+服务器将在第一个自由端口号为5900或以上时运行。实际分配的 VNC 显示可以通过“ vncdisplay”获得
+               command to "virsh" (or virt-viewer(1) can be used which handles this detail for the use).
+命令“ virsh”(或 virt-viewer (1)可以用来处理这些细节)。
+
+               spice
+香料
+
+               Export the guest's console using the Spice protocol. Spice allows advanced features like audio and USB device streaming, as well as
+使用 Spice 协议导出客户端的控制台。Spice 允许高级功能，如音频和 USB 设备流，以及
+               improved graphical performance.
+改进的图形性能。
+
+               Using spice graphic type will work as if those arguments were given:
+使用香料图形类型将工作，如果这些参数给出:
+
+                   --video qxl --channel spicevmc
+-- video qxl -- channel spicevmc
+
+               none
+一个都没有
+
+               No graphical console will be allocated for the guest. Guests will likely need to have a text console configured on the first serial port in
+不会为客人分配任何图形控制台。Guest 可能需要在2010年的第一个串行端口上配置一个文本控制台
+               the guest (this can be done via the --extra-args option). The command 'virsh console NAME' can be used to connect to the serial device.
+客户(这可以通过 -- extra-args 选项完成)。命令‘ virsh console NAME’可以用来连接到串行设备。
+
+           port
+左舷
+               Request a permanent, statically assigned port number for the guest console. This is used by 'vnc' and 'spice'
+请求一个永久的，静态分配的客户端端口号。这是由‘ vnc’和‘ spice’使用的
+
+           tlsport
+运动员
+               Specify the spice tlsport.
+指定香料运动。
+
+           listen
+听着
+               Address to listen on for VNC/Spice connections. Default is typically 127.0.0.1 (localhost only), but some hypervisors allow changing this
+默认值通常为127.0.0.1(仅限本地主机) ，但是一些管理程序允许更改这个值
+               globally (for example, the qemu driver default can be changed in /etc/libvirt/qemu.conf).  Use 0.0.0.0 to allow access from other machines.
+全局地(例如，qemu 驱动程序默认值可以在/etc/libvirt/qemu 中更改。Conf).使用0.0.0.0允许来自其他机器的访问。
+
+               Use 'none' to specify that the display server should not listen on any port. The display server can be accessed only locally through
+使用“ none”指定显示服务器不应侦听任何端口。显示服务器只能在本地通过
+               libvirt unix socket (virt-viewer with --attach for instance).
+Libvirt unix socket (virt-viewer with -- attach).
+
+               Use 'socket' to have the VM listen on a libvirt generated unix socket path on the host filesystem.
+使用“ socket”让 VM 侦听主机文件系统上 libvirt 生成的 unix 套接字路径。
+
+               This is used by 'vnc' and 'spice'
+这是由‘ vnc’和‘ spice’使用的
+
+           keymap
+键盘地图
+               Request that the virtual console be configured to run with a specific keyboard layout. If the special value 'local' is specified, virt-
+请求将虚拟控制台配置为使用特定键盘布局运行。如果指定了特殊的值“ local” ，virt-
+               install will attempt to configure to use the same keymap as the local system. A value of 'none' specifically defers to the hypervisor.
+Install 将尝试配置为使用与本地系统相同的键盘映射。值为“ none”的操作系统管理程序。
+               Default behavior is hypervisor specific, but typically is the same as 'local'. This is used by 'vnc' and 'spice'.
+Default 行为是特定于 hypervisor 的，但通常与‘ local’相同。
+
+           password
+密码
+               Request a console password, required at connection time. Beware, this info may end up in virt-install log files, so don't use an important
+请求连接时需要的控制台密码。注意，这些信息可能最终会出现在 virt-install 日志文件中，所以不要使用重要的
+               password. This is used by 'vnc' and 'spice'
+这个密码由“ vnc”和“ spice”使用
+
+           gl  Whether to use OpenGl accelerated rendering. Value is 'yes' or 'no'. This is used by 'spice'.
+是否使用 OpenGl 加速渲染。值是“是”或“否”。这是由“ spice”使用的。
+
+           rendernode
+渲染节点
+               DRM render node path to use. This is used when 'gl' is enabled.
+DRM 渲染节点路径使用。当启用“ gl”时使用。
+
+           Use --graphics=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsGraphics>
+使用 -- graphics = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsgraphics > 
+
+           This deprecates the following options: --vnc, --vncport, --vnclisten, -k/--keymap, --sdl, --nographics
+这不建议使用以下选项: -- vnc、 -- vncport、 -- vnclisten、-k/-- keymap、 -- sdl、 -- nographics
+
+       --noautoconsole
+没有自动控制台
+           Don't automatically try to connect to the guest console. The default behaviour is to launch virt-viewer(1) to display the graphical console, or
+不要自动尝试连接到来宾控制台。默认的行为是启动 virt-viewer (1)来显示图形控制台，或者
+           to run the "virsh" "console" command to display the text console. Use of this parameter will disable this behaviour.
+运行“ virsh”“ console”命令来显示文本控制台。使用此参数将禁用此行为。
+
+VIRTUALIZATION OPTIONS
+虚拟化选项
+       Options to override the default virtualization type choices.
+选项来重写默认的虚拟化类型选项。
+
+       -v
+V
+       --hvm
+-- hvm
+           Request the use of full virtualization, if both para & full virtualization are available on the host. This parameter may not be available if
+请求使用完全虚拟化，如果段和完全虚拟化在主机上都可用。此参数可能不可用，如果
+           connecting to a Xen hypervisor on a machine without hardware virtualization support. This parameter is implied if connecting to a QEMU based
+在没有硬件虚拟化支持的情况下连接到机器上的 Xen 管理程序。如果连接到一个基于 QEMU 的
+           hypervisor.
+管理程序。
+
+       -p
+P
+       --paravirt
+半病毒
+           This guest should be a paravirtualized guest. If the host supports both para & full virtualization, and neither this parameter nor the "--hvm"
+这个客人应该是一个半虚拟化的客人。如果宿主同时支持 para 和 full 虚拟化，而且这个参数和“ -- hvm”都不支持
+           are specified, this will be assumed.
+指定，这将被假定为。
+
+       --container
+集装箱
+           This guest should be a container type guest. This option is only required if the hypervisor supports other guest types as well (so for example
+这个客人应该是容器类型的客人。只有当管理程序也支持其他类型的客户端时，才需要这个选项(例如
+           this option is the default behavior for LXC and OpenVZ, but is provided for completeness).
+这个选项是 LXC 和 OpenVZ 的默认行为，但是是为了完整性而提供的)。
+
+       --virt-type
+虚拟类型
+           The hypervisor to install on. Example choices are kvm, qemu, or xen.  Available options are listed via 'virsh capabilities' in the <domain>
+要安装在其上的管理程序。示例选择是 kvm、 qemu 或 xen。可用的选项通过“ virsh 功能”在 < domain > 中列出
+           tags.
+标签。
+
+           This deprecates the --accelerate option, which is now the default behavior. To install a plain QEMU guest, use '--virt-type qemu'
+这将不推荐使用 -- accelerate 选项，它现在是默认行为
+
+DEVICE OPTIONS
+设备选项
+       All devices have a set of address.* options for configuring the particulars of the device's address on its parent controller or bus.  See
+所有设备都有一组地址。* 在父控制器或总线上配置设备地址详细信息的选项。参见
+       "http://libvirt.org/formatdomain.html#elementsAddress" for details.
+“ http://libvirt.org/formatdomain. html # elementsaddress”了解详情。
+
+       --controller OPTIONS
+-- 控制器选项
+           Attach a controller device to the guest. TYPE is one of: ide, fdc, scsi, sata, virtio-serial, or usb.
+将控制器设备附加到客户端。 TYPE 是 ide、 fdc、 scsi、 sata、 virtio-serial 或 usb 的一种。
+
+           Controller also supports the special values usb2 and usb3 to specify which version of the USB controller should be used (version 2 or 3).
+Controller 还支持特殊值 usb2和 usb3来指定应该使用哪个版本的 USB 控制器(版本2或3)。
+
+           model
+模特
+               Controller model.  These may vary according to the hypervisor and its version.  Most commonly used models are e.g. auto, virtio-scsi for
+控制器模型。这些可能会根据管理程序及其版本而有所不同。最常用的模型是 auto，virtio-scsi for
+               the scsi controller, ehci or none for the usb controller.  For full list and further details on controllers/models, see
+Usb 控制器的 scsi 控制器，ehci 或 none。有关控制器/型号的完整列表和更多详细信息，请参见
+               "http://libvirt.org/formatdomain.html#elementsControllers".
+图片来源: http://libvirt.org/formatdomain. html。
+
+           address
+地址
+               Shorthand for setting a manual PCI address from an lscpi style string.  The preferred method for setting this is using the address.*
+从 lscpi 样式字符串设置手动 PCI 地址的简写。首选的设置方法是使用地址。*
+               parameters.
+参数。
+
+           index
+索引
+               A decimal integer describing in which order the bus controller is encountered, and to reference the controller bus.
+一种十进制整数，描述遇到总线控制器的顺序，并引用控制器总线。
+
+           master
+师父
+               Applicable to USB companion controllers, to define the master bus startport.
+适用于 USB 伴随控制器，定义主总线起始端口。
+
+           Examples:
+例子:
+
+           --controller usb,model=ich9-ehci1,address=0:0:4.0,index=0
+-- controller usb，model = ich9-ehci1，address = 0:0:4.0，index = 0
+               Adds a ICH9 EHCI1 USB controller on PCI address 0:0:4.0
+在 PCI 地址0:0:4.0上添加 ich9ehci1usb 控制器
+
+           --controller usb,model=ich9-uhci2,address=0:0:4.7,index=0,master=2
+-- controller usb，model = ich9-uhci2，address = 0:0:4.7，index = 0，master = 2
+               Adds a ICH9 UHCI2 USB companion controller for the previous master controller, ports start from port number 2.
+为前一个主控制器添加一个 ICH9 UHCI2 USB 伴随控制器，端口从2号端口开始。
+
+               The parameter multifunction='on' will be added automatically to the proper device (if needed).  This applies to all PCI devices.
+参数 multifunction = ‘ on’将自动添加到适当的设备(如果需要)。这适用于所有的 PCI 设备。
+
+           Use --controller=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsControllers>
+使用 -- controller = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementscontrollers > 
+
+       --input OPTIONS
+-- 输入选项
+           Attach an input device to the guest. Example input device types are mouse, tablet, or keyboard.
+将输入设备附加到客户端。示例输入设备类型为鼠标、平板电脑或键盘。
+
+           Use --input=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsInput>
+使用 -- input = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsinput > 
+
+       --hostdev OPTIONS
+-- hostdev OPTIONS
+       --host-device OPTIONS
+-- 主机-设备选项
+           Attach a physical host device to the guest. Some example values for HOSTDEV:
+将物理主机设备附加到客户端。 HOSTDEV 的一些示例值:
+
+           --hostdev pci_0000_00_1b_0
+-- hostdev pci _ 0000 _ 00 _ 1b _ 0
+               A node device name via libvirt, as shown by 'virsh nodedev-list'
+一个通过 libvirt 的节点设备名称，如‘ virsh nodedev-list’所示
+
+           --hostdev 001.003
+-- hostdev 001.003
+               USB by bus, device (via lsusb).
+USB 总线，设备(通过 lsusb)。
+
+           --hostdev 0x1234:0x5678
+-- hostdev 0x1234:0x5678
+               USB by vendor, product (via lsusb).
+USB 由供应商，产品(通过 lsusb)。
+
+           --hostdev 1f.01.02
+-- hostdev 1f. 01.02
+               PCI device (via lspci).
+PCI 设备(通过 lspci)。
+
+           Use --hostdev=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsHostDev>
+使用 -- hostdev = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementshostdev > 
+
+       --sound MODEL
+-- 声音模型
+           Attach a virtual audio device to the guest. MODEL specifies the emulated sound card model. Possible values are ich6, ich9, ac97, es1370, sb16,
+给客人安装一个虚拟音频设备。MODEL 指定模拟声卡模型。可能的值是 ich6，ich9，ac97，es1370，sb16,
+           pcspk, or default. 'default' will try to pick the best model that the specified OS supports.
+‘ default’将尝试选择指定操作系统支持的最佳模型。
+
+           This deprecates the old --soundhw option.
+这会使原有的 -- soundhw 选项失效。
+
+           Use --sound=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsSound>
+使用 -- sound = ? 查看所有可用子选项的列表。详细信息请访问 http://libvirt.org/formatdomain. html # elementssound > 
+
+       --watchdog MODEL[,action=ACTION]
+-- 看门狗模型[ ，行动 = 行动]
+           Attach a virtual hardware watchdog device to the guest. This requires a daemon and device driver in the guest. The watchdog fires a signal when
+给客户端附加一个虚拟硬件看门狗设备。这需要一个守护进程和设备驱动程序。看门狗在下列情况下触发信号
+           the virtual machine appears to hung. ACTION specifies what libvirt will do when the watchdog fires. Values are
+ACTION 指定当看门狗触发时 libvirt 将做什么
+
+           reset
+重启
+               Forcefully reset the guest (the default)
+强制重置客户(默认)
+
+           poweroff
+关机
+               Forcefully power off the guest
+强行关闭客人电源
+
+           pause
+暂停
+               Pause the guest
+暂停客人
+
+           none
+一个都没有
+               Do nothing
+什么都别做
+
+           shutdown
+关机
+               Gracefully shutdown the guest (not recommended, since a hung guest probably won't respond to a graceful shutdown)
+优雅地关闭客人(不推荐，因为挂起的客人可能不会对优雅地关闭做出反应)
+
+           MODEL is the emulated device model: either i6300esb (the default) or ib700.  Some examples:
+MODEL 是仿真设备模型: i6300esb (默认)或 ib700:
+
+           Use the recommended settings:
+使用建议的设置:
+
+           --watchdog default
+看门狗违约
+
+           Use the i6300esb with the 'poweroff' action
+使用 i6300esb 和“ poweroff”动作
+
+           --watchdog i6300esb,action=poweroff
+-- watchdog i6300esb，action = poweroff
+
+           Use --watchdog=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsWatchdog>
+使用 -- watchdog = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementswatchdog > 
+
+       --parallel OPTIONS
+——平行选择
+       --serial OPTIONS
+——序列选项
+           Specifies a serial device to attach to the guest, with various options. The general format of a serial string is
+指定要连接到客户端的串行设备，具有多种选项。串行字符串的一般格式为
+
+               --serial type,opt1=val1,opt2=val2,...
+-- 序列类型，opt1 = val1，opt2 = val2，..。
+
+           --serial and --parallel devices share all the same options, unless otherwise noted. Some of the types of character device redirection are:
+-- 串行和 -- 并行设备共享所有相同的选项，除非另有说明。字符设备重定向的一些类型如下:
+
+           --serial pty
+连环空气污染
+               Pseudo TTY. The allocated pty will be listed in the running guests XML description.
+分配的 pty 将在运行的客户 XML 描述中列出。
+
+           --serial dev,path=HOSTPATH
+-- serial dev，path = HOSTPATH
+               Host device. For serial devices, this could be /dev/ttyS0. For parallel devices, this could be /dev/parport0.
+主机设备。对于串行设备，这可以是/dev/ttyS0。对于并行设备，这可以是/dev/parport0。
+
+           --serial file,path=FILENAME
+-- 串行文件，路径 = 文件名
+               Write output to FILENAME.
+将输出写入文件名。
+
+           --serial pipe,path=PIPEPATH
+-- 串行管道，路径 = 管道
+               Named pipe (see pipe(7))
+命名管道(参见管道(7))
+
+           --serial tcp,host=HOST:PORT,mode=MODE,protocol=PROTOCOL
+-- 串行 tcp，HOST = HOST: PORT，MODE = MODE，PROTOCOL = PROTOCOL
+               TCP net console. MODE is either 'bind' (wait for connections on HOST:PORT) or 'connect' (send output to HOST:PORT), default is 'bind'. HOST
+TCP 网络控制台。MODE 是‘ bind’(等待 HOST: PORT 上的连接)或者‘ connect’(将输出发送到 HOST: PORT) ，默认是‘ bind’。主机
+               defaults to '127.0.0.1', but PORT is required. PROTOCOL can be either 'raw' or 'telnet' (default 'raw'). If 'telnet', the port acts like a
+默认值为“127.0.0.1” ，但是需要 PORT。PROTOCOL 可以是“ raw” ，也可以是“ telnet”(默认为“ raw”)。如果是“ telnet” ，端口就像一个
+               telnet server or client.  Some examples:
+Telnet 服务器或客户端。例如:
+
+               Wait for connections on any address, port 4567:
+等待任何地址的连接，端口4567:
+
+               --serial tcp,host=0.0.0.0:4567
+-- 串行 tcp，host = 0.0.0.0:4567
+
+               Connect to localhost, port 1234:
+连接到本地主机，端口1234:
+
+               --serial tcp,host=:1234,mode=connect
+-- 串行 tcp，host = : 1234，mode = connect
+
+               Wait for telnet connection on localhost, port 2222. The user could then connect interactively to this console via 'telnet localhost 2222':
+在本地主机端口2222上等待 telnet 连接。用户可以通过“ telnet localhost 2222”交互式地连接到这个控制台:
+
+               --serial tcp,host=:2222,mode=bind,protocol=telnet
+-- 串行 tcp，host = : 2222，mode = bind，protocol = telnet
+
+           --serial udp,host=CONNECT_HOST:PORT,bind_host=BIND_HOST:BIND_PORT
+-- 串行 udp，host = CONNECT _ host: PORT，BIND _ host = BIND _ host: BIND _ PORT
+               UDP net console. HOST:PORT is the destination to send output to (default HOST is '127.0.0.1', PORT is required). BIND_HOST:BIND_PORT is the
+UDP 网络控制台。主机: PORT 是发送输出到的目的地(默认主机为“127.0.0.1” ，需要 PORT)。BIND _ host: BIND _ port 是
+               optional local address to bind to (default BIND_HOST is 127.0.0.1, but is only set if BIND_PORT is specified). Some examples:
+要绑定到的可选本地地址(默认的 BIND _ host 为127.0.0.1，但只有在指定 BIND _ port 时才设置):
+
+               Send output to default syslog port (may need to edit /etc/rsyslog.conf accordingly):
+将输出发送到默认的 syslog 端口(可能需要相应地编辑/etc/rsyslog. conf) :
+
+               --serial udp,host=:514
+-- serial udp，host = : 514
+
+               Send output to remote host 192.168.10.20, port 4444 (this output can be read on the remote host using 'nc -u -l 4444'):
+发送输出到远程主机192.168.10.20，端口4444(这个输出可以使用‘ nc-u-l 4444’在远程主机上读取) :
+
+               --serial udp,host=192.168.10.20:4444
+-- serial udp，host = 192.168.10.20:4444
+
+           --serial unix,path=UNIXPATH,mode=MODE
+-- 串行 unix，path = UNIXPATH，MODE = MODE
+               Unix socket, see unix(7). MODE has similar behavior and defaults as --serial tcp,mode=MODE
+Unix socket，参见 Unix (7) . MODE 有类似的行为和默认值 -- serial tcp，MODE = MODE
+
+           Use --serial=? or --parallel=? to see a list of all available sub options. Complete details at
+使用 -- serial = ? 或 -- parallel = ? 查看所有可用子选项的列表
+           <http://libvirt.org/formatdomain.html#elementsCharSerial> and <http://libvirt.org/formatdomain.html#elementsCharParallel>
+Http://libvirt.org/formatdomain. html # elementscharserial > 和 http://libvirt.org/formatdomain. html # elementscharparallel > 
+
+       --channel
+频道
+           Specifies a communication channel device to connect the guest and host machine. This option uses the same options as --serial and --parallel
+指定连接客户机和主机的通信通道设备。此选项使用与 -- serial 和 -- parallel 相同的选项
+           for specifying the host/source end of the channel. Extra 'target' options are used to specify how the guest machine sees the channel.
+用于指定信道的主机/源端。额外的“目标”选项用于指定客户机如何看待通道。
+
+           Some of the types of character device redirection are:
+字符设备重定向的一些类型如下:
+
+           --channel SOURCE,target_type=guestfwd,target_address=HOST:PORT
+-- channel SOURCE，target _ type = guestfwd，target _ address = HOST: PORT
+               Communication channel using QEMU usermode networking stack. The guest can connect to the channel using the specified HOST:PORT combination.
+通信通道使用 QEMU 用户模式网络堆栈。客户端可以使用指定的 HOST: PORT 组合连接到通道。
+
+           --channel SOURCE,target_type=virtio[,name=NAME]
+-- channel SOURCE，target _ type = virtio [ ，NAME = NAME ]
+               Communication channel using virtio serial (requires 2.6.34 or later host and guest). Each instance of a virtio --channel line is exposed in
+使用 virtio 串行通信通道(需要2.6.34或更高版本的主机和客户端)。Virtio 通道线的每个实例都暴露在
+               the guest as /dev/vport0p1, /dev/vport0p2, etc. NAME is optional metadata, and can be any string, such as org.linux-kvm.virtioport1.  If
+NAME 是可选的元数据，可以是任何字符串，如 org.linux-kvm. virtioport1
+               specified, this will be exposed in the guest at /sys/class/virtio-ports/vport0p1/NAME
+指定，这将在/sys/class/virtio-ports/vport0p1/NAME 的客户机中公开
+
+           --channel spicevmc,target_type=virtio[,name=NAME]
+-- channel spicevmc，target _ type = virtio [ ，NAME = NAME ]
+               Communication channel for QEMU spice agent, using virtio serial (requires 2.6.34 or later host and guest). NAME is optional metadata, and
+QEMU 香料代理的通信通道，使用 virtio 串行(需要2.6.34或更高版本的主机和客户端)。NAME 是可选的元数据
+               can be any string, such as the default com.redhat.spice.0 that specifies how the guest will see the channel.
+可以是任何字符串，比如默认的 com.redhat.spice. 0，它指定 guest 将如何查看通道。
+
+           Use --channel=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsCharChannel>
+使用 -- channel = ? 查看所有可用子选项的列表。详细信息请访问 < http://libvirt.org/formatdomain. html # elementscharchannel > 
+
+       --console
+控制台
+           Connect a text console between the guest and host. Certain guest and hypervisor combinations can automatically set up a getty in the guest, so
+在客户和主机之间连接一个文本控制台。某些来宾和 hypervisor 组合可以自动在来宾中设置一个 getty，所以
+           an out of the box text login can be provided (target_type=xen for xen paravirt guests, and possibly target_type=virtio in the future).
+可以提供一个开箱即用的文本登录(target _ type = xen for xen paravirt guest，将来可能还会提供 target _ type = virtio)。
+
+           Example:
+例子:
+
+           --console pty,target_type=virtio
+-- console pty，target _ type = virtio
+               Connect a virtio console to the guest, redirected to a PTY on the host.  For supported guests, this exposes /dev/hvc0 in the guest. See
+将 virtio 控制台连接到客户端，重定向到主机上的 PTY。对于受支持的客户端，这暴露了客户端中的/dev/hvc0。参见
+               http://fedoraproject.org/wiki/Features/VirtioSerial for more info. virtio console requires libvirt 0.8.3 or later.
+更多信息 http://fedoraproject.org/wiki/Features/VirtioSerial。 virtio 控制台需要 libvirt 0.8.3或更高版本。
+
+           Use --console=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsCharConsole>
+使用 -- console = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementscharconsole > 
+
+       --video OPTIONS
+-- 视频选择
+           Specify what video device model will be attached to the guest. Valid values for VIDEO are hypervisor specific, but some options for recent kvm
+指定哪种视频设备型号将附加到客人身上。VIDEO 的有效值是特定于 hypervisor 的，但是对于最近的 kvm 有一些选项
+           are cirrus, vga, qxl, virtio, or vmvga (vmware).
+是 cirrus、 vga、 qxl、 virtio 或 vmvga (vmware)。
+
+           Use --video=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsVideo>
+使用 -- video = ? 查看所有可用子选项的列表。详细信息请访问 http://libvirt.org/formatdomain. html # elementsvideo > 
+
+       --smartcard MODE[,OPTIONS]
+-- 智能卡模式[ ，选项]
+           Configure a virtual smartcard device.
+配置虚拟智能卡设备。
+
+           Mode is one of host, host-certificates, or passthrough. Additional options are:
+Mode 是主机、主机证书或直通之一。其他选项如下:
+
+           type
+类型
+               Character device type to connect to on the host. This is only applicable for passthrough mode.
+要连接到主机上的字符设备类型。这只适用于通过模式。
+
+           An example invocation:
+一个示例调用:
+
+           --smartcard passthrough,type=spicevmc
+-- smartcard pass，type = spicevmc
+               Use the smartcard channel of a SPICE graphics device to pass smartcard info to the guest
+使用 SPICE 图形设备的智能卡通道将智能卡信息传递给客人
+
+           Use --smartcard=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsSmartcard>
+使用 -- smartcard = ? 查看所有可用子选项的列表。详细信息请访问 http://libvirt.org/formatdomain. html # elementssmartcard > 
+
+       --redirdev BUS[,OPTIONS]
+-- redirdev BUS [ ，OPTIONS ]
+           Add a redirected device.
+添加重定向设备。
+
+           type
+类型
+               The redirection type, currently supported is tcp or spicevmc.
+目前支持的重定向类型是 tcp 或 spicevmc。
+
+           server
+服务器
+               The TCP server connection details, of the form 'server:port'.
+TCP 服务器连接的详细信息，形式为“ server: port”。
+
+           Examples of invocation:
+召唤的例子:
+
+           --redirdev usb,type=tcp,server=localhost:4000
+-- redirdev usb，type = tcp，server = localhost: 4000
+               Add a USB redirected device provided by the TCP server on 'localhost' port 4000.
+在“ localhost”端口4000上添加一个由 TCP 服务器提供的 USB 重定向设备。
+
+           --redirdev usb,type=spicevmc
+-- redirdev usb，type = spicevmc
+               Add a USB device redirected via a dedicated Spice channel.
+添加通过专用 Spice 通道重定向的 USB 设备。
+
+           Use --redirdev=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsRedir>
+使用 -- redirdev = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsredir > 
+
+       --memballoon MODEL
+-- memballoon MODEL
+           Attach a virtual memory balloon device to the guest. If the memballoon device needs to be explicitly disabled, MODEL='none' is used.
+给客人安装一个虚拟内存气球装置。如果需要显式禁用 memballoon 设备，则使用 MODEL = ‘ none’。
+
+           MODEL is the type of memballoon device provided. The value can be 'virtio', 'xen' or 'none'.  Some examples:
+MODEL 是提供的 memballoon 设备的类型。值可以是“ virtio”、“ xen”或“ none”。一些例子:
+
+           Use the recommended settings:
+使用建议的设置:
+
+           --memballoon virtio
+-- memballoon virtio
+
+           Do not use memballoon device:
+请勿使用 memballoon 设备:
+
+           --memballoon none
+我没有气球
+
+           Use --memballoon=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsMemBalloon>
+使用 -- memballoon = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsmemballoon > 
+
+       --tpm TYPE[,OPTIONS]
+-- tpm 类型[ ，选项]
+           Configure a virtual TPM device.
+配置虚拟 TPM 设备。
+
+           Type must be passthrough. Additional options are:
+类型必须是通过的。其他选项如下:
+
+           model
+模特
+               The device model to present to the guest operating system. Model must be tpm-tis.
+要呈现给客户操作系统的设备模型。模型必须是 tpm-tis。
+
+           An example invocation:
+一个示例调用:
+
+           --tpm passthrough,model=tpm-tis
+-- tpm 通过，型号 = tpm-tis
+               Make the host's TPM accessible to a single guest.
+使主机的 TPM 对单个客户可访问。
+
+           --tpm /dev/tpm
+-- tpm/dev/tpm
+               Convenience option for passing through the hosts TPM.
+通过主机 TPM 的便利选项。
+
+           Use --tpm=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsTpm>
+使用 -- tpm = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementstpm > 
+
+       --rng TYPE[,OPTIONS]
+-- rng TYPE [ ，OPTIONS ]
+           Configure a virtual RNG device.
+配置虚拟 RNG 设备。
+
+           Type can be random or egd.
+Type 可以是随机的，也可以是 egd。
+
+           If the specified type is random then these values must be specified:
+如果指定的类型是随机的，那么必须指定这些值:
+
+           backend_device
+后端设备
+               The device to use as a source of entropy.
+作为熵源使用的设备。
+
+           Whereas, when the type is egd, these values must be provided:
+然而，当类型为 egd 时，必须提供这些值:
+
+           backend_host
+后端主机
+               Specify the host of the Entropy Gathering Daemon to connect to.
+指定要连接的熵聚集守护进程的主机。
+
+           backend_service
+后端 _ 服务
+               Specify the port of the Entropy Gathering Daemon to connect to.
+指定要连接的熵聚集守护进程的端口。
+
+           backend_type
+后端 _ 型
+               Specify the type of the connection: tcp or udp.
+指定连接的类型: tcp 或 udp。
+
+           backend_mode
+后端 _ 模式
+               Specify the mode of the connection.  It is either 'bind' (wait for connections on HOST:PORT) or 'connect' (send output to HOST:PORT).
+指定连接的模式。它可以是“绑定”(在 HOST: PORT 上等待连接)或者“连接”(将输出发送到 HOST: PORT)。
+
+           backend_connect_host
+后端连接主机
+               Specify the remote host to connect to when the specified backend_type is udp and backend_mode is bind.
+当指定的 backend_type 为 udp 并且 backend_mode 为 bind 时，指定要连接的远程主机。
+
+           backend_connect_service
+后端连接服务
+               Specify the remote service to connect to when the specified backend_type is udp and backend_mode is bind.
+当指定的 backend_type 为 udp 并且 backend_mode 为 bind 时，指定要连接的远程服务。
+
+           An example invocation:
+一个示例调用:
+
+           --rng egd,backend_host=localhost,backend_service=8000,backend_type=tcp
+-- rng egd，backend _ host = localhost，backend _ service = 8000，backend _ type = tcp
+               Connect to localhost to the TCP port 8000 to get entropy data.
+连接到 TCP 端口8000的 localhost 以获得熵数据。
+
+           --rng /dev/random
+-- rng/dev/random
+               Use the /dev/random device to get entropy data, this form implicitly uses the "random" model.
+使用/dev/random 设备获取熵数据，这种形式隐含地使用了“随机”模型。
+
+               Use --rng=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsRng>
+使用 -- rng = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsrng > 
+
+       --panic MODEL[,OPTS]
+恐慌模型[ ，OPTS ]
+           Attach a panic notifier device to the guest. For the recommended settings, use:
+给客人附加一个紧急通知设备。对于建议的设置，使用:
+
+           --panic default
+恐慌性违约
+
+           Use --panic=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsPanic>
+使用 -- panic = ? 查看所有可用子选项的列表。完整的详细信息请访问 http://libvirt.org/formatdomain. html # elementspanic > 
+
+       --memdev OPTS
+-- memdev OPTS
+           Add a memory module to a guest which can be hotunplugged. To add a memdev you need to configure hotplugmemory and NUMA for a guest.
+为客户端添加一个可以热插拔的内存模块。要添加 memdev，你需要为客户端配置 hotplugmemory 和 NUMA。
+
+           Use --memdev=? to see a list of all available sub options. Complete details at <http://libvirt.org/formatdomain.html#elementsMemory>.
+使用 -- memdev = ? 查看所有可用子选项的列表。详细信息请参阅 < http://libvirt.org/formatdomain. html # elementsmemory > 。
+
+MISCELLANEOUS OPTIONS
+杂项选择
+       -h
+- 什么
+       --help
+救命
+           Show the help message and exit
+显示帮助消息并退出
+
+       --version
+版本
+           Show program's version number and exit
+显示程序的版本号和退出
+
+       --autostart
+自动启动
+           Set the autostart flag for a domain. This causes the domain to be started on host boot up.
+设置域的自动启动标志。这会导致域在主机启动时启动。
+
+       --transient
+暂时的
+           Use --import or --boot and --transient if you want a transient libvirt VM.  These VMs exist only until the domain is shut down or the host
+如果需要一个瞬态 libvirt VM，请使用 -- import 或 -- boot 和 -- transient。这些虚拟机只存在于域或主机关闭之前
+           server is restarted.  Libvirt forgets the XML configuration of the VM after either of these events.  Note that the VM's disks will not be
+服务器重新启动。Libvirt 在这两个事件中的任何一个发生后都会忘记 VM 的 XML 配置。注意虚拟机的磁盘不会
+           deleted.  See: <http://wiki.libvirt.org/page/VM_lifecycle#Transient_guest_domains_vs_Persistent_guest_domains>
+删除参见: http://wiki.libvirt. org/page/vm _ lifecycle # transient _ guest _ domains _ vs _ persistent _ guest _ domains > 
+
+       --print-xml [STEP]
+-- print-xml [ STEP ]
+           Print the generated XML of the guest, instead of defining it. By default this WILL do storage creation (can be disabled with --dry-run). This
+打印生成的来宾 XML，而不是定义它。默认情况下，这个 WILL 会进行存储创建(可以禁用 -- dry-run)。这个
+           option implies --quiet.
+选项意味着——安静。
+
+           If the VM install has multiple phases, by default this will print all generated XML. If you want to print a particular step, use --print-xml 2
+如果 VM 安装有多个阶段，默认情况下，这将打印所有生成的 XML。如果你想打印一个特定的步骤，使用 -- print-xml 2
+           (for the second phase XML).
+(用于第二阶段 XML)。
+
+       --noreboot
+-- noreboot
+           Prevent the domain from automatically rebooting after the install has completed.
+防止域在安装完成后自动重启。
+
+       --wait WAIT
+等等，等等
+           Amount of time to wait (in minutes) for a VM to complete its install.  Without this option, virt-install will wait for the console to close
+等待虚拟机完成安装的时间(以分钟为单位)。如果没有这个选项，virt-install 将等待控制台关闭
+           (not necessarily indicating the guest has shutdown), or in the case of --noautoconsole, simply kick off the install and exit. Any negative
+(不一定表示客户端已经关机) ，或者在 -- noautoconsole 的情况下，只需启动安装并退出即可。任何否定的
+           value will make virt-install wait indefinitely, a value of 0 triggers the same results as noautoconsole. If the time limit is exceeded, virt-
+值将使 virt-install 无限期地等待，值0触发与 noautoconsole 相同的结果。如果超过了时间限制，virt-
+           install simply exits, leaving the virtual machine in its current state.
+安装就会退出，使虚拟机保持其当前状态。
+
+       --dry-run
+演习
+           Proceed through the guest creation process, but do NOT create storage devices, change host device configuration, or actually teach libvirt
+继续进行来宾创建过程，但不要创建存储设备，更改主机设备配置，或实际教导 libvirt
+           about the guest.  virt-install may still fetch install media, since this is required to properly detect the OS to install.
+关于客户端。Virt-install 仍然可以获取安装介质，因为这是正确检测要安装的操作系统所必需的。
+
+       --check
+没问题
+           Enable or disable some validation checks. Some examples are warning about using a disk that's already assigned to another VM (--check
+启用或禁用某些验证检查。一些例子是关于使用一个已经分配给另一个虚拟机的磁盘的警告
+           path_in_use=on|off), or warning about potentially running out of space during disk allocation (--check disk_size=on|off). Most checks are
+路径 _ in _ use = on | off) ，或者警告在磁盘分配过程中可能耗尽空间(-- 检查磁盘 _ size = on | off)
+           performed by default.
+默认执行。
+
+       -q
+Q
+       --quiet
+安静
+           Only print fatal error messages.
+只打印致命错误消息。
+
+       -d
+D
+       --debug
+调试
+           Print debugging information to the terminal when running the install process.  The debugging information is also stored in
+在运行安装过程时，将调试信息打印到终端。调试信息也存储在
+           "~/.cache/virt-manager/virt-install.log" even if this parameter is omitted.
+即使省略了这个参数，也可以使用“/. cache/virt-manager/virt-install. log”。
+
+EXAMPLES
+例子
+       Install a Fedora 9 plain QEMU guest, using LVM partition, virtual networking, booting from PXE, using VNC server/viewer, with virtio-scsi disk
+使用 LVM 分区、虚拟网络、从 PXE 启动、使用 VNC 服务器/查看器、使用 virtio-scsi 磁盘安装一个 Fedora 9普通 QEMU 客户机
+
+         # virt-install \
+# virt-install
+              --connect qemu:///system \
+连接 qemu:///system
+              --name demo \
+叫我 demo
+              --memory 500 \
+内存500
+              --disk path=/dev/HostVG/DemoVM,bus=scsi \
+-- 磁盘路径 =/dev/HostVG/DemoVM，总线 = scsi
+              --controller virtio-scsi \
+控制器 virtio-scsi
+              --network network=default \
+-- 网络网络 = 默认值
+              --virt-type qemu \
+-- virt-type qemu
+              --graphics vnc \
+图形 vnc
+              --os-variant fedora9
+-- os-variant fedora9
+
+       Run a Live CD image under Xen fullyvirt, in diskless environment
+在无磁盘环境中运行 Xen fullyvirt 下的 livecd 映像
+
+         # virt-install \
+# virt-install
+              --hvm \
+-- hvm
+              --name demo \
+叫我 demo
+              --memory 500 \
+内存500
+              --disk none \
+磁盘空白
+              --livecd \
+活生生的
+              --graphics vnc \
+图形 vnc
+              --cdrom /root/fedora7live.iso
+-- cdrom/root/fedora7live. iso
+
+       Run /usr/bin/httpd in a linux container guest (LXC). Resource usage is capped at 512 MiB of ram and 2 host cpus:
+在 linux 容器 guest (LXC)中运行/usr/bin/httpd。资源使用上限为512mib 内存和2个主机 cpu:
+
+         # virt-install \
+# virt-install
+               --connect lxc:/// \
+连接 lxc:///
+               --name httpd_guest \
+——名字 httpd _ guest
+               --memory 512 \
+-- memory 512内存512
+               --vcpus 2 \
+Vcpus 2
+               --init /usr/bin/httpd
+-- init/usr/bin/httpd
+
+       Start a linux container guest(LXC) with a private root filesystem, using /bin/sh as init.  Container's root will be under host dir /home/LXC.  The
+使用/bin/sh 作为 init，使用私有根文件系统启动 linux 容器 guest (LXC)。Container 的根将位于 host dir/home/LXC 下。译者:
+       host dir "/home/test" will be mounted at "/mnt" dir inside container:
+Host dir”/home/test”将安装在容器内的”/mnt” dir 上:
+
+         # virt-install \
+# virt-install
+               --connect lxc:/// \
+连接 lxc:///
+               --name container \
+集装箱名称
+               --memory 128 \
+-- 内存128
+               --filesystem /home/LXC,/ \
+-- 文件系统/home/LXC,/
+               --filesystem /home/test,/mnt \
+-- 文件系统/home/test,/mnt
+               --init /bin/sh
+-- init/bin/sh
+
+       Install a paravirtualized Xen guest, 500 MiB of RAM, a 5 GiB of disk, and Fedora Core 6 from a web server, in text-only mode, with old style --file
+以纯文本模式从 web 服务器安装一个半虚拟化的 Xen guest、500mib RAM、5gib 磁盘和 Fedora Core 6，使用旧的样式 -- file
+       options:
+选项:
+
+         # virt-install \
+# virt-install
+              --paravirt \
+半病毒
+              --name demo \
+叫我 demo
+              --memory 500 \
+内存500
+              --disk /var/lib/xen/images/demo.img,size=6 \
+磁盘/var/lib/xen/images/demo. img，size = 6
+              --graphics none \
+没有图形
+              --location http://download.fedora.redhat.com/pub/fedora/linux/core/6/x86_64/os/
+地址: http://download.fedora.redhat. com/pub/fedora/linux/core/6/x86 _ 64/os/
+
+       Create a guest from an existing disk image 'mydisk.img' using defaults for the rest of the options.
+使用其余选项的默认值从现有磁盘映像‘ mydisk.img’创建一个 guest。
+
+         # virt-install \
+# virt-install
+              --name demo \
+叫我 demo
+              --memory 512 \
+-- 内存512
+              --disk /home/user/VMs/mydisk.img \
+-- disk/home/user/VMs/mydisk.img
+              --import
+-- 导入
+
+       Start serial QEMU ARM VM, which requires specifying a manual kernel.
+Start 串行 QEMU armvm，它需要指定一个手动内核。
+
+         # virt-install \
+# virt-install
+              --name armtest \
+叫我 armtest
+              --memory 1024 \
+-- 内存1024
+              --arch armv7l --machine vexpress-a9 \
+-- arch armv7l -- 机器 vexpress-a9
+              --disk /home/user/VMs/myarmdisk.img \
+-- disk/home/user/VMs/myarmdisk.img
+              --boot kernel=/tmp/my-arm-kernel,initrd=/tmp/my-arm-initrd,dtb=/tmp/my-arm-dtb,kernel_args="console=ttyAMA0 rw root=/dev/mmcblk0p3" \
+-- boot kernel =/tmp/my-arm-kernel，initrd =/tmp/my-arm-initrd，dtb =/tmp/my-arm-dtb，kernel _ args = “ console = ttyAMA0 rw root =/dev/mmcblk0p3”
+              --graphics none
+没有图形
+
+BUGS
+虫子
+       Please see http://virt-manager.org/page/BugReporting
+请参阅 http://virt-manager. org/page/bugrereporting
+
+COPYRIGHT
+版权所有
+       Copyright (C) Red Hat, Inc, and various contributors.  This is free software. You may redistribute copies of it under the terms of the GNU General
+Copyright (c) Red Hat，Inc，and various contributor 版权(c) Red Hat，Inc，以及各种贡献者。这是一款免费软件。你可以根据 GNU General 的条款重新发布它的副本
+       Public License "http://www.gnu.org/licenses/gpl.html". There is NO WARRANTY, to the extent permitted by law.
+公共许可“ http://www.gnu. org/licenses/gpl. html. " 在法律允许的范围内，没有保证。
+
+SEE ALSO
+参见
+       virsh(1), "virt-clone(1)", "virt-manager(1)", the project website "http://virt-manager.org"
+Virsh (1)、“ virt-clone (1)”、“ virt-manager (1)”、项目网站“ http://virt-manager. org”
+
+
+
+1.5.0                                                                   2019-08-09                                                         VIRT-INSTALL(1)
+1.5.02019-08-09 VIRT-INSTALL (1)

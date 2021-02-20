@@ -1,0 +1,138 @@
+is 与 == 区别:
+is用于判断两个变量引用对象是否是同一个。
+==用于判断引用变量的值是否相等。
+
+a=[1,2,3,4]
+b=[1,2,3,4]
+a is b #False
+a == b #True
+
+c = b #表示b和c同时指向[1,2,3,4]
+c is b #True
+c == b #True
+
+私有属性:
+私有方法:只能在类的内部访问，对象不能直接访问。
+在定义属性和方法时，在属性名或方法名前加两个下划线，定义的就是私有属性或私有方法。
+class Women:
+	def __init__(self,name):
+		self.name = name
+		self.__age = 18
+	def __secret(self):
+		print("我的年龄是: %d"%self.__age)
+
+a = Women("aa")
+print(a.__age) #报错
+print(a.__secret) #报错
+为私有属性和私有方法:
+在python中没有真正意义上的私有，实际上是对名称做了一些特殊处理，使得外界无法访问到。
+#强制访问私有属性和方法。
+#对象名._类名__私有属性名
+print(tom._Cat__age)
+#对象名._类名__私有方法
+print(tom._Cat__secret)
+
+继承: 子类不能继承父类的私有属性和私有方法。
+父类:基类,
+子类:派生类
+子类从父类继承或派生。
+class 类名(父类名):
+	pass 
+子类继承自父类,可以直接使用父类的的属性和方法，不需要再次开发。子类应该根据职责封装子类特有的属性和方法。
+class Animal:
+	def __init__(self):
+		self.__age = "18" #私有属性
+		self.name = "tony"
+	def eat(self):
+		pass
+	def sleep(self):
+		pass
+		print(self.__age)
+		self.__break()
+	#私有方法
+	def __break(self):
+		pass
+class Dog(Animal):
+#子类有3个方法
+	def fly(self):
+		pass 
+	def show(self):
+		print(self.name) #访问父类的公有属性
+		self.eat() #访问父类的公用方法。
+		self.sleep() #通过访问父类的公有方法间接访问父类的私有方法和属性
+class Xiao(Dog):
+#继承的传递性。有4个方法。
+	def break(self):
+		pass 
+
+方法重写:
+当父类封装的方法不能满足子类需求时，需要对其方法重写。
+class Xiao(Dog):
+	def break(self):
+		pass
+	#使用和父类同名的方法进行重写。[覆盖重写]
+	def fly(self):
+		pass 
+	#重写。[扩展重写]
+	def fly(self)
+		super().fly #3.0方式。super是一个特殊的类.在需要的位置使用super().父类方法来调用父类方法的执行。
+		Dog.fly(self) #2.0方式。父类名.方法(self)
+		pass 
+
+多继承:
+子类可以拥有多个父类,子类继承所有父类的属性和方法
+class Father1:
+	def test(self):
+		pass
+class Son(Father1,Father2):
+	pass
+
+如果父类之间存在同名的属性或者方法，应该尽量避免使用多继承。也就是父类A和父类B中都含有同名的方法或者属性，
+class Son(Father1,Father2):
+	pass 
+#如果出现同名，先调用Father1的方法和属性，因为被先继承。
+
+print(C.__mro__) #使用__mro__方法查看类的继承顺序或叫方法搜索顺序。
+
+新式类：以object为基类的类。
+object是所有对象的基类.
+#在python3中如果没有指定父类，则以object为父类,而在python2中则不会。
+#新式类和旧式类在多继承时,会影响到方法的搜素顺序。
+class DOg(object):
+	pass
+a = Dog()
+dir(a)
+经典(旧式)类:不已object为基类的类。[不推荐]
+class B:
+	pass 
+b = B()
+dir(b)
+
+
+多态:
+不同的子类对象调用相同的父类方法，产生不同的执行结果。
+以继承和重写父类方法为前提。
+多态可以增加代码的灵活度，是调用方法的技巧，不会影响到类的内部设计。
+class Dog(object):
+	def __init__(self,name):
+		self.name = name 
+	def game(self):
+		print("game ....")
+class Bigdog(Dog):
+	def game(self):
+		print("Zai1 tianshang1 fei.. %s"%self.name) #继承父类的name属性
+class Person(object):
+	def __init__(self,name):
+		self.name = name 
+	def game_with_dog(self,dog):
+		print("%s he %s 玩耍!"%(self.name,dog.name))
+		dog.game() #调用狗的玩耍方法。
+
+dog = Dog("wangwang") #创建一个普通狗对象
+dog2 = Bigdog("dog222") #创建一个子类对象
+
+xiaoming = Person("小明") #创建一个人对象。
+
+xiaoming.game_with_dog(dog) #体会多态。
+xiaoming.game_with_dog(dog2) #传入不同的狗对象实参，产生不同的执行效果。
+		

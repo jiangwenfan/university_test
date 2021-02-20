@@ -1,0 +1,11 @@
+```python
+for temp in 可迭代对象:
+	print(temp)
+
+#可迭代对象:列表，元祖，字符串，集合
+#判断是否为可迭代对象:
+from collections import Iterable
+
+isinstance([11,22,33],Iterable)　
+true　#返回值为true为可迭代对象
+```

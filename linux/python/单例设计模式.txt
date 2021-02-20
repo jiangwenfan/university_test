@@ -1,0 +1,73 @@
+设计模式:
+设计模式是前人工作的总结和提炼，通常被人们广泛流传的设计模式都是针对某一特定问题的成熟解决方案。
+使用设计模式是为了可重用代码，让代码更容易被他人理解，保证代码的可靠性。
+
+单例设计模式:单个实例，具有唯一一个实例
+目的是让类创建的对象,在系统中只有唯一的一个实例。
+每一次执行类名()返回的对象，内存地址是相同的。
+
+单例设计模式的应用场景:
+音乐播放器对象
+回收站对象
+打印机对象
+
+__new__方法:
+使用类名()创建对象时,python解释器首先会调用__new__方法为对象分配内存空间。
+__new__方法是一个由object基类提供的内置的静态方法,主要作用有两个:
+1).在内存中为对象分配空间
+2).返回对象的引用
+python解释器获得对象的引用后，将引用作为第一个参数，传递给__init__方法
+__init__
+1).对象初始化
+2).定义实例属性
+
+重写__new__方法的代码是固定的，一定要return super().__new__(cls)。__new__是一个静态方法，在调用时需要主动传入cls参数
+否则python解释器得不到分配了空间的对象引用，就不会调用对象的初始化方法。
+
+class MusicPlayer(object):
+	instance = None #类属性。记录第一个被创建对象的引用
+	#重写父类的new方法
+	def __new__(cls,*args,**kwargs):
+		#创建对象时,new方法会被自动调用。重写new方法时,如果不进行super().__new__(cls)调用父类的new方法，那么init将无法完成初始化。
+		#判断类属性是否为空对象
+		if cls.instance is None: #None表示空对象
+			cls.instance = super().__new__(cls) #调用父类的方法,为第一个对象分配空间
+		return cls.instance #返回类属性保存的对象引用。这个返回的对象引用,python解释器会自动得到这个引用
+	def __init__(self):
+		print("---")
+player1 = MusicPlayer()
+print(player1) #创建的多个对象的地址是相同的。0x0000028ABD9AA9A0
+
+player2 = MusicPlayer() #创建了两个对象,__init__初始化方法会被执行两次。
+print(player2) #0x0000028ABD9AA9A0
+
+只执行一次初始化工作:
+1.定义一个类属性,init_flag标记是否执行过初始化动作,初始化值为False
+2.在__init__方法中，判断init_flag,如果为False就执行初始化动作，然后将init_flag设置为True
+3.这样,再次自动调用__init__方法时,初始化动作就不会再次被执行了。
+class MusicPlayer(object):
+	instance = None 
+	init_flag = False #记录是否执行过初始化动作
+	def __new__(cls,*args,**kwargs):
+		if cls.instance is None:
+			cls.instance = super().__new__(cls)
+		return cls.instance
+	def __init__(self):
+		#判断是否执行过初始化动作
+		if MusicPlayer.init_flag:
+			return 
+		#如果没有，就执行初始化动作。
+		MusicPlayer.init_flag = True #修饰类属性的标记
+		print("初始化播放器")
+player1 = MusicPlayer()
+print(player1) 
+
+player2 = MusicPlayer() #
+print(player2) #0x0000028ABD9AA9A0	
+		
+		
+		
+		
+		
+		
+		

@@ -1,0 +1,9 @@
+﻿  DemoA.c
+D:\CodeWork_main\university_local\university_test\win32api\win32apiDemoA\win32apiDemoA\DemoA.c(4,6): error C2061: 语法错误: 标识符“CreateChildProcess”
+D:\CodeWork_main\university_local\university_test\win32api\win32apiDemoA\win32apiDemoA\DemoA.c(4,6): error C2059: 语法错误:“;”
+D:\CodeWork_main\university_local\university_test\win32api\win32apiDemoA\win32apiDemoA\DemoA.c(4,30): error C2059: 语法错误:“<parameter-list>”
+D:\CodeWork_main\university_local\university_test\win32api\win32apiDemoA\win32apiDemoA\DemoA.c(44,28): error C2143: 语法错误: 缺少“)”(在“*”的前面)
+D:\CodeWork_main\university_local\university_test\win32api\win32apiDemoA\win32apiDemoA\DemoA.c(44,28): error C2081: “_TCHAR”: 形参表中的名称非法
+D:\CodeWork_main\university_local\university_test\win32api\win32apiDemoA\win32apiDemoA\DemoA.c(44,28): error C2143: 语法错误: 缺少“{”(在“*”的前面)
+D:\CodeWork_main\university_local\university_test\win32api\win32apiDemoA\win32apiDemoA\DemoA.c(44,36): error C2059: 语法错误:“)”
+D:\CodeWork_main\university_local\university_test\win32api\win32apiDemoA\win32apiDemoA\DemoA.c(45,1): error C2054: 在“argv”之后应输入“(”

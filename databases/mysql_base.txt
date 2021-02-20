@@ -1,0 +1,89 @@
+mysql管理:
+
+创建用户django,并设置密码:
+create user django identified by 'admin123K#'; 
+
+grant all 
+
+select user from mysql.user; 查看所有用户
+
+describe test1;		//显示test1表的结构
+
+select * from test;	//显示表的内容
+
+
+
+	
+
+
+		
+
+mysql远程登录：
+select host,user from mysql.user
+update mysql.user set host='%' where host="localhost" and user="root";（'%'表示所有ip都可以连接）
+flush privileges 刷新（或者重启mysql服务）
+mysql登录：
+mysql  -h 192.168.201.222  -u root - proot  -P 3306 //注意指定端口的字母P为大写.
+
+查看服务器mysql服务是否开启：ps -ef|grep mysql
+
+导入  xx.sql文件
+在命令行中输入：source 文件所在路径.sql   【把里面的/全部替换成//】
+
+https://www.cnblogs.com/arraylist/p/6726614.html
+https://www.cnblogs.com/weifeng1463/p/7941625.html
+https://www.cnblogs.com/xxoome/p/6170579.html
+https://blog.csdn.net/jamin2018/article/details/79085333
+
+解决mysql用任意密码都能登录的问题:
+```sql
+1、use mysql;
+2、(无password字段的版本)update user set authentication_string=PASSWORD("密码") where user='root';
+（有password字段的版本)update user set password=password('密码') where user='root'; 
+3、update user set plugin="mysql_native_password";
+4、flush privileges;
+5、quit;
+6、重启mysql服务
+```
+
+mysql备份与恢复
+```shell
+lsb_release -a  #ubntu16
+apt install mysql-server #安装并设置密码
+```
+
+### 1.导出/备份数据库内容:
+##### 1.1备份导出整个数据库:
+
+> mysqldump -u用户名  -p  数据库名 > 导出文件名
+
+备份导出test数据库。
+可以理解为导出test数据库中的所有表，与当前数据库名无关系，其本质还是导出表。
+```bash
+mysqldump -uroot -p test > da.sql #-p指定密码，-p和test数据库名必须有空格。
+```
+##### 1.2备份一张表
+
+> mysqldump -u用户名 -p 数据库名 表名 > 导出文件名
+
+备份test数据库中的info这张表。
+可以理解为仅导出test数据库中的一张info表。
+```bash
+mysqldump -uroot -p test info > ta.sql  #-p参数与test,info之间必须要有空格。
+```
+
+### 2.导入/恢复数据库内容
+##### 2.1 恢复数据库
+第一步中我们导出了test数据库中的所有表，再次强调与库名无关。
+```bash
+create database test123; #创建一个任意的数据库。 目的是为了存放你要导入的数据库中的所有表。
+use test123;
+# set names utf8 设置数据库编码格式。
+source /home/work/da.sql; #导入
+```
+##### 2.2 导入表
+```shell
+create database test456; #创建任意一个数据库。
+use test456;
+source /home/work/ta.sql #导入表
+```

@@ -1,0 +1,91 @@
+Integer类下的一个静态方法：
+toHexString()方法
+public static String toHexString(int i)：把一个整数转成一个十六进制表示的字符串
+Integer.toHexString(123);  //把数字转成16进制字符显示
+//类名+@+hash的16进制表示
+s.getClass().getName()+'@'+Integer.toHexString(s.hashCode());  //Student@2a139a55
+
+
+Scanner类:用于接收键盘录入数据。
+import java.util.Scanner
+
+
+   		A:导包
+   		B:创建对象
+   		C:调用方法
+   
+   System类下有一个静态的字段：
+   		public static final InputStream in; 标准的输入流，对应着键盘录入。
+   
+   		InputStream is = System.in;
+   
+   class Demo {
+   		public static final int x = 10;
+   		public static final Student s = new Student();
+   }
+   int y = Demo.x;
+   Student s = Demo.s;
+   构造方法：
+   		Scanner(InputStream source)
+
+nextLine()方法:将输入的类型都当作字符串来处理。nihao,23,78.3	
+	public String nextLine()
+nextInt()方法: 只能用来获取int类型的值
+  		public int nextInt()
+
+Scanner sc = new Scanner(System.in);
+//每次调用.nextLine或.nextInt方法都要进行输入
+String a1 = sc.nextLine();
+Strign a2 = sc.nextLine();
+int a3 = sc.nextLine();  
+
+		// 获取两个int类型的值
+		// int a = sc.nextInt();
+		// int b = sc.nextInt();
+
+		// 获取两个String类型的值
+		// String s1 = sc.nextLine();
+		// String s2 = sc.nextLine();
+
+		// 先获取一个字符串，在获取一个int值
+		// String s1 = sc.nextLine();
+		// int b = sc.nextInt();
+		// System.out.println("s1:" + s1 + ",b:" + b);
+		// System.out.println("-------------------");
+
+先获取一个数值，在获取一个字符串，会由于那个换行符号出现问题。
+解决办法:
+	A:先获取一个数值后，在创建一个新的键盘录入对象获取字符串。
+	B:把所有的数据都先按照字符串获取，然后要什么，你就对应的转换为什么。
+
+		// 先获取一个int值，在获取一个字符串 ---->创建2个对象，一个获取int，一个获取String
+		// int a = sc.nextInt();
+		// String s2 = sc.nextLine();
+		// System.out.println("a:" + a + ",s2:" + s2);
+		// System.out.println("-------------------");
+
+		int a = sc.nextInt(); //sc对象获取int值
+		Scanner sc2 = new Scanner(System.in); 
+		String s = sc2.nextLine(); //sc2对象获取String值
+		System.out.println("a:" + a + ",s:" + s);
+
+基本格式：
+ 		public boolean hasNextXxx():判断是否是某种类型的元素
+		public Xxx nextXxx():获取该元素
+ 
+ 举例：用int类型的方法举例
+		public boolean hasNextInt()
+		public int nextInt()
+ 
+ 注意：
+ 		InputMismatchException：输入的和你想要的不匹配
+		
+		Scanner sc = new Scanner(System.in);
+		// 获取数据
+		if (sc.hasNextInt()) {
+			int x = sc.nextInt();
+			System.out.println("x:" + x);
+		} else {
+			System.out.println("你输入的数据有误");
+		}
+ 

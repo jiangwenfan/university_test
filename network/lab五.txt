@@ -1,0 +1,83 @@
+实验五:三层交换机综合实验
+A(f0/10)->B1(trunk,f0/10;f0/11)->pc1(vlan10,f0/1),pc2(vlan20,f0/2),pc3(vlan30,f0/3)
+ (f0/11)->B2(trunk,f0/10;f0/11)->pc4(vlan10,f0/1),pc5(vlan20,f0/2),pc5(vlan30,f0/3)
+vlan 10: 192.168.10.0/24 192.168.10.1
+vlan 20: 192.168.20.0/24 192.168.20.1
+vlan 30: 192.168.30.0/24 192.168.30.1
+要求:使用三层交换机让不同vlan之间互访。
+#设置三层交换机为整个网络的生成树的跟
+#
+
+步骤:
+1.二层交换机:创建3个Vlan,添加端口到vlan，设置与三层交换机相连的端口为trunk端口。
+2.三层交换机:创建3个Vlan,给vlan配置虚接口地址，设置与二层交换机相连端口为trunk模式。
+改变三层交换机的优先级，设置为根桥。启用路由功能(ip routing)。
+
+配置过程:
+1.创建vlan 10,20,30
+{
+	vlan 10
+	vlan 20
+	vlan 30
+	show vlan //查看Vlan信息
+}
+2.分别添加端口到vlan
+{
+	int f0/1
+	switchport access vlan 10
+	int f0/2
+	switchport access vlan 20
+	int f0/3
+	switchport access vlan 30
+	show vlan 
+}
+3.设置与三层交换机相连的端口为trunk模式(vlan中继模式)
+{
+	int f0/10
+	switchport mode trunk
+	show interfaces trunk 
+}
+
+B1：
+1.创建vlan 10,20,30
+2.分别添加端口到vlan
+3.设置与三层交换机相连的端口为trunk模式。
+
+B2:
+1.创建vlan 10,20,30
+2.分别添加端口到vlan
+3.设置与三层交换机相连的端口为trunk模式。
+
+A:
+1.创建vlan 10,20,30
+//分别设置每个vlan的虚接口地址
+int vlan 10
+ip address 192.168.10.1 255.255.255.0
+int vlan 20
+ip address 192.168.20.1 255.255.255.0
+int vlan 30
+ip address 192.168.30.1 255.255.255.0
+//设置f0/10和f0/11端口为trunk模式
+int f0/10
+switchport trunk encapsulation dot1q
+switchport mode trunk 
+int f0/11
+switchport trunk encapsulation dot1q 
+switchport mode trunk 
+//改变三层交换机的优先级，将其设置为根桥。
+spanning-tree vlan 1  priority 0
+spanning-tree vlan 10 priority 0
+spanning-tree vlan 20 priority 0
+spanning-tree vlan 30 priority 0
+//启用三层交换机路由功能
+ip routing 
+
+--------------------->结果:全网互通
+
+
+
+
+
+
+
+

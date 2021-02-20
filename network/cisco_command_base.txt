@@ -1,0 +1,130 @@
+1.三种配置模式
+一般用户模式--->特权用户模式--->全局配置模式
+>enable #从一般用户进入特权用户
+#config terminal #从特权用户进入全局配置
+
+exit #退回到上一级模式
+ctrl+z #退回到特权用户
+interface ? #显示提示参数列表
+
+特权用户模式：
+show clock #查看系统时钟和日期
+clock set 11:28:16 march 2009 #设置系统日期和时钟。
+ping 192.168.1.2  //!!!表示ping不通。 ...表示ping通。
+show arp //显示交换机上ARP缓冲区的内容。
+show mac-address-table //显示交换机上mac地址表的内容。
+show interface fastEthernet 0/1 //显示交换机端口信息
+show vlan //查看vlan信息
+show interface vlan 10 //查看vlan10的信息
+show interfaces trunk //查看trunk信息
+show spanning-tree //查看根桥信息
+
+
+全局配置模式:
+hostname jwf #设置设备名称
+enable password admin123 #设置进入特权模式的密码(admin123). 密码不加密
+enable secret admin #设置进入特权模式的密码(admin). 密码以md5加密
+#secret的优先级高于password
+
+接口配置模式的:
+shutdown //临时关闭端口
+no shutdown //开启端口
+switch(config)# interface fastEthernet 0/1
+switch(config-if)# shutdown 
+
+(config)#interface f0/0 进入相应的端口配置模式
+
+
+
+ip地址常识： 以太网利用mac地址标志网络中的一个节点。
+
+
+* **链路聚合技术 和 IEEE802.3ad**
+[A]:
+```clike
+interface range  fastethernet0/1-2
+channel-protocol lacp   //设置链路聚合协议lacp
+channel-group 1 mode active  //链路聚合的通道组1，激活模式
+```
+[B]
+```clike
+interface range fastethernet0/23-24
+channel-protocol lacp
+channel-group 1 mode active
+```
+[查看配置]：
+```clike
+show etherchannel summary
+```
+
+* **拓展：把聚合后的链路作为trunk链路**
+```clike
+vlan 10
+vlan 20
+interface port-channel 1  //进入端口通道配置模式
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk allowed vlan 10,20
+```
+
+
+
+
+
+------------------
+1.vlan互访配置
+
+```clike
+no switchport   //二层接口变成三层接口
+vlan 10
+vlan 20
+interface range fastethernet0/1-2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+
+
+interface vlan 10
+ip address 192.168.10.1 255.255.255.0
+no shutdown
+interface vlan 20
+ip address 192.168.20.1 255.255.255.0
+no shutdown
+```
+
+[查看]：
+```clike
+ip route
+```
+
+2.dhcp服务配置
+需求：为不同的valn自动提供ip地址
+1.
+```clike
+vlan 10
+vlan 20
+interface range ethernet0/1-2
+switchport mode trunk
+switchport trunk encapsulation dot1q
+
+interface vlan 10
+ip address 192.168.10.1 255.255.255.0
+no shutdown
+interface vlan 20
+ip address 192.168.20.1 255.255.255.0
+no shutdown
+```
+
+2.
+```clike
+ip dhcp excluded-address 192.168.10.1 192.168.10.10
+ip dhcp excluded-address  192.168.20.1  192.168.20.10
+
+ip dhcp pool vlan10pool
+network 192.168.10.0 255.255.255.0
+default-router	192.168.10.1
+
+ip dhcp pool vlan20pool
+network 192.168.20.0 255.255.255.0
+default-router  192.168.20.1
+```
+

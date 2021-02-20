@@ -1,0 +1,99 @@
+urllib库的使用:
+request：最基本的http请求模块，用来模拟发送请求。
+error:异常处理模块，捕获发生错误的请求。
+parse:工具模块（提供了很多url的处理方法）
+robotparse:识别网站的robots.txt文件。
+
+request模块详解：
+#利用最基本的urlopen()方法可以完成最基本的简单网页的Get请求。
+import urllib.request
+response=urllib.request.urlopen("https://www.python.org")
+
+print(response.read().decode('utf-8'))   #打印全部网页源代码
+print(type(response))   #查看响应类型。
+【是HTTPResponse类型的对象。方法：read(),readinto(),getheader(name),getheaders(),fileno() 属性：msg,version,status,reason,debuglevel,closed】
+print(response.status)  #返回结果的状态码
+print(response.getheaders())   #响应头的信息
+print(response.getheader('Server'))  # 获取了响应头中的server的值。
+补充：
+urlopen函数的API:
+urllib.request.urlopen(url,data=none,[timeout,]*,cafile=none,capath=none,cadefault=False,context=none)
+data参数：
+可选的。使用这个参数说明请求方法是post方式。需要将字符串转成bytes(字节流)s类型；使用bytes()方法 “bytes()方法的第一个参数为string类型,所以需要将字典转换为字符			    串（urllib.parse模块里的urlencode()方法）；第二个参数指定编码格式”
+eg:
+#请求的站点是:httpbin.org，它提供http请求测试。
+import  urllib.parse
+import  urllib.request
+data=bytes(urllib.parse.urlopen({'word':'hello'}),encoding='utf-8')
+response=urllib.request.urlopen('http://httpbin.org/post',data=data)
+print(response.read())      #我们传递的参数出现在了form字段中，这表明模拟了表单提交的方式，以post方式传输数据。
+timeout参数：
+可选的。用于设置超时时间，单位为：秒，不指定该参数就会使用全局默认时间。如果请求超出了这个设置的时间，还没有得到响应，就会抛出异常。他支持http,https,ftp请求。
+eg:
+import  urllib.request
+response=urllib.request.urlopen('http://httpbin.org/get',timeout=1)
+print(response.read())
+
+#可以通过这个设置来控制一个网页如果长时间为响应就跳过它的抓取，可以利用try except语句来实现。
+import socket
+import urllib.request
+import urllib.error
+try:
+response=urllib.request.urlopen('http://httpbin.org/get',timeout=0.1)
+except urllib.error.URLError as e:
+if isinstance(e.reason,socket.timeout):   	#<class 'socket.timeout'>   
+print("time out")
+
+其他参数：
+context参数:他必须是ssl.SSLContext类型，用来指定SSL设置。
+cafile参数：指定证书
+capath参数：证书的路径
+Request：更加强大的请求方法
+import  urllib.request
+request=urllib.request.Resquest('https://python.org')
+response=urllib.request.urlopen(request)
+print('response.read().decode('utf-8')')
+
+
+。
+
+
+布尔值取反:
+b = True
+a = bool(1-b)
+
+random模块:
+https://zhuanlan.zhihu.com/p/34395664
+
+
+
+
+1.4
+
+matplotlib模块：绘图模块
+import matplotlib.pyplot
+ax=[1,2,3,4]
+ay=[1,4,9,16]
+
+matplotlib.pyplot.plot(ax,ay,linewidth=5)   ##绘制简单的折线图
+matplotlib.pyplot.scatter(ax,ay,s=200)      #绘制散点图：
+
+matplotlib.pyplot.title("this is title",fontsize=24)    
+matplotlib.pyplot.xlabel("这是横坐标x",fontsize=14)
+matplotlib.pyplot.ylabel("这是纵坐标y",fontsize=14)
+
+matplotlib.pyplot.tick_params(axis='both',labelsize=14) 
+matplotlib.pyplot.show()  //显示图形
+
+自动计算数据：
+import matplotlib.pyplot
+ax=list(range(1,1001))
+ay=[x**2 for x in ax]
+matplotlib.pyplot.scatter(ax,ay,s=40,edgecolor='none',c='red'，)   #c=(0,0,8) 自定义颜色
+.......
+matplotlib.axis([0,1100,0,1100000])
+matplotlib.pyplot.show()
+
+颜色映射是一系列颜色，他们从起始颜色渐变到结束颜色，用于突出数据的规律。
+matplotlib.pyplot.scatter(ax,ay,s=40,edgecolor='none',c=ay,cmap=matplotlib.pyplot.cm.Blues)
+

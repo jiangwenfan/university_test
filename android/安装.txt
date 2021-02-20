@@ -1,0 +1,39 @@
+1.linuxan error occurred while creating the AVD 
+see idea.log for details
+
+could not start avd
+
+2.unable to locate adb
+
+java环境:
+jdk:
+
+eclipse:
+sdk: google提供的
+	docs:文档
+	sources:android源码
+	platform-tools:adb等工具
+	
+java + eclipse + sdk +adt + genymotion(模拟器) +真机
+java 你懂的
+eclipse + sdk +adt 你懂的
+eclipse + sdk +adt +内置模拟器----->卡的一批，时常起不来
+eclipse + sdk +adt +真机 -->流畅。不过真机有个问题,就是尽量别用太旧的手机，问题比较多，有的接口比较松，所以自己的当前的新手机就不错。
+其中:
+1.需要安装驱动(推荐官方驱动或手机助手)，手机虽然可以用adb devices看到手机设备但是，eclipse软件不能驱动。
+2.打开usb调试模式,打开usb安装。如果手机太旧了，出现问题尝试多插拔几次，并且usb调试模式也多打开关闭几次，就能解决很大一部分问题。
+3.远离ov手机，能剩下很大一部分麻烦。我的旧手机就是vivo,开发者模式中的功能都不全,最后虽然可以调试，但是每次都需要手动确认安装。
+4.在eclipse的设备管理器中可以查看到手机就可以了。然后在run configuration中选择app application选项,在target中选择每次运行都询问，也就是第一个选项，然后保存，随后进行运行。
+
+eclipse + sdk +adt +genymotion(开usb调试模式,版本号连续点击) --->流畅，不过eclipse偶尔不能发现这个设备。解决办法是关掉Eclipse和genymotion模拟器，然后使用真机,用eclipse运行，然后在打开模拟器，就会发现模拟器这个设备了，就可以使用模拟器进行运行了。
+
+
+java + android studio + genymotion(模拟器) + 真机
+java 你懂的
+eclipse + sdk +adt 你懂的
+android studio + 内置模拟器 --->反应有点慢，有点卡
+android studio +真机 -->流畅。需要在run configuration中设置，启动设备是usb设备。
+android studio +genymotion模拟器 -->流畅。
+
+adb devics几个常见的问题:
+都可以通过上面的几个方法进行解决,多半可能是由于手机太旧的问题。

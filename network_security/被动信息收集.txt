@@ -1,0 +1,56 @@
+
+www.moguding.net
+139.129.109.190
+
+域名:moguding.net
+完全限定域名:www.moguding.net
+a,c name,ns,mx ptr(反向域名解析)
+
+nslookup:
+set type=all #查询所有
+set type=a #设置a记录，max只查邮件记录。
+server 8.8.8.8 #指定域名服务器
+
+nslookup -q=any 163.com 114.114.114.114 #指定域名服务器
+
+dig:
+dig 163.com any @8.8.8.8 #指定域名服务器
+dig mail.163.com any #查询fqdn的ip
+   dig +noall +answer mail.163.com any #+noall 表示什么都不输出
+dig -x 8.8.8.8 #反向查询
+
+
+
+
+dig 163.com ns #查询ns记录，dns主机
+dig +noall +answer txt chaos VERSION.BIND @ns3.dnsv4.com 
+
+抓包
+dig +trace www.baidu.com 
+
+
+区域传输:
+抓包    
+dig @ns2.163.com 163.com axfr #区域传输
+ 
+host -T -l 163.COM ns3.163.com #同
+
+DNS字典爆破:
+fierce -dnsserver 8.8.8.8 -dns 163.com -wordlist a.txt 
+dpkg -L fierce #显示这个软件所生成的的文件
+fierce -dnsserver 8.8.8.8 -dns 163.com -wordlist /usr/share/fierce/hosts.txt
+
+dnsdict6 -d4 -t 16 -x 163.com  #-t 线程数,ipv4,6地址，-u 完整字典
+find / -name dnsenum #从根下面查dnsenum文件
+
+DNS注册信息:
+whois
+whois 163.com 
+whois 8.8.8.8
+
+
+ 
+
+
+
+

@@ -1,0 +1,79 @@
+* 多进程创建
+```python
+import multiprocessing
+import time
+def test1():
+    while True:
+        print("test1---1---")
+        time.sleep(1)
+def test2():
+    while True:
+        print("test2---2---")
+        time.sleep(1)
+def main():
+    p1 = multiprocessing.Process(target=test1)　#创建进程对象
+    p2 = multiprocessing.Process(target=test2)　
+    p1.start()　＃创建启动子进程
+    p2.start()
+if __name__ == "__main__":
+    main()
+
+```
+进程：一堆资源的总称，一个进程里面至少有一个线程。
+线程：一个进程里面的多功能。
+线程是调度的单位，进程是资源的单位。
+* 进程间通信
+socket通信
+文件保存读取通信
+queue队列
+```python
+import multiprocessing
+import time
+def download_data(q):
+    data = [11,22,33,44]
+    #向队列中写入数据
+    for temp in data:
+        q.put(temp)
+    print("form Queue　write over!")
+def analysis_data(q):
+    watting_data = list() #创建一个空列表.等价于[]，但是效果更好
+    while True:
+        data = q.get() #from queue get data
+        watting_data.append(data)
+        if q.empty(): #判断队列是否空
+            break
+    print("queue analysis data over!")
+def main():
+    q = multiprocessing.Queue() #默认是无限制，由硬件决定。（３）表示最多存储３个。
+    p1 = multiprocessing.Process(target=download_data,args=(q,)) #传入队列引用
+    p2 = multiprocessing.Process(target=analysis_data,args=(q,))
+    p1.start()
+    p2.start()
+if __name__ == "__main__":
+    main()
+
+```
+* process of pool
+任务数量不确定使用进程池
+```python
+import multiprocessing
+import time,os,random
+
+def worker(msg):
+    t_start = time.time()
+    print("%s开始执行，进程号:%d"%(msg,os.getpid()))
+    time.sleep(random.random()*2)
+    t_stop = time.time()
+    print(msg,"执行完毕，耗时%0.2f"%(t_stop-t_start))
+
+po = multiprocessing.Pool(3) #定义一个进程池，最大进程数３
+for i in range(0,10):
+    po.apply_async(worker,(i,))
+
+print("------start---")
+po.close() #关闭进程池，关闭后po不再接受新请求
+#po.join()　#等待po中所有子进程执行完毕，必须放在close语句之后。
+po.join()
+prinrtzaqy("-----end-----")
+
+```

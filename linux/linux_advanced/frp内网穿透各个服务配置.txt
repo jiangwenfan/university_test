@@ -1,0 +1,63 @@
+base:
+going to github download frp
+
+vps ---> frps,frps.ini作为服务端
+client ---> frpc,frpc.ini 作为客户端
+
+1.getenforce #关闭Selinux
+2.systemctl status firewalld #关闭firewalld
+3.iptables -F #清空防火墙规则
+4.云平台放行所有端口(tcp必须放行)
+5.nmap 1.1.1.1 -p 3306 #出现filtered必是防火墙的原因。
+
+1.进入vps进行配置中转。
+vim frps.ini 
+	[common]
+	bind_port = 7000  #frps服务监听的端口. vps与内网服务器沟通的端口7000
+	token = 123  #vps与内网服务器的连接密码
+screen -S frpsServer #进入screen的终端
+	./frps -c frps.ini #运行frp的服务端
+	ctrl + a+d #退出
+screen -l #查看这个服务已经在后台运行
+
+2.进入内网服务器配置客户端
+vim frpc.ini
+	[common]
+	server_addr = x.x.x.x #vps的公网ip
+	server_port = 7000 #vps上frps服务监听的端口
+	token = 123 #连接vps上frp服务的口令
+
+	[ssh]
+	type = tcp
+	local_ip = 127.0.0.1 
+	local_port = 22 #需要映射的端口。--->ssh服务的22端口
+	remote_port = 6000 #内网端口被映射的端口。-->22端口被映射为6000端口
+screen -S frpcServer
+	./frpc -c frpc.ini #运行客户端服务
+	ctrl + a + b #退出
+5.连接被映射的ssh服务
+ssh root@1.1.1.1 -p 6000 #通过vps地址和被映射为6000端口的ssh进行连接。
+
+6.其他服务的映射
+vim frpc.ini
+	.....
+	[http]
+	type = tcp
+	local_ip = 127.0.0.1
+	local_port = 80
+	remote_port = 8000
+	
+	[mysql]
+	type = tcp
+	local_ip = 127.0.0.1
+	local_port = 3306
+	remote_port = 33060 #如果vps本机没有3306端口，则可以不用修改，直接使用3306
+	
+	[remote_desktop]
+	[vnc_desktop]
+	
+	[nfs]
+	[ftp]
+	[samba]  #当网盘
+
+

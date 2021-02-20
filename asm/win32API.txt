@@ -1,0 +1,14 @@
+win32 API中宽字符:
+什么是Win32 api?
+有哪些?
+几个重要的DLL:
+Kernel32.dll
+最核心的功能模块,比如管理内存，进程和线程相关的函数等。
+User32.dll
+是windows用户界面相关应用程序接口，比如创建窗口和发送消息等。
+GDI32.dll
+全称是Graphical Device Interface(图形设备接口),包含用于画图
+和显示文本的函数。
+在哪里? 
+主要存放在c:\windows\system32目录下，system32目录下的是64为api,
+syswow64中存放的是32位api

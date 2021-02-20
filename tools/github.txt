@@ -1,0 +1,42 @@
+repository: 
+	仓库。存放一个项目的所有资源。
+start:
+	收藏+点赞。赞同了这个项目,也方便自己下次查看。
+fork:
+	克隆。将被人的项目复制一份到自己的仓库。
+pull request:
+	发起请求,结合fork使用。当我fork了别人的项目，并做了一些修改之后，使用pull request请求对方合并我做的修改到他的项目上。
+watch:
+	关注。当关注了某个项目之后，这个项目的更新我会收到通知。
+issue:
+	事务卡片。通常用来反馈项目bug。
+	
+
+
+
+
+
+
+
+
+
+
+github:
+Initialize this repository with a README
+在 Initialize this repository with a README 选项上打钩，随后
+GitHub 会自动初始化仓库并设置 README 文件，让用户可以立刻clone 这个仓库。
+如果想向 GitHub 添加手中已有的 Git 仓库，建议不要勾选，直接手动 push。
+
+Add .gitignore
+下方左侧的下拉菜单非常方便，通过它可以在初始化时自动生
+成.gitignore文件.这个设定会帮我们把不需要在Git仓库中进行版本管
+理的文件记录在 .gitignore 文件中，省去了每次根据框架进行设置的麻
+烦。下拉菜单中包含了主要的语言及框架，选择今后将要使用的即可。
+由于本书中我们并不使用任何框架，所以不做选择。
+
+Add a license
+右侧的下拉菜单可以选择要添加的许可协议文件。如果这个仓库中
+包含的代码已经确定了许可协议，那么请在这里进行选择。随后将自动
+生成包含许可协议内容的 LICENSE 文件，用来表明该仓库内容的许可
+协议。
+输入选择都完成后，点击 Create repository 按钮，完成仓库的创建。

@@ -1,0 +1,34 @@
+单臂路由:
+vlan互通的几种实现方式:
+1.两个网络(vlan)跨交换机互通，通过路由器实现。
+2.两个网络(vlan)同交换机互通，通过三层交换机实现。
+3.两个网络(vlan)同交换机互通，通过单臂路由实现(早期没有三层交换机的实现方式)。
+
+A(trunk,f0/10)-->(trunk,f0/10)B--->pc1(vlan 10,f0/1)
+				  --->pc2(vlan 20,f0/2)
+vlan 10: 192.168.10.0/24 192.168.10.1
+vlan 20: 192.168.20.0/24 192.168.20.1
+
+B：
+//创建vlan,添加端口
+vlan 10
+vlan 20
+int f0/1 
+switchport access vlan 10
+int f0/2
+switchport access vlan 20
+//设置端口为trunk模式
+int f0/10
+switchport mode trunk 
+
+A:
+//启用物理端口
+int f0/10 
+no shutdown
+//分别进入逻辑子接口设置网关地址，和帧标记。
+int f0/0.1
+encapsulation dot1q 10
+ip address 192.168.10.1 255.255.255.0
+int f0/0.2
+encapsulation dot1q 20
+ip address 192.168.20.1 255.255.255.0

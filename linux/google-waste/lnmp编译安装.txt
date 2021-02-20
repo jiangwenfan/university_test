@@ -1,0 +1,145 @@
+#centos7
+一:nginx 1.12
+1.安装编译工具和相关依赖:
+yum install -y gcc gcc-c++ pcre-devel openssl openssl-devel zlib-devel ncurses-devel cmake bison libxml2-devel libpng-devel 
+
+2.下载源码包到服务器上。
+nginx 1.12
+mysql 5.5
+php 7.1 
+
+3.创建运行nginx的用户
+useradd -r -s /sbin/nologin nginx 
+
+4.解压,编译安装
+tar -zxvf ....
+./configure --prefix=/usr/local/nginx --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module
+make
+make install 
+
+5.上传nginx管理脚本.以上传到github中。
+#!/bin/bash
+ngxc="/usr/local/nginx/sbin/nginx"
+pidf="/usr/local/nginx/logs/nginx.pid"
+ngxc_fpm="/usr/local/php/sbin/php-fpm"
+pidf_fpm='/usr/local/php/var/run/php-fpm.pid'
+case "$1" in 
+	start)
+		$ngxc -t &> /dev/null
+		if [ $? -eq 0 ];then
+			$ngxc 
+			$ngxc_fpm 
+			echo "nginx service start success!"
+		else
+			$ngxc -t 
+		fi
+		;;
+	stop)
+		kill -s QUIT $(cat $pidf)
+		kill -s QUIT $(cat $pidf_fpm)
+			echo "nginx service stop success!"
+		;;
+	restart)
+		$0 stop
+		$0 start 
+		;;
+	reload)
+		$ngxc -t &> /dev/null
+		if [ $? -eq 0];then 
+			kill -s HUP $(cat $pidf)
+			kill -s HUP $(cat $pidf_fpm)
+			echo "reload nginx config success!"
+		else
+			$ngxc -t 
+		fi 
+		;;
+	*)
+		echo "please input stop|start|restart|reload"
+		exit 1 
+	esac
+
+6. 设置nginx的软连接
+ln -s /usr/local/nginx/sbin/nginx /usr/local/sbin/nginx
+通常用来检测nginx配置文件的语法错误: nginx -t 
+
+
+二：mysql 5.5
+1.下载源码包到服务器上。
+2.创建用户
+useradd -r -s /sbin/nologin mysql 
+3.解压，编译安装
+tar -zxvf ...
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DEXTRA_CHARSETS=all -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWIDTH_MEMORY_STORAGE_ENGINE=1 -DWIDTH_READLINE=1 -DENABLED_LOCAL_INFILE=1 -DMYSQL_USER=mysql -DMYSQL_TCP_PORT=3306
+make -j 4
+make install 
+
+4.修改安装后的目录权限
+ln -s /usr/local/mysql/bin/* /usr/local/bin/ 
+
+cd /usr/local/mysql 
+chown -R root .
+chown -R mysql data
+
+5.生成mysql配置文件
+cp -a /root/mysql-5.5/support-files/my-medium.cnf /etc/my.cnf 
+
+6.初始化，生成授权表
+cd /usr/local/mysql 
+./scripts/mysql_install_db --user=mysql #成功标志，两个ok
+
+7.生成mysql的启动和自启动管理脚本
+cd /root/mysql-5.5/support-files/ 
+cp -a mysql.server /etc/init.d/mysqld 
+chmod +x /etc/init.d/mysqld 
+
+chkconfig --add mysqld 
+chkconfig mysqld on 
+service mysqld start|stop|restart 
+
+8.给mysql的root用户设置密码
+mysqladmin -uroot password 123456
+
+三.php 7.1 
+1.下载源码包到服务器上。
+2.解压,编译安装 
+./configure --prefix=/usr/local/php/ --with-config-file-path=/usr/local/php/etc/ --with-mysqli=/usr/local/mysql/bin/mysql_config --enable-soap --enable-mbstring=all --enable-sockets --with-pdo-mysql=/usr/local/mysql --with-gd --without-pear --enable-fpm
+make -j 4
+make install 
+#libpng.so not found报错。-->ln -s /usr/lib64/libpng.so /usr/lib/
+
+3. 生成php配置文件
+cp -a /root/php-7.1/php.ini-production /usr/local/php/etc/php.ini 
+
+4. 创建软连接
+ln -s /usr/local/php/bin/* /usr/local/bin/ 
+ln -s /usr/local/php/sbin/* /usr/local/sbin/ 
+
+四. 配置nginx连接php
+1.修改php-fpm配置文件
+cd /usr/local/php/etc/
+cp -a php-fpm.conf.default php-fpm.conf 
+vim php-fpm.conf 
+	pid = run/php-fpm.pid 
+
+cp -a php-fpm.d/www.conf.default php-fpm.d/www.conf 
+vim  php-fpm.d/www.conf 
+	user = nginx
+	group = nginx 
+
+2.修改nginx配置文件，使其识别.php后缀的文件
+vim /usr/local/nginx/conf/nginx.conf 
+	#取消下列注释行
+	location ~\.php${
+		root	html;
+		fastcgi_pass 127.0.0.1:9000;
+		fastcgi_index	index.php;
+		fastcgi_param	SCRIPT_FILENAME		/scripts$fastcgi_script_name;
+		include		fastcgi.conf #修改为这样的
+	}
+	
+	#修改为这样，使其默认加载php文件
+	location / {
+		root html;
+		index	index.php index.html;	#设置默认加载页面的优先级
+	}

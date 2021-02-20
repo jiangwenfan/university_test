@@ -1,0 +1,8 @@
+## kali更新出现的文件尺寸不符问题
+解决办法: 将http更换为https
+```bash
+# vim /etc/apt/source
+deb https://mirrors.tuna.tsinghua.edu.cn/kali kali-rolling main contrib non-free
+deb-src https://mirrors.tuna.tsinghua.edu.cn/kali kali-rolling main contrib non-free
+```
+https://www.cnblogs.com/Hi-blog/p/9354252.html

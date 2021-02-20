@@ -1,0 +1,70 @@
+DNS服务器搭建:
+0.前奏
+0.1客户端查询：
+dig工具：
++trace :追踪功能。 
+dig +trace  www.ksu.edu.tw     //防火墙通行tcp/udp的53端口
+
+host工具：
+host  linux.vbrid.org	    //使用默认查询ip
+host  -a  linux.vbrid.org	//查询linux.vbrid.org的所有重要参数。
+host		linux.vbrid.org  139.175.10.20	
+
+	//强制以139.175.10.20这台dns主机来查询。有错，查看/etc/resolv.conf
+nslookup使用：
+nslookup   mail.ksu.edu.tw	//查询ip信息
+#nslookup
+>:	ip	---->域名信息
+>:	域名   ----->IP信息
+>:set type:any
+>:域名  ---->ip信息
+>:exit
+
+dns配置：
+1.所需软件：yum  -y install bind
+bind-libs-9.7-....     	//bind相关命令函数库
+bind-utils-9.7.....	//客户端命令
+bind-9.7.0-......		//主程序
+bind-chroot-9.7......		//锁定根目录./var/named/chroot
+【通过 rpm -qa | grep '^bind' 来查询是否安装】
+2.配置文件：
+/etc/named.conf	//主要配置文件。规范主机设置，zone file的所在，权限设置。
+/etc/sysconfig/named	是否启动chroot及额外参数。
+/var/named/	数据文件默认放在这个目录。
+/var/run/named	
+3. vim  /etc/sysconfig/chroot		//锁定根目录
+ROOTDIR=/var/named/chroot
+实操：
+cache-only 与 forwarding dns 服务器：
+1. vim   /etc/named.conf		
+option{
+listen-on port 53 {any;};
+allow-query{any;};
+forwarders{ 8.8.8.8 ;  221.13.30.242; };
+2：
+recursion  yes;   //支持递归查询
+#  dnssec-enabble  yes;  //安全查询，要密钥
+#dnssec-validation  yes;
+#dnssec-lookaside  auto;
+3.forward  only;   //only:仅执行转发；first:先查找本地zone,再转发。
+forwarders{8.8.8.8; };
+};
+ /etc/init.d/named    start  //6中的
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

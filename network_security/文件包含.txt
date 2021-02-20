@@ -1,0 +1,7 @@
+服务器包含文件时，不管文件后缀是否是php，都会尝试当做php文件执行，如果文件内容确为php，则会正常执行并返回结果，如果不是，则会原封不动地打印文件内容，所以文件包含漏洞常常会导致任意文件读取与任意命令执行。
+low:
+本地文件包含：
+http://192.168.201.201/dvwa/vulnerabilities/fi/?page=../../../study.html
+远程文件包含：
+allow_url_fopen ： On 
+allow_url_include : On

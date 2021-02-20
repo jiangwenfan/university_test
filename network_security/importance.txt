@@ -1,0 +1,21 @@
+iptables介绍：
+
+参考资料：
+https://zh.wikipedia.org/wiki/Netfilter
+https://zh.wikipedia.org/wiki/%E5%86%85%E6%A0%B8
+
+
+scapy模块的使用:
+#数据包的源和目的地址默认是:127.0.0.1  ; ttl值默认为64  ；配置完目标ip后，源IP自动变为本机ip.
+	#packet  #查看所添加的信息，不显示默认的信息.
+	#packet.src #查看这个项的信息
+	packet=IP(ttl=10)      #指定数据包的ttl值  【packet       ;    packet.ttl】
+	                                       #del(packet.ttl)   #删除指定的ttl值，采用默认的。【packet    ;    packet.ttl 】
+	packet.dst="192.168.201.51"      #指定数据包的目标ip  【packet    ;     packet.dst 】
+	查看数据包：
+	packet  #查看数据包简略内容 (修改的)
+	packet.show()    #查看数据包详细内容
+	http://www.voidcn.com/article/p-pewwaiwr-bdn.html
+	构造多层数据包：
+	packet=Ether(dst="68:07:15:53:B4:4D") / IP(dst="172.16.169.19") / TCP(dport=23)       # packet.show() 
+

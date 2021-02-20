@@ -1,0 +1,179 @@
+django
+drf
+
+开发者id:wxffcba304bfcd1cec
+
+--------------------
+pages: 存放页面。一个页面就是一个文件夹。*必须存在*
+	index 页面
+		index.js  js代码
+		index.json 页面的配置文件
+		index.wxml 微信的html代码
+		index.wxss 微信的css代码
+	ligs 页面
+		。。。
+		。。。
+
+utils: 工具类
+
+app.js 全局的(公用的)
+app.json 全局的配置。*必须存在*。
+app.wxss 全局的Css
+project.config.json 项目的配置文件
+sitemap.json 微信搜索爬虫的
+---------------------
+
+<text>haha</text> 这个相当于span标签
+<view>你好</view> 这个相当于div标签
+
+使用微信的Css样式
+.c1{
+	color:red;
+}
+<view class="c1">哈哈</view>
+
+app.json使用:
+{
+	"pages":[
+		"pages/index/index",   每创建一个页面，就需要在app.json里面注册一个页面。
+		"pages/logs/logs"
+		
+	]
+	页面的导航栏设置
+	"window":{
+		"navigationBarBackgroundColor":"#9932CC", 导航栏背景颜色
+		"navigationBarTextStyle":"blank",  导航栏标题字体的颜色
+		"navigationBarTitleText":"毕业设计代做", 标题栏标题文字内容
+	},
+	页面的尾部设置
+	"tabBar":{
+		"selectedColor":"#CD5C5C",  选中之后文字的颜色。为了使选中之后文字的颜色随着图片的颜色而变化。
+		"list":[
+			{
+				"pagePath":"pages/index/index",
+				"text":"首页",
+				"iconPath":"static/tabbar/1.png",  给加个图标
+				"selectedIconPath":"static/tabbar/11.png" 选择之后图标的样子
+			},
+			{
+				"pagePath":"pages/logs/logs",
+				"text":"日志中心",
+				"iconPath":"static/tabbar/2.png",
+				"selectedIconPath":"static/tabbar/22.png"
+			}
+		]
+	},
+}
+
+
+常见组件/标签:
+text 相当于 span
+view 相当于 div
+image 
+<image src="/statics/1.png"></image>
+
+flex布局:
+image{  图片太大，缩小一下
+	width:150rpx;
+	height:150rpx;
+	border-radius:50rpx; 图片变成圆角
+}
+.menu{
+	display:flex;  把父容器变成flex布局形式
+	规定元素的主轴方向。
+	flex-direction:row; 里面的子元素按行排列。 column 按列排列
+	元素在主轴方向如何展示
+	justify-content:space-around;  表示子元素平均居中排列。center连在一起居中排列。space-between两边靠边，中间平均排列。
+	元素在副轴方向如何展示
+	align-items:center; 在副轴居中。flex-end靠最右边
+}
+.menu .item{
+	display:flex; 把子元素变成flex布局形式
+	flex-direction:column; 子元素里面的元素按列排列
+}
+--->???
+<view class="menu">
+	<view class="item">
+		<image src="/statics/software.png"></image>
+		<text>代做软件</text>
+	</view>
+	<view class="item"></view>
+	<view class="item"></view>
+	<view class="item"></view>
+</view>
+------>>>样式3：
+.auction{
+  padding-bottom: 20rpx; 给每个小区域加一个边距，但是似乎不太行。
+}
+.item .title{ 给标题加粗，居中
+  font-size:50rpx;  
+  font-weight: 700;
+  text-align:center;
+}
+.item .tips{ 给小提示使用flex布局，让他在一行显示，主轴方向为恒着显示
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; 主轴排列方式为两边居中
+
+  font-size: 30rpx; 字体大小和颜色
+  color:#87CEEB;
+}
+.item .time + .count{
+  text-align:center;  打算给小提示中的两个字体稍微靠近居中显示，但是似乎不太行。
+}
+.item .big{
+  height:620rpx; 给大图片的容器限定高度，并且当图片超过容器时隐藏
+  overflow: hidden;
+}
+.item .big image{
+  width:100%; 让大图片自动适应容器的大小
+  height:100%;
+}
+.item .small image{
+  height:100rpx;  小图片太大了，让小图片缩小一下
+  width:100rpx;
+  padding-right: 20rpx; 给小图片价格右边据，不然紧挨着。
+}
+.item .small{
+  display: flex;  给小图片的容器进行flex布局，里面的小图片内容横着排列，从左到右。
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+
+<view class="auction">
+  <view class="item">
+    <view class="title">超星尔雅刷课</view>
+    <view class="tips">
+      <view class="time">2020-12-12上线</view>
+      <view class="count">127人想要</view>
+    </view>
+    <view class="big">
+      <image src="/statics/刷课/4.jpg"></image>
+    </view>
+    <view class="small">
+      <image src="/statics/刷课/1.jpg"></image>
+      <image src="/statics/刷课/2.jpg"></image>
+      <image src="/statics/刷课/3.jpg"></image>
+      <image src="/statics/刷课/4.jpg"></image>
+      <image src="/statics/刷课/5.jpg"></image>
+    </view>
+  </view>
+  <view class="item">
+    <view class="title">超星尔雅刷课</view>
+    <view class="tips">
+      <view class="time">2020-12-12上线</view>
+      <view class="count">127人想要</view>
+    </view>
+    <view class="big">
+      <image src="/statics/刷课/4.jpg"></image>
+    </view>
+    <view class="small">
+      <image src="/statics/刷课/1.jpg"></image>
+      <image src="/statics/刷课/2.jpg"></image>
+      <image src="/statics/刷课/3.jpg"></image>
+      <image src="/statics/刷课/4.jpg"></image>
+      <image src="/statics/刷课/5.jpg"></image>
+    </view>
+  </view>
+</view>

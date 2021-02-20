@@ -1,0 +1,72 @@
+
+pip3 install beautifulsoup4
+from bs4 import  BeautifulSoup  #python3.5以上不能导入。
+
+爬虫---
+网站自身的robots.txt和sitemap文件(网站地图)可以对目标站点的规模和结构进行一定程度的了解。
+Google搜索和whois也可以提供帮助。
+builtwitch模块可以检查网站的构建类型。
+	安装方法：pip install builtwitch
+	说明：该模块将url作为参数，下载url并对其分析，然后返回该网站所用的技术类型。
+	import builtwitch 
+	builtwitch.parse('http://example.webscraping.com')
+使用WHOSI就可以知道网站的所有者
+	pip install python-whois
+	使用该模块就可以对域名进行whois查询并返回结果。
+	import whois
+	print whois.whois('appspot.com')
+安全的下载网页:
+	使用python的urllib2模块下载url
+	#最简单版本
+	import urllib2
+	def download(url):
+		return urllib2.urlopen(url).read()
+	#可以捕获异常的健壮版本
+	import urllib2
+	def download(url):
+		print 'Downloading:',url
+		try:
+			html=urllib2.urlopen(url).read()
+		except urllib2.URLError as e:
+			print 'Download error:',e.reason
+			html=none
+		return html
+	重试下载:
+	支持重试下载的版本：
+	import urllib2
+	def download(url,num_retries=2):
+		print 'Download:',url
+		try:
+			html=urllib2.urlopen(url).read()
+		except urllib2.URLError as e：
+			print 'Download error:',e.reason
+			html=none
+			if num_retries > 0:
+				if hasattr(e,'code') and 500 <= e.code < 600:
+					#recursively retry 5XX HTTP errors
+					return download(url,num_retries-1)
+		return html
+设置用户代理：
+默认情况下urllib2使用python-urllib2/2.7作为用户代理下载网页内容。
+设置了一个默认的用户代理“wswp”,可以控制用户代理的设定。
+	def download(url,user_agent='wswp',num_retries=2):
+		print 'Download:',url
+		headers={'user-agent:'user_agent}
+		request=urllib2.Request(url,headers=headers)
+		try：
+			html=urllib2.urlopen(request).read()
+		expect urllib2.URLError as e：
+			print ‘Download error:',e.reason
+			html=none
+			if 
+			
+
+
+Handler:各种处理器，用他们可以做到http请求中的所有事。
+urllib.request.BaseHandler:这个类是其他所有Handler类的父类，提供最基本的方法，default_open()、protocol_request()等。
+HTTPDefaultErrorHandler:用于处理HTTP响应错误，错误都会抛出Handler类型的异常。
+HTTPRedirectHandler:用于处理重定向。
+HTTPCookieProcessor:用于处理Cookies
+ProxyHandler:用于代理设置，默认代理为空。
+HTTPPasswordMgr:用于管理密码
+HTTPBasicAuthHandler:用于管理认证。

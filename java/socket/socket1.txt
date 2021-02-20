@@ -1,0 +1,79 @@
+InetAddress 类操作IP地址，没有构造方法
+没有构造方法的通常几种形式:
+1.成员全部是静态的(Math,Arrays,Collections)
+2.单例设计模式(Runtime)
+3.类中有静态方法返回该类的对象。
+class Demo{
+	privte Demo(){} //私有构造方法。
+	public static Demo getxxx(){
+		return new Demo();  //返回类的对象
+	}
+}
+
+InetAddress的成员方法： public static InetAddress getByName(string host)
+
+//使用throws解决异常
+public static void main(String[] args) throws UnknownHostException {
+	//根据给定的主机名或者ip地址创建InetAddress的地址对象。
+	InetAddress address = InetAddress.getByName("sick.pwall.icu"); 
+	InetAddress address = InetAddress.getByName("119.29.194.108");
+	
+	//根据地址对象，获取到地址的主机名。
+	//根据ip解析域名，很扯。有负载均衡的乱解析，没有的解析错误只有ip。hosts文件中的可以
+	String name = address.getHostName(); 。
+	
+	//根据地址对象，获取到地址的IP地址。
+	String ip = address.getHostAddress();
+	
+	System.out.println(name+"----------"+ip);
+}
+
+1.UDP协议发送数据 DatagramSocke类用于发送和接受数据包
+	创建发送端的DatagramSocket对象
+	创建数据，并把数据打包
+	调用DatagramSocket对象的发送方法发送数据
+	释放资源
+	
+	//创建发送端的DatagramSocket对象
+	DatagramSocket ds = new DatagramSocket();
+	
+	//创建数据，并把数据打包
+	//创建数据:要发送的消息数据
+	byte[] bys = "hello,udp,Im come here".getBytes(); //将字符串转为字节流
+	//创建数据:要发送数据的长度
+	int length = bys.length;
+	//创建数据:ip地址对象
+	InetAddress address = InetAddress.getByName("127.0.0.1");
+	//创建数据:端口
+	int port = 10086;
+	//将创建的数据进行打包
+	DatagramPacket dp = new DatagramPacket(bys,length,address,port);
+	
+	//调用DatagramSocket对象的发送方法发送数据
+	ds.send(dp);
+	
+	//释放资源 
+	ds.close();
+
+2.udp协议接收数据
+	//
+	DatagramPacket ds = DatagramPacket(10086);
+	
+	//创建一个数据包，也叫接收容器。
+	byte[] bys = new byte[1024];
+	int length = bys.length;
+	DatagramPacket dp = new DatagramPacket(bys,length);
+	
+	//调用DatagramSocket对象的receive方法接收数据
+	ds.receive(dp);
+	
+	//解析数据包，并显示
+	InetAddress address = dp.getAddress(); //从接收到的数据包里面获得地址对象
+	String ip = address.getHostAddress(); //从地址对象中获得ip地址。
+	
+	
+	
+
+		
+	
+	

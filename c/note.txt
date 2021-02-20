@@ -1,0 +1,105 @@
+int类型:一般是4字节
+%d 有符号 10进制 int类型
+%u 无符号 10进制 
+%o 		  8进制 int类型
+%x	      16进制 int类型 （字母小写输出）
+%X		  16进制 int类型 (字母大写输出)
+
+短整型 short 2字节
+整形 int 4字节
+长整型 long windows:4字节 linux：4字节(32位) 8字节(64位)
+长长整型 long long : 8字节
+%u  unsigned int 类型
+%lu unsigned long 类型
+
+字符型 char 1字节
+(char实际上就是一个1字节大小的整型，即可输出字符，也可输出数字)
+
+float 单精度浮点型 4字节
+double 双精度浮点型 8字节
+
+ASCII值:
+48 0
+67 A 
+97 a
+
+int类型:一般是4字节
+%d 有符号 10进制 int类型
+%u 无符号 10进制 
+%o 		  8进制 int类型
+%x	      16进制 int类型 （字母小写输出）
+%X		  16进制 int类型 (字母大写输出)
+
+短整型 short 2字节
+整形 int 4字节
+长整型 long windows:4字节 linux：4字节(32位) 8字节(64位)
+长长整型 long long : 8字节
+%u  unsigned int 类型
+%lu unsigned long 类型
+
+字符型 char 1字节
+(char实际上就是一个1字节大小的整型，即可输出字符，也可输出数字)
+
+float 单精度浮点型 4字节
+double 双精度浮点型 8字节
+
+ASCII值:
+48 0
+67 A 
+97 a
+
+
+typedef作为C语言的关键字，作用是为一种数据类型(基本类型或自定义数据类型)定义一个新名字，不能创建新类型。
+typedef只能限于数据类型。
+#define发生在预处理时，typedef发生在编译阶段。
+* 简化基本类型
+```c
+#include <stdio.h>
+typedef unsigned long long ull;
+
+int main()
+{
+	ull a = 10;
+	printf("%d\n",a);
+	return 0;
+}
+```
+* 简化结构体
+student.h
+```c
+struct studentInfoList
+{
+	char name[20];
+	short int age;
+}
+typedef struct studentInfoList sil;  
+```
+student.c
+```c
+#include "student.h"
+
+int main()
+{
+	sil s1;  //struct studentInfoList s1
+	return 0;
+}
+```
+
+typedef struct _PROCESS_INFORMATION {
+    HANDLE hProcess;   //本身进程的句柄表编号
+    HANDLE hThread;		
+    DWORD dwProcessId;	//操作系统全局句柄表的编号 PID
+    DWORD dwThreadId;
+} PROCESS_INFORMATION, *PPROCESS_INFORMATION, *LPPROCESS_INFORMATION;
+
+typedef struct_process_infomation{
+	handle hprocess;
+	handle hthread;
+	dword dwprocessid;
+	dword dwthreadid;
+} process_information, *pprocess_infomation,*lpprocess_information;
+//也就意味着
+//hProcess是局部的,仅仅针对这个进程有效
+//dwProcessId ,dwThreadId 是全局的,是通过操作系统管理的,是唯一的 .不可能出现相同的PID TID
+//但唯一不代表不变,0这编号的进程没了, 那么这0编号会被回收且分给新的进程
+

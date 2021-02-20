@@ -1,0 +1,126 @@
+dir内置函数
+
+在python中,数据,变量,函数都是一个对象,通常有以下两种方法验证,全部操作在ipython中。
+1.
+a = []
+a. #然后按tab键，会列出这个列表变量的所有方法。
+2.使用内置函数dir查看对象内的所有属性和方法。
+__方法名__是python提供的内置方法或属性，
+def hello():
+	print("hello python")
+dir(hello) #查看这个对象的所有属性和方法
+hello.__doc__ #查看函数的文档注释
+
+一些常用的内置方法:
+__new__ 创建对象时,自动调用
+__init__ 对象初始化时,自动调用
+__del__ 对象被从内存中销毁前，自动调用
+__str__ 返回对象的描述信息,print函数输出使用
+
+面向对象是更大的封装,在一个类中封装多个方法,这样通过这个类创建出来的对象，就可以直接调用这些方法了。
+1.定义类
+class Cat:
+	#定义类中的方法，第一个参数必须是self.
+	def eat(self):
+		print("eat ....")
+	def drink(self,name):
+		print("drink ....")
+tom = Cat() #根据类创建对象。
+tom.eat() #调用方法
+
+tom = Cat()
+#Cat()在内存中创建了一个Cat类的对象，使得tom指向这个对象的地址(tom变量记录这个对象的内存地址),也就是tom变量引用了新建的猫对象
+print(tom)
+#使用print输出对象变量,输出的是这个引用对象是由哪一个类创建的对象,以及在内存中的地址。
+<__main__.Cat object at 0X7fdbd1234b00> #这个表示Cat类的对象的地址是0X7fdbd1234b00
+print("%x"%id(tom))
+#id函数查询数据在内存中的地址。%d以10进制输出数字,%x以16进制输出数字
+7fdbd1234b00
+
+tom2 = Cat() #创建第二个对象
+tom2.eat()
+print(tom2)
+#tom和tom2这两个对象的地址不一样，所有两个对象不一样,是不同的内存空间。
+tom3 = tom2 
+print(tom3)
+#tom3和tom2这两个对象的地址一样，所以是同一个对象,是同一个内存空间。
+
+2.给对象增加属性[这种方法不推荐]
+#对象应该有那些属性，应该封装在类的内部。
+class Cat:
+	def eat(self):
+		print("吃")
+	def drink(self):
+		print("drink...")
+tom = Cat() #创建对象
+tom.age = "18" #给对象增加一个属性
+tom.cat() #调用方法
+tom.drink()
+print(tom)
+
+
+self参数:
+self.调用对象的其他属性和方法
+class Cat:
+	def eat(self):
+		print("%s eat ..."%self.name)
+tom = Cat()
+tom.name = "tom cat" #在这里下断点。
+tom.eat()
+#通过debug调试可以发现，tom指向的内存地址和self指向的内存地址是一样的。
+#所以,哪一个对象调用的方法，Self就是哪一个对象的引用。
+
+初始化方法: __init__
+class Cat:
+	def eat(self):
+		print("%s eat ..."%self.name)
+tom = Cat()
+tom.eat()
+tom.name = "tommm" #将这个添加属性的语句放到eat方法之后，会报错，是因为Eat方法内使用self.name这个属性。所以去掉eat方法内的这个属性
+调用不会报错。
+#tom.name这中添加属性的方式不受制于地点，可以随时添加，只要在调用这个属性之前就行了。
+
+Cat()
+#创建对象时,python解释器会自动执行以下两个操作，第一个是为对象在内存中分配空间(创建对象),为对象的属性设置初始值(初始化方法__init__)
+#__开头和结尾的方法是python的内置方法。
+#__init__初始化方法是专门用来定义一个类具有那些属性的方法。
+
+使用初始化方法定义属性。使用__init__方法可以让创建对象更加灵活。
+class Cat:
+	def __init__(self,name):
+		print("初始化方法")
+		self.name = name #在初始化方法内部定义属性
+		self.age = "24"
+	def eat(self):
+		print("%s eat ..."%self.name)
+tom = Cat("tommmm")
+print(tom.age)
+
+del方法:
+#当一个对象从内存中被销毁前,会自动调用__del__方法。
+#如果希望对象被销毁前，做一些事情，可以考虑使用__del__方法。
+class Cat:
+	def __inti__(self,name):
+		self.name = name
+		print("%s 对象来了"%self.name)
+	def __del__(self):
+		print("%s 对象走了"%self.name) #这个在程序结束后最后执行。所以在分割线下方输出。
+#tom 是一个全局变量
+tom = Cat("tom")
+del tom #del关键字删除一个对象。使用del之后，在分割线上方输出。
+print("--"*50)
+
+str方法:
+#使用print输出对象变量,默认输出的是变量的引用对象信息(对象由那个一个类创建,以及对象在内存中的地址)
+#使用str方法可以自定义输出对象变量的内容。__str__方法必须返回一个字符串。
+class Cat:
+	def __init__(self,name):
+		self.name =name
+	def __str__(self):
+		return "i:%s"%self.name
+tom = Cat("tom对象")
+print(tom) #输出对象名称
+
+生命周期:
+一个对象从调用类名()创建，生命周期开始，一个对象的__del__方法一旦被调用，生命周期结束。在对象的生命周期内容，可以访问对象属性,
+或者让对象调用方法。

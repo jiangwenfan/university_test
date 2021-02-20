@@ -1,0 +1,14 @@
+1.intel命名科普	intel core i7 4790k
+intel每个系列的产品定位和面向客户都不同。
+1.1 Core(酷睿系列)
+    主要用户:游戏玩家,工作者使用者。
+    代表:intel core i3 ,intel core i5,intel core i7
+
+1.2 Xeon(至强)
+    专门面向服务器的CPU，
+    面向企业，服务器，专业设计人士，性能强，核心多，主频略低。
+    2017年之前:按照性能高低分为:E3,E5,E7
+    2017年之后:根据用途分为Platinum(铂金),Glod(金牌),Silver(银牌),Bronze(铜牌)
+
+
+

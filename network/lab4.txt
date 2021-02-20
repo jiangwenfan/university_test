@@ -1,0 +1,55 @@
+switch(三层)(vlan 192.168.1.1/24) ---->pc0(192.168.1.2)
+			(vlan 192.168.2.1/24) ---->pc1(192.168.2.2)
+创建2个vlan
+vlan database
+vlan 2
+vlan 3
+
+#1.0 通过vlan ip做网关,实现不同vlan的访问
+添加端口给vlan
+int f0/1
+switchport mode access
+switchport access vlan 2
+description connected PC0
+
+int f0/2
+switchport mode access
+switchport access vlan3
+description connected PC1
+
+#配置vlan网关地址
+int vlan2
+ip address 192.168.1.1 255.255.255.0
+int vlan3
+ip address 192.168.2.1 255.255.255.0
+
+#启用三层交换机的路由功能
+ip routing
+
+------->全网互通
+##v2.0 通过设置端口的三层工作模式，实现不同网络的访问
+
+int f0/1
+no switchport #关闭交换机端口的二层功能,改为三层模式
+ip address 192.168.1.1 255.255.255.0
+
+int f0/2 
+no switchport
+ip address 192.168.2.1 255.255.255.0
+
+ip routing 
+
+------------>全网互通
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,4 @@
+1.先安装完mysql80之后卸载，然后安装mysql57会启动报错。
+cat /var/log/mysqld.log |grep ERROR
+	InnoDB: Table flags are 0 in the data dictionary but the flags in file ./ibdata1 are 0x4800!
+rm -rf /var/log/mysql/*  #解决，重启即可

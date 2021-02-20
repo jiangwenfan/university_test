@@ -1,0 +1,36 @@
+windows堆栈特点:上面(栈顶)大地址，下面(栈底)小地址。
+通过汇编模拟堆栈:
+;刚开始栈顶和栈底都是同一个地址。
+mov edx,0x0013ffdc  ;栈顶
+mov ebx,0x0013ffdc	;栈底 
+;方式一: 先压入数据，栈顶减4
+mov dword ptr ds:[edx-4],0xAAAAAAAA ;先往栈顶压入4字节数据
+sub edx,4 ;栈顶指针减去4 ---> mov edx,edx-4 
+;方式二:栈顶指针减去4,然后在压入数据
+sub edx,4 ;栈顶指针减4。
+mov dword ptr ds:[edx],0xBBBBBBBB ;往栈顶压入数据
+
+;方式三：同方式一
+mov dword ptr ds:[edx-4],0xCCCCCCCC ;往栈顶压入数据。
+lea edx,dword ptr ds:[edx-4]  ;栈顶指针减4.
+
+;方式四:同方式二
+lea edx,dword ptr ds:[edx-4]  ;栈顶指针减去4
+mov dword ptr ds:[edx],0xDDDDDDDD  ;往栈顶压入数据
+
+读取被压入的数据:
+方式一:通过栈底减去4来读取。
+mov esi,dword ptr ds:[ebx-4] ;栈底指针减去4，读取第一个被压入的数据放到esi寄存器。
+mov esi,dword ptr ds:[edx-0x10]
+;第四个....
+
+
+
+esp 栈顶 
+ebp 栈底
+push 0x12345678 ;向栈顶存入数据，并且提升栈顶指针。esp-4
+
+pop eax ;弹出数据到eax寄存器 esp+4
+
+
+

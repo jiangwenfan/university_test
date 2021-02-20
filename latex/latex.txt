@@ -1,0 +1,124 @@
+latex基本结构。
+一个latex文档(text.tex)分为导言区和正文区。
+一个最基本的latex文档结构:
+%导言区
+\documentclass{article} %引入一个article类，还可以引入book,report,letter类
+
+%正文区
+\begin{document}  %document是环境名称，整个文档只能有一个。
+	hello world!
+%test123  这是一个注释。
+\end{document}
+
+2.导言区
+导言区主要用于进行全局设置。
+\documentclass{article} %普通文档 引入文档类。
+%book类和report类有封面和标题。letter类中不能使用\maketitle命令，显示为一个普通文档。
+\title{My first document}  %设置文档标题
+\author{jason} %设置文档作者
+\date{\today} %date设置编辑文档的时间，\today表示今天
+%以上这些设置需要在正文区，使用\maketitle进行显示。
+
+%拓展选项
+%1.中文支持
+\usepackage{ctex} %引入ctex宏包。可以在标题，作者，正文中输入中文。  
+%首先要确保这个latex文件是utf-8编码的，其次编译器设置正确。
+%选项-->设置-->1.构建[默认编译器:XelaTex;] 2.编辑器[默认字体编码:UTF-8]
+\newcommand\degree{^\circ} %定义degree命令
+
+%2.表格
+
+3.正文区
+\begin{document}
+	\maketitle 
+	
+	hello world!  %文本模式，普通字符
+		%空白表示空行
+	hello math $f(x)$ is $f(x)=3x^2+x-1$.  %$符号包含的内容称为数学模式
+	%单$符表示行内公式
+	hello second math $$f(x)=3x^2+x-1$$.
+	%双$符表示行间公式。既是在两行内容中间的的数学公式。
+	
+	%2中文支持
+	勾股定理:
+	%\angle命令是角度符号;需要在导言区定义\degree命令
+	用符号语言表述为:设直角三角形$ABC$,其中$\angleC=90\degree$,则有:
+	\begin{equation}   %引入了equation环境，用于产生带编号的行间公式。
+	AB^2=BC^2+AC^2.
+	\end{equation}
+	
+	%3表格的制作和排版
+
+\end{document}
+
+输入矩阵的宏包:
+\usepackage{amsmath,xcolor}
+\usepackage{array}
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+ \hskip -\arraycolsep
+ \let\@ifnextchar\new@ifnextchar
+ \array{#1}}
+\makeatother 
+
+
+%数学公式
+%上标
+$a^2$
+$a^{20}$
+
+%下标
+$a_0$
+$a_{100}$
+
+%希腊字符.  直接使用其对应的英文名称
+$\alpha$  
+$\beta$
+%大写字母开头的，则是大写的希腊字母
+$\Beta$
+$\Omega$
+$\alpha^3+\beta^2+\gamma=0$
+
+数学函数
+$\log$
+$\sin$
+$\cos$
+$\arcsin$
+$\arccos$
+$\In$
+
+$\sin^2 x+\cos^2 x=1$
+
+根式:
+$\sqrt{2}$
+$\sqrt{x^2+y^2}$
+$\sqrt{2+\sqrt{2}}$
+$\sqrt[4]{x}$  %指定开方的次数
+
+分式:
+体积是$3/4$  %横式分式
+体积是$\frac{3}{4}$  %竖式分式。{分子}{分母} 
+
+
+
+排版:
+填空题的下划线:
+\underline{\hbox to 20mm{}}
+回车换行:
+\\
+\newline
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,80 @@
+BeautifulSoup模块:
+
+div = soup.find(name="div",attrs={'class':'123'}) #找到第一个div标签对象. Attrs中是属性，可选
+divList = soup.find_all(name="div",attrs={'id':'123'}) #找到所有的div标签，是一个列表，里面的每个是标签对象
+
+div = soup.select('#test') #找到id=test的标签对象
+div = soup.find(id='i1') #找到id=i1的标签对象
+
+
+
+2.每个标签对象的操作
+1.name 
+div = div.name #获取标签名字. div
+tag = soup.find(id='i1')
+div = tag.name 
+
+2.attrs
+a = soup.find('a')
+#attrs = a.attrs #找到a标签的所有属性，比如href,title,... 返回一个属性字典
+
+a.attrs['href'] #获取href的值
+a.attrs['href'] = '123' #修改href得值
+a.attrs['title'] = 'abc' #增加一个属性
+del a.attrs['href'] #删除一个属性
+print(soup)
+
+3.children 只找儿子一层，不找后代。
+<body>
+	<a>123</a>
+	<a>123</a>
+	<di>
+		<a>456</a>
+	</div>
+</body>
+
+tags = soup.find('body').children
+print(len(tags)) #3个子代，但是长度为7，因为还包含了换行。
+
+
+每个换行都是一种soup类型的字符串，过滤换行。soup对象都是Tag类型。
+from bs4.element import Tag
+for tag in tags:
+	if type(tag) == Tag:
+		print(tag+"十个标签对象")
+	else:
+		print("是个文本或者换行")
+4. descendants 找到body标签对象下的所有内容。
+soup.find('body').descendants 
+#'\n',<a>123</a>,123,'\n',<a>123</a>,123,........递归的找到所有
+
+4.clear 清空子标签内容
+soup.fins('body').clear()
+print(soup) #<body></body>
+
+5.decompose 清空整个标签。
+soup.find('body').decompose()
+print(soup) #结果是空
+
+6. extract 也是清空整个标签，效果等同于decompose，但是会有返回值,返回值是被删除的内容。
+v = soup.find('body').extract() 
+
+7. encode(),decode()
+tag = soup.find('body')
+print(tag.encode()) #将标签对象转换为字节类型
+#print(tag.encode_contents()) #不包含最外层标签
+print(tag.decode()) #将标签对象转换为字符串类型
+#print(tag.decode_contents()) 
+print(str(tag)) #转换为字符串
+
+8. find 获取匹配到第一个标签
+soup.find('a') #默认找到标签是a的第一个标签元素
+
+
+9.find_all 获取匹配到所有标签
+
+10.has_attr 检查标签是否具有该属性
+
+12.get_text 获取标签内部文本内容
+
+13.index 检查标签在某标签中的索引位置

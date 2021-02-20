@@ -1,0 +1,61 @@
+sqoop(sql to hadoop)
+用于hadoop与关系型数据库之间进行数据传递
+
+tar -zxvf sqoop1.4.7.tar.gz -C /opt/module/
+cd sqoop/conf
+mv sqoop-env-template.sh sqoop-env.sh 
+vim sqoop-env.sh 
+	export HADOOP_COMMON_HOME=/opt/module/hadoop-2.9.2
+	export HADOPP_MAPRED_HOME=/opt/module/hadoop-2.9.2
+	export HIVE_HOME=/opt/module/hive1.2
+	#export HABSE_HOME=
+cp mysql-connector-java-5.1.27-bin.jar module/sqoop1.4.7/lib/
+bin/sqoop help #验证成功安装
+bin/sqoop list-databases --connect jdbc:mysql://hadoop1:3306/ --username root --password admin123#K
+
+导入数据:
+从mysql把数据导入到hdfs上。
+1.创建一些数据
+mysql -uroot -padmin123
+>create database company;
+>create table company.staff(id int(4) primary key not null auto_increment,name varchar(255),sex varchar(255));
+>insert into company.staff(name,sex) values('tony','male');
+>insert into company.staff(name,sex) values('catalina','female');
+2.全部导入到hdfs中
+bin/sqoop import --connect jdbc:mysql://hadoop1:3306/company --username root \
+--password admin123#K --table staff --target-dir /user/company --delete-target-dir \
+--num-mappers 1 --fields-terminated-by "\t"
+#\表示拼接下一条命令(换行)，清空目标目录，没有则创建。
+hdfs dfs -cat /user/company/part-m-00000 #查看结果
+
+3.查询导入
+bin/sqoop import --connect jdbc:mysql://hadoop1:3306/company --username root --password admin123#K --target-dir /user/company --delete-target-dir --num-mappers 1
+--fields-terminated-by "\t" --query 'select name,sex from staff where id <=1 and $CONDITIONS;'
+#and conditions的作用是保证导入的数据也是有有序的，而不是乱序的。
+#".... and \CONDITIONS;" 使用双引号需要加个转义字符。
+
+4.导入指定列
+bin/sqoop import --connect jdbc:mysql://hadoop1:3306/company --username root --password admin123#K --colums id,sex --table staff --target-dir /user/company -delete-target-dir --num-mappers 1 --fields-terminated-by "\t" 
+
+5.查询条件导入
+bin/sqoop import --connect jdbc:mysql://hadoop1:3306/company --username root --password admin123#K  --target-dir /user/company -delete-target-dir --num-mappers 1 --fields-terminated-by "\t" --table staff --where "id=1"
+ 
+bin/sqoop import --connect jdbc:mysql://hadoop1:3306/company --username root --password admin123#K  --target-dir /user/company -delete-target-dir --num-mappers 1 --fields-terminated-by "\t" --table staff --colums id,sex --where "id=1"
+#只显示指定列的
+--query(指定列和条件)不能和--where(指定条件)同时用。
+
+6.导入数据到hive. mysql-->hdfs-->hive 
+bin/hive 
+>show tables; #查看没有表
+bin/sqoop import --connect jdbc:mysql://hadoop1:3306/company --username root --password admin123#K --table staff --num-mappers 1 --hive-import --fields-terminated-by "\t"  --hive-overwrite --hive-table staff_hive
+
+
+
+
+
+
+
+
+
+
+ 

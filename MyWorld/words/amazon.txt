@@ -1,0 +1,7 @@
+digital,数字
+content,内容
+devices,设备
+E-readers,电子阅读器
+Appstore,应用商店
+shop by department,按部门购物
+department,部门

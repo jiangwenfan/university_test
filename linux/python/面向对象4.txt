@@ -1,0 +1,42 @@
+静态方法:
+如果不需要访问实例属性或者实例方法，也不需要访问类属性或类方法，也就是这个方法与任何属性和方法都没有关系时，那么这个方法一般封装为静态方法。
+@staticmethod #这个告诉解释器这是一个静态方法。通过类名.调用静态方法。
+def 静态方法名():
+	pass
+
+class Dog(object):
+	@staticmethod
+	def run():
+		print("halllo....")
+
+Dog.run() #调用静态方法。
+
+
+综合案列:
+class Game(object):
+	#历史最高分 类属性
+	top_score = 0
+	
+	def __init__(self,player_name):
+		self.player_name = player_name #实例属性
+	
+	@staticmethod #静态方法。与类和对象的数据都没有关系的。
+	def show_help():
+		print("帮助信息...")
+	
+	@classmethod #类方法
+	def show_top_score(cls)：
+		print("历史最高分:%d"%cls.top_score)
+	
+	def start_game(self): #实例方法
+		print("%s 开始游戏"%self.player_name)
+
+Game.show_help() #查看游戏帮助信息
+Game.show_top_score() #查看历史最高分
+game = Game("小明") #创建对象
+game.start_game()
+
+总结:
+实例方法:方法内部需要访问实例属性,还有要访问类属性。类名.类属性名。
+类方法:方法内部只需要访问类属性
+静态方法:方法内部，不需要访问类和对象的数据(属性和方法)

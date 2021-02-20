@@ -1,0 +1,38 @@
+tcpdump -h  #查看帮助文档
+## 参数详解：
+	-i interface #指定网卡
+		-i eth0
+	-s #指定抓取的数据包大小。默认抓取长度为68字节。
+		-s 0   #0表示抓取完整的数据包【常用】
+	-w #将抓取的数据包保存为cap文件。【方便wireshark分析】
+		-w a.cap
+	tcp  #tcp协议
+	port 22  #端口22
+	host 192.168.201.51  #指定抓取的主机是xxx
+	dst host 192.168.201.51   #指定抓取目标主机是xxx
+	src host  192.168.201.51   #指定抓取源主机是xxx
+	-r #读数据包
+		tcpdump -r a.cap#查看摘要信息
+	-A	#以saaia码读
+		tcpdump -A -r a.cap  #以assia码的形式显示完整信息。
+	-X	#以16进制读
+		tcpdump -X   -r  a.cap  #以16进制的形式显示完整信息。
+
+
+实践:
+pc1: 192.168.10.10
+pc2: 192.168.10.11
+1.
+	tcpdump -i eth0 -s 0 -w a.cap  【pc1】
+	ping 192.168.10.1	【cp2】
+2.	
+	【pc1】
+		nc -l 22 
+		tcpdump -i eth0 tcp port 22
+	【pc2】
+		nc -nv 192.168.10.10 22 
+3.http
+	tcpdump -i eth0 tcp port 80
+	curl -v http://www.baidu.com
+	
+	

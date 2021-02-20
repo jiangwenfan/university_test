@@ -1,0 +1,198 @@
+```clike
+<H3C>system-view 	 #进入系统视图
+System View: return to User View with Ctrl+Z.
+
+[H3C]sysname R1  #更改设备名称
+
+reset saved-configuration  恢复出厂设置，清空所有配置
+
+reboot 重启
+```
+
+进入接口，配置IP地址：
+```clike
+[R1]interface GigabitEthernet 0/0
+[R1-GigabitEthernet0/0]ip address 192.168.1.1 24
+[R1-GigabitEthernet0/0]undo shutdown
+```
+
+查看当前配置是否成功
+```clike
+[R1-GigabitEthernet0/0]display this
+```
+
+进入serial接口，配置ip地址
+```clike
+[R1-GigabitEthernet0/0]quit
+[R1]interface Serial 1/0
+[R1-Serial1/0]ip address 100.10.10.1 30
+[R1-Serial1/0]undo shutdown
+```
+
+查看指令：
+```clike
+[R1-Serial1/0]display this
+
+<R1>display history-command   #查看历史命令
+
+<R1>display ip interface brief   #查看接口的ip地址配置情况
+
+<R1>save  保存配置指令：
+
+<R1>display saved-configuration  查看保存的配置文件
+
+<R2>display interface Serial 1/0 查看具体的某个接口状态
+
+<R1>display ip routing-table  查看路由表
+[H3C]ip ttl-expires enable  路由跟踪
+```
+
+配置R1的静态路由信息：
+```clike
+[R1]ip route-static 192.168.2.0 24 100.10.10.2
+[R1]quit
+```
+
+
+
+
+
+
+
+
+ACL配置：
+基本acl:
+acl basic 2000
+rule deny source 192.168.1.0 0.0.0.255 #在靠近目标的路由器上设置，拒绝该网段的所有主机访问。
+in serial 1/0
+packet-filter 2000 inbound #绑定到指定接口
+
+高级acl:
+##time-range test 8:00 to 18:00 working-day
+acl advanced 3000
+rule permit tcp source 192.168.1.0 0.0.0.255 destination 192.168.3.2 0.0.0.0 destination-port eq www
+rule permit tcp source 192.168.1.0 0.0.0.255 destination 192.168.3.2 0.0.0.0 destination-port eq ftp
+##rule deny  icmp source 192.168.1.0 0.0.0.255 destination 192.168.3.2 0.0.0.0 time-range test
+###exit
+--------ser 0/1
+packet-filter 3000 inbound    #绑定到接口
+
+
+-----#配置ppp协议  和IP
+####chap验证[A]
+local-user userb class network
+password simple 123456
+service-type ppp #exit
+in s 1/0
+link-protocol ppp
+ppp authentication-mode chap
+ip add    1111 30
+undo shutdown
+
+###[B]
+in s 1/0
+link-protocol ppp
+ip add 1 1 1  30
+ppp chap user userb
+ppp chap password simple 123456
+
+dhcp
+dhcp server  ip-pool vlan100pool #创建vlan100的地址池
+network 192.168.100.0 24
+gateway-list 192.168.100.1
+dns-list 211.1.1.1
+-----#valn200地址池划分
+dhcp server forbidden-ip 192.168.100.1 192.168.100.10   #排除IP地址
+--------#排除vlan200地址
+in vlan 100
+dhcp select server
+dhcp server apply ip-pool vlan100pool #绑定地址池
+--------#绑定vlan200
+dhcp enable
+
+ospf
+单区域配置：
+router id 1.1.1.1 #环回接口
+ospf 10
+area 0
+network 192.168.1.0 0.0.0.255【24】
+network 192.168.2.0 0.0.0.3【30】 #公布一切想公布的直连网段
+多区域配置：
+a，c:
+router id 1.1.1.1
+ospf 10
+area 0
+network ....
+[添加： 配置环回接口，公布环回接口]
+b:
+router id 2.2.2.2
+ospf 10
+area 0
+networrk .... #exit
+area 1
+network .....
+[添加： 配置环回接口，公布环回接口(两个)]
+
+port:
+vlan:
+----  // in range g to g
+port access vlan 10
+vlan虚接口:
+ip address 1.1.1.1  24
+vlan trunk:
+-----
+port link-type trunk
+port trunk permit vlan all
+二层启用三层接口，配IP：
+------
+port link-mode route
+ip address 1.1.1.1 24
+缺省路由：
+ip route-static 0.0.0.0 255.255.255.0 192.168.1.1  [目的网络][下一跳]
+二层聚合：
+interface bridge-aggregation 1 #创建聚合组，exit退出
+in range g0/21 to g 1/0/23  #添加端口到聚合组,exit
+port link-mode bridge
+port link-aggregation group 1
+in bridge-aggregation 1 #设置聚合组为trunk
+port link-type trunk
+port trunk permit vlan all
+三层聚合：
+in route-aggregation 1 #创建聚合组,exit
+in range g 1/0/1 to g 1/0/3 #添加端口到聚合组
+port link-mode route
+port link-aggregation group 1
+in route-aggregation 1 #设置聚合组为trunk
+ip add 192.168.1.1 24
+undo shutdown
+
+ppp的pap
+in####ppp协议配置[A,B]
+in se 1/0  #进入接口封装二层协议 pap
+link-protocol ppp
+ip address 10.1.1.1 30 #配置地址
+undo shu
+#####ppp的pap验证配置[A]
+local-user tonyb class network  #A
+password simple 123456
+service-type ppp  #exit
+in s 1/0
+ppp authentication-mode pap
+####[B]
+in s 1/0
+ppp pap local-user tonyb password simple 123456
+
+telent:
+local-user tony class manage #创建用户 gzeic
+password simple 123456 #设置密码
+service-type telnet #这个用户使用telnet服务
+authorization-attribute user-role network-admin  #设置该用户的角色
+user-interface vty 0 4#配置telnet用户使用计划认证方式
+authentication-mode scheme
+telnet server enable #启动telnet服务
+
+
+
+
+
+

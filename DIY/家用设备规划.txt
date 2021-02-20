@@ -1,0 +1,75 @@
+终端设备:
+	mi book :12.5英寸	小巧，长续航,轻便
+	windows 10: office
+		software:
+			proxy_tools
+			7z
+			chrome浏览器
+			notepad++
+			MobaXterm：
+				ssh
+				telnet
+				vnc服务
+				ftp服务
+				http服务
+			git:
+				连接同步github
+			everything
+			SumatraPDF
+			(截图软件)
+			微信
+		目录规范：
+			Software_Main
+			CodeWork_Main
+	usb3.0U盘:
+		office
+		everything
+		
+	
+主力系统(虚拟化):
+	windows 10:
+	windows 7:
+	windows xp:
+	mac os:
+	ubuntu Desktop:
+	ubuntu server:
+	centos(server):
+	
+主力系统(物理机):
+	windows 10:
+		software:
+			photoshop
+			premiere
+		dire standard:
+			Software_Main
+			CodeWork_Main
+			
+	manjaro(arch linux):
+		software:
+		dire standard:
+			
+
+虚拟化技术: esxi
+关于硬件选择的几个标准及原则:
+1.核心硬件的选择:
+cpu: 价格2个预计在8000左右
+cpu的选择以esxi所支持的CPU为选择目标,由于将来用作个人的私有云数据中心，并且要进行大量虚拟机的创建，所以要选择核心数量相对较高的xeon e7系列cpu，而不是桌面的i系列cpu.
+并且esxi本来就是给服务器使用的虚拟化技术，所以对多核心和多线程的支持更好。
+
+主板: 5000
+主板选购应注意，将来是否能够拓展万兆网卡。
+
+内存:  价格大约是1万元
+64g*4 = 256g
+
+硬盘: 价格大约是2000*5=1万元
+2t*5=10t ssd 
+
+千兆网卡:  300*4=1200元
+4个千兆
+
+万兆网卡：将来拓展
+
+笔记本连接万兆网卡:
+
+万兆交换机: 1300元

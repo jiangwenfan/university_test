@@ -1,0 +1,13 @@
+pacman -S vim //安装vim
+pacman -Rs vim //删除vim及其没有被其他已安装软件包所有的依赖关系。
+pacman -Syu //升级整个系统及其软件包
+pacman -Syyu //更新系统
+pacman -S //同步远程数据库
+
+sudo pacman-mirrors -i -c China -m rank //选择速度最快的国内镜像源
+sudo vim /etc/pacman.conf //添加Arch linux镜像源.文件末尾添加
+    [archlinuxcn]
+    SigLevel = Optional TrustedOnly
+    Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
+sudo pacman -Syy  //更新缓存
+udo pacman -S archlinuxcn-keyring //写入密钥，解决软件包签名错误问题

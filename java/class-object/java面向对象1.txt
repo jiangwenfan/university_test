@@ -1,0 +1,63 @@
+static关键字
+作用:
+static表示这个成员变量被所有对象共享。
+特点:
+静态方法不需要创建对象,直接通过类名.方法名就可以调用。对象名.方法名也行。
+随着类的加载而加载
+被类的所有对象共享
+静态只能访问静态。非静态的随便都可以访问
+public class Test{
+	private int age;
+	static String country;
+	
+	public Test(){};
+	public Test(int a){
+		this.age = a;
+	}
+	publci Test(int a,String s){
+		this.age = a;
+		this.country = s;
+	}
+	
+	public void show(){
+		System.out.println("age is :"+this.age+" country is : "+this.country);
+	}
+}
+
+Test t1 = new Test(22);
+Test t2 = new Test(23);
+Test t3 = new Test(24);
+Test.country = "canada";   //所有对象共享country成员变量
+
+
+this关键字:
+this是随着对象的创建而存在的
+
+类的组成:
+	成员变量
+	构造方法
+	成员方法
+
+1.构造方法
+作用:构造方法是为了给对象的数据进行初始化/赋值。在类创建对象的时候运行。
+特点:方法名与类名;没有返回值类型;没有具体返回值
+public class Phone{
+	private age;
+	
+	//无参构造方法
+	public Phone(){
+		this.age = 18;
+		System.out.println("this is no argument method!"+age);
+	}  
+	//有参构造方法
+	public Phone(int a){
+		this.age = a;
+		System.out.println("this is a have argument method!"+age);
+	}
+}
+
+Phone p = new Phone();  //创建对象p,并自动使用无参构造方法
+Phone p1 = new Phone(22); //创建对象p1,并自动使用有参构造方法
+
+2.成员方法
+public  void 

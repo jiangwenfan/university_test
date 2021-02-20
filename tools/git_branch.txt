@@ -1,0 +1,122 @@
+
+git branch //查看当前有几个分支，且在那个分支下工作。
+git branch -d dev //删除dev分支
+
+git checkout -b dev //创建并切换到dev分支上。
+[root@test]#git branch
+* dev
+  master
+git checkout master //切换会master分支
+
+git merge dev //合并dev分支到当前分支
+git log --pretty=oneline //查看提交记录
+git log --graph --pretty=oneline 
+
+1.快速合并dev分支
+mkdir test1 && git init  #创建并新建一个test1的git仓库
+vim code1.c 
+	"the first line of code under the master branch"
+git add .
+git commit -m "create a code.c file under the master branch"
+git log --pretty=oneline
+git branch #
+
+git checkout -b dev
+vim code1.c 
+	"append the first line of code under the dev branch"
+git add .
+git commit -m "append  a line code under the dev branch"
+git log --pretty=oneline
+git branch #
+
+git checkout master
+git merge dev 
+git log --pretty=oneline 
+git branch -d dev
+
+#快速合并只能适用于master分支没有任何修改，只有dev分支有修改，此时将dev分支合并到master分支可以采用快速合并。
+
+#当mster分支有修改,dev分支也有修改时，需要采用合并提交的方式。
+2.不能快速合并，合并也没有冲突，此时会合并之后做一次新的提交。
+git checkout -b dev
+vim code2.c 
+git add .
+git commit -m  "dev branch 2"
+
+git checkout master 
+vim code1.c 
+	"delete a some code"
+git add .
+git commit -m "master 3"
+
+git merge dev #在弹出的文本窗口中，输入要提交的信息。
+git merge -m "aaa" dev 
+
+3.即使可以快速合并，但是禁用快速合并模式，合并进行一次提交。为了保存分支合并记录。
+git merge --no-ff -m "禁用快速合并" dev 
+
+主要用在合并bug分支
+4.合并失败，手动解决合并冲突问题
+在两个分支上编辑的是同一个文件。
+git checkout -b dev
+vim code1.c 
+	"add a line under dev branch"
+git add . 
+git commit -m "dev branch 1"
+
+git checkout master
+vim code1.c 
+	"add a line under master branch"
+git add  .
+git commit -m "master branch 1"
+
+git merge dev 
+#Auto-merging code1.c
+CONFLICT (content): Merge conflict in code1.c
+Automatic merge failed; fix conflicts and then commit the result.
+git status
+vim code1.c  #手动删除相关的内容，进行合并。
+git add .
+git commit -m "Resolve the conflict"  #手动解决冲突
+git log --pretty=oneline 
+
+5.bug分支。
+在dev分支上正在进行编辑code2.c,不过master分支上出现了bug。
+此时使用git stash保存当前dev分支上的现场，然后切换到master分支上，创建新的bug001分支
+，修复bug，然后禁用快速合并，进行合并提交。切换会Dev分支，恢复保存的现场。
+git checkout -b dev 
+vim code2.c 
+	"add a new content"
+git status #当前内容没有被提交保存
+git stash #保存当前工作现场
+
+git checkout master
+git branch -b bug001 #创建一个bug修复分支
+vim code1.c 
+	"delete a some content"
+git add .
+git commit -m "fix a bug"
+
+git checkout master 
+git merge --no-ff -m "a bug has been fixed" bug001 #合并bug001分支
+
+git checkout dev
+git stash list #列出保存的工作现场。
+git stash pop #恢复保存的现场。
+git status 
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+

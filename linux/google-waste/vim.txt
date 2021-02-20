@@ -1,0 +1,48 @@
+alias vi='vim' #定义别名
+vim ~/.bashrc
+	alias vi='vim'
+
+命令模式:
+进入输入模式:
+a 在光标所在字符后插入(追加)
+A 在光标所在字符的行尾插入(行尾追加)
+i 在光标所在字符前插入(前插入)
+I 在光标所在字符的行首插入(行首插入)
+o 在光标下插入新行,向下插入一行(向下打开新行)
+O (向上打开新行)
+
+输入模式: 主要用于文本编辑,类似windows的记事本
+末行模式(编辑模式): 执行常用操作
+	:w 保存(不退出)
+		:w abc 另存为abc文件
+	:q 退出(不保存)。 在文件没有修改的条件下
+	:wq 保存退出 。等于:x 。等于 ZZ(大) 
+	:!
+		:q! 强制退出(不保存)。主要用于修改文件后，不保存数据退出。
+		:wq! 强制保存退出。	当文件的所有者或者root用户,对文件没有写权限的时候，强制写入数据。
+
+临时常用设置:
+:set nu 设置行号
+:set nonu 取消行号
+:noh 取消高亮
+
+:set list 显示隐藏字符。tab键用^I显示,回车符用$显示,^M$表示windows下的回车符(shell脚本无法执行)。作用等同于cat -A test.txt 
+:set nolist 
+#windows下创建一个shell脚本或者普通文件，上传到linux上，使用cat -A test.txt查看回车符用的是什么。:set list看不出来。
+#使用dos2linux进行转换
+yum install dos2unix 
+dos2unix test.sh #将windows下的回车符转换为linux下的回车符
+unix2dos test.sh #将linux转为windows
+echo $?  #显示0表示成功。
+--
+:syntax on 开启语法高亮显示
+:syntax off
+
+:set ruler 开启右下角的状态栏
+:set noruler
+
+.vimrc文件常用设置
+vim /etc/vimrc 对整个系统生效
+~/.vimrc 只对单个用户生效
+vim ~/.bashrc
+	set nu #显示行号

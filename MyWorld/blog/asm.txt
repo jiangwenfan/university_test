@@ -1,0 +1,9 @@
+1.EIP寄存器:
+	存储的是下一跳指令的地址。
+jmp 0x004383ec 修改EIP的值
+jmp EAX 修改EIP的值
+
+call 0x004383ec
+call EAX
+
+2.

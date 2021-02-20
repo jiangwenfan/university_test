@@ -1,0 +1,16 @@
+rpm 
+
+查询软件包是否安装:
+rpm -q httpd #查询httpd是否安装
+rpm -qa #查询已安装的所有软件包
+rpm -qa |grep httpd 
+
+rpm -qi httpd #查询已安装软件包的详细信息
+rpm -qip 包全名 #查询未安装的包的详细信息
+
+rpm -ql httpd #查询已安装软件包的位置
+rpm -qlp 包全名 #查询未安装软件包打算装的位置
+
+rpm -qf /etc/httpd/conf/httpd.conf #查询这个文件属于那个软件包
+
+rpm -qR httpd #查询这个软件都依赖那些包

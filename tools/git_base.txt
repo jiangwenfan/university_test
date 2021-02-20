@@ -1,0 +1,62 @@
+1.配置git连接到github
+ssh-keygen -t rsa -C "zhan2103208467@gmail.com" #用这个账号创建一个私钥和公钥。设置的密码是你push的密码
+
+cat /root/.ssh/id_rsa.pub #将这个公钥内容复制添加到github上。
+
+ssh -T git@github.com #测试连接
+
+2.git基本初始配置
+git config --global user.name  tony  #你是谁
+git config --global user.email tony@163.com  #怎么联系你
+git config --global color.ui auto #提交命令输出的可读性
+#会生成在/root/.gitconfig或./config文件中。
+
+3.基本使用-->github
+git clone git@github.com:jiangwenfan/test.git  #克隆github上的test仓库
+
+vim test/t1.c #修改文件
+git add . #添加到暂存区
+git status #查看文件状态
+# ?? 表示没有添加到暂存区
+# A 表示已经添加到暂存区
+git commit -m "本次提交说明.." #提交到本地仓库。 -m参数指定的是本次版本的说明
+git push #合并到github
+
+
+工作区--->暂存区--->版本库
+git add . -->添加到暂存区
+git commit -m "version 1" -->添加到版本库
+4.基本命令
+git log #查看所有提交的记录和完整的版本号。也叫所有版本的记录。
+git reflog #查看简短的版本号。
+git reset --hard 版本号 #切换到其他版本
+#git reset --hard 83f0d5e 跳到版本1
+
+
+#撤销工作区的修改
+git status #工作区的是clean的
+echo "666" >> a.txt
+git status #工作区显示没有添加到暂存区.
+#git status -s 摘要显示
+git checkout -- a.txt  #撤销工作区的修改。相当于批量撤销所有文件的修改。
+#git checkout -- . 撤销所有文件的修改,但是不不能撤销新创建的文件
+git status #工作区又是干净的了。
+
+#撤销暂存区的修改
+git status #查看文件状态,已经变绿了。以及执行过git add .命令了。
+git reset HEAD a.txt #放回已经添加到暂存区的a.txt文件到工作区
+#git reset HEAD . 放回所有已经添加到暂存区的文件
+git status #重新放回工作区
+
+注意事项:
+1.可以多次git add . ，然后一次性git commit 提交到本地版本库
+2.
+工作区和版本库中的对比
+版本库中的对比
+3.在本地创建一个git仓库
+mkdir test #创建一个目录
+cd test && git init #进入目录,将这个目录初始化为git仓库
+
+
+
+
