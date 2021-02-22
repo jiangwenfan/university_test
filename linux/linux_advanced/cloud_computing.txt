@@ -54,25 +54,6 @@ ping www.baidu.com
 4.创建虚拟机
 kvm虚拟机的组成=虚拟机的xml配置文件+虚拟机的镜像文件
 
-4.1kvm虚拟机的克隆
-mount /dev/sdb1 /var/lib/libvirt/images/ #挂载虚拟机镜像存储盘到默认虚拟机存储目录中
-#yum install virt-install #安装克隆工具,一般默认安装,提供virt-clone命令
-#虚拟机需要关机。
-#virsh list --all 查看所有虚拟机的名字
-#查看虚拟机占用的空间
-ll -h  
-df -h 
-1.
-virt-clone -o centos7.1 -n centos7.2 -f /var/lib/libvirt/images/centos7-2.img 
-virt-clone -o centos7.1 -n centos7.3 -f /var/lib/libvirt/images/centos7-3.qcow2 
-#virt-clone -o 源虚拟机名 -n 新虚拟机名 -f 虚拟机镜像存放路径
-使用virt-clone命令克隆虚拟机相当于，先复制了一份xml配置文件，修改了其中的mac地址和IP地址，然后复制了一份镜像文件。
-2.
-cp centos7-1.qcow2 centos7-2.qcow2 #克隆镜像
-cp /etc/libvirt/qemu/centos7-1.xml /etc/libvirt/qemu/centos7-2.xml #克隆配置文件
-virsh edit centos7-2.xml #修改配置文件的mac地址,虚拟机名,镜像存储路径
-
-vimdiff centos7-1.xml centos7-2.xml #对立配置文件的不同 
 
 5.常用命令
 virsh list #列出在运行的虚拟机。
@@ -85,44 +66,6 @@ virsh autostart centos7-71 #虚拟机在物理机开机后自启动。
 #1. chkconfig --list libvirtd #查看开启启动了。
 #2.  vim /etc/fstab 	#开机自动挂载分区。
 
-
-
-6.虚拟机镜常用像格式
-raw:老牌镜像格式，性能强劲,速度快,但不支持快照。
-通常作为各种格式相互转换的中间格式,用多少就使用多少,du -h看到的就是使用大小。
-eg:qcow2转为vmdk: qcow2-->raw-->vmdk
-相机上使用的就是raw格式，raw原意是"未经加工的",可以理解为:raw图像就是CMOS或者CCD图像感应器将捕捉到的光源信号转化为数字信号的原始数据,称为数字底片。
-cow格式:没有成熟就被放弃了，由qcow格式取代。
-qcow格式:性能相比raw格式一般，被qcow2取代。
-qcow2格式:现主比较主流的虚拟化镜像格式,性能上接近raw格式,支持快照,更小的存储空间,支持创建image镜像,支持多个snapshot,支持slib磁盘压缩,支持aes加密。
-vmdk:vmware的格式，整体性能和稳定性最好。
-
-镜像格式相互转换:
-1.qcow2-->raw
-qemu-img convert -f qcow2 -O raw kali.qcow2 kali2.raw #把kali的qcow2格式转换为kali2的raw格式。
-#qemu-img convert -f 源格式 -O(大写) 目标格式 源镜像 目标镜像
-
-qemu-img info kali.qcow2 #查看镜像文件的格式
-#qemu-img info 镜像文件
-
-2.qcow2-->vmdk
-qemu-img convert -f qcow2 -O vmdk kali.qcow2 kali3.vmdk 
-
-3.vmdk-->qcow2
-qemu-img convert -f vmdk -O qcow2 kali3.vmdk kali4.qcow2 
-
-修改原来虚拟机的配置文件,以启动转化后的镜像文件。
-virsh edit kali.xml 
-	23 <driver name='qemu' type='raw' cache='none'/>  #修改镜像格式为raw
-	24 <source file='/var/lib/libvirt/images/kali2.raw'/> #文件名为kali2.raw
-
-
-修改虚拟机配置文件:
-1.推荐使用virsh edit命令修改配置文件,修改完毕即可生效。
-virsh edit centos7.xml 
-2.通过vim修改配置文件需要重启服务才生效
-vim centos7.xml 
-/etc/init.d/libvirtd restart 
 
 
 

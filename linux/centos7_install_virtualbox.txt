@@ -1,8 +1,0 @@
-1.虚拟机在启动期间意外终止，退出code 1
-yum update && yum upgrade -y #安装完virtualbox之后，更新软件
-
-2.kernel driver not installed rc=1908
-#yum install -y gcc
-/sbin/vboxconfig #根据报错提示执行，发现缺少一个指定类型的驱动包。
-yum install -y kernel-devel-3.10.0-693.el7.x86_64 #根据提示安装缺少的指定的版本的驱动包。
-#reboot 重启即可解决。 
