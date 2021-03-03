@@ -1,5 +1,4 @@
 yum install -y mariadb-server mariadb
-
 systemctl start mariad
 
 

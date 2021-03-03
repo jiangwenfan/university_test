@@ -1,6 +1,0 @@
-centos6
-1.修改主机名
-vim /etc/sysconfig/network
-	HOSTNAME=c6server
-hostname c6server #临时修改
-uname -a 查看主机名

@@ -1,3 +1,0 @@
-﻿  DemoA.c
-D:\CodeWork_main\university_local\university_test\win32api\win32apiDemoA\win32apiDemoA\DemoA.c(6,8): warning C4013: “system”未定义；假设外部返回 int
-  win32apiDemoA.vcxproj -> D:\CodeWork_main\university_local\university_test\win32api\win32apiDemoA\Debug\win32apiDemoA.exe
