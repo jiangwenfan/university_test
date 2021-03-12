@@ -1,0 +1,52 @@
+面向对象语言通过把一切事物都抽象为对象进行操作,为了方便对多个对象进行操作，就需要把多个对象进行存储,想要存储多个对象就不能是一个基本变量，而应该是一个容器类型的变量。
+数组和StringBuffer是容器类型的变量,StringBuffer的结果是一个字符串，不能满足要求,所以只能选择用对象数组进行存储，同时对象数据的长度是固定的，所以不能满足变化的需求，java提供了集合类供我们使用。
+数组与集合的区别?
+数组长度固定，集合长度可变。
+数组存储的是同一种类型的元素,集合可以存储不同类型的元素。
+数组可以存储基本数据类型,也可以存储引用数据类型。
+集合只能存储引用数据类型。
+
+java根据不同的需求，提供了多个集合类。
+import java.util.ArrayList;
+import java.util.Collection;
+
+
+1.添加功能
+boolean add(OBject obj) //添加一个元素
+boolean addAll(Collection c) //添加一个集合元素
+这个添加相当于连个集合的拼接。
+
+2.删除功能
+void clear() //移除所有元素
+boolean remove(Objetc c) //移除一个元素
+boolean removeAll(Collection c) //移除一个集合的元素
+t1.removeAll(t2) 
+//会根据t2集合中的元素移除所有t1集合中的元素。
+//t2集合中的元素是模板，t1集合中的元素是目标操作对象。
+//只要t2中有一个存在于t1中，并且被成功移除了，就返回true
+
+3.判断功能
+boolean contains(Object c) //判断集合中是否包含指定元素。
+boolean containsAll(Collection c) //判断集合中是否包含指定集合元素
+t1.containsAll(t2); 
+只有当t2中的元素全部包含于t1中才返回true
+boolean isEmpty() //判断集合是否为空
+
+4.获取功能
+Iterator<E> iterator()
+
+5.长度功能
+int size() //元素个数
+
+6.交集功能
+boolean retainAll(Collection c)
+t1.retainAll(t2); //给t1集合求与t2集合的交集,结果保存在t1集合中，
+//t2集合不变。返回值表示t1集合是否发生改变。
+
+7.把集合转换为数组
+Object[] toArray()
+
+会出现这个警告:
+Note: CollectionDemo.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+

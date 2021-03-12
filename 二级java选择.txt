@@ -1,0 +1,26 @@
+javadoc生成java文档。(javaprof,java,jdb)
+package用来定义包。(import,com,class)
+java为移动设备提供的平台是java ME。(java SE,java EE,jdk5.0)
+java虚拟机[解释执行]字节码,(jdk库文件目录是???)java的类是对具有相同行为对象的一种抽象。java中的垃圾回收机制是一个系统级的线程。
+java源程序前三种语句的的次序是:package,import ,public class 
+在编写java子类时可以自由地增加新方法和属性；java语言用解释器(jvm虚拟机)执行字节码。java中的类一般都有自己的属性和方法。
+java命名约定规范是:?????? 【第七题,第八题，15题目】
+在java中负责对字节码解释执行的是虚拟机。[垃圾回收器,编译器,多线程机制]
+为使java程序独立于平台，java虚拟机把字节码与各个操作系统及硬件分开。
+class类的对象由java编译器自动生成,隐藏在.class文件中，它在运行时为用户提供信息。[java解释器,javanew关键字,java类分解器]
+java虚拟机(jvm)运行java代码时,会进行加载代码，校验代码，执行代码。不会进行编译代码。
+java源程序中可以包含多个import语句,包含多个接口定义,可以包含多个类的定义。包含public类最多一个。
+NULL不属于java关键字,this,super,finally属于java关键字。
+java有多线程,跨平台,动态性,没有多继承，有多层继承。
+java程序的并发机制是多线程。
+
+switch语句中表达式(expression)中的值不允许用的类型是boolean,可以使用bytes,int,char
+能给数组赋值而不使用for循环的是: String s[] = new String[]{"zero","one","two","three","four"};
+System.out.println("111"+222);  //java可以数字和字符串混合输出。
+
+java位运算符:
+& 2个都是1，结果为1
+| 2个都是0,结果位0
+^ 两个都相同,结果为0
+
+

@@ -13,3 +13,13 @@
 32位系统中，每个内存地址为32位，寻址宽度为32位。内存以字节为单位。一个地址对应一个字节。
 
 virt-install --name manager03 --memory=3096 --arch=x86_64 --cpu=host-model --vcpus=2 --check-cpu --os-type=windows --os-variant='windos7test'  --cdrom=/home/data_tem/win7.iso --disk path=/home/data_tem/win7test.qcow2 --network bridge=br0 --noautoconsole --graphics vnc,password=xxxx,listen=0.0.0.0,port=8000 --cpu=host-model
+
+
+
+#实际存在
+if [ -x "t2.sh" ] #[ ! -x "t2.sh"] 结果取反
+then
+	echo "文件存在" #显示这个
+else
+	echo "文件不存在"
+fi
